@@ -1,0 +1,22 @@
+info:
+  name: Update Vendedor
+  type: http
+  seq: 9
+
+http:
+  method: PUT
+  url: http://localhost:8080/vendedores
+  body:
+    type: json
+    data: |-
+      {
+        "id": 2,
+        "nome": "Ana Livia",
+        "telefone": "11988880001"
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
