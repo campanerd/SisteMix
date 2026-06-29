@@ -2,7 +2,6 @@ package org.example.controller;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.example.cliente.ClienteRepository;
 import org.example.pedido.*;
 import org.example.vendedor.VendedorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ public class PedidoController {
     private PedidoRepository repository;
 
     @Autowired
-    private ClienteRepository clienteRepository;
+    private PedidoService pedidoService;
 
     @Autowired
     private VendedorRepository vendedorRepository;
@@ -29,9 +28,7 @@ public class PedidoController {
     @PostMapping
     @Transactional
     public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroPedido dados, UriComponentsBuilder uriBuilder) {
-        var cliente = clienteRepository.getReferenceById(dados.idCliente());
-        var vendedor = vendedorRepository.getReferenceById(dados.idVendedor());
-        var pedido = repository.save(new Pedido(dados, cliente, vendedor));
+        var pedido = pedidoService.cadastrar(dados);
         var uri = uriBuilder.path("/pedidos/{id}").buildAndExpand(pedido.getId()).toUri();
         return ResponseEntity.created(uri).body(new DadosDetalhamentoPedido(pedido));
     }
