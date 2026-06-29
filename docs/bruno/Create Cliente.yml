@@ -1,0 +1,23 @@
+info:
+  name: Create Cliente
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:8080/clientes
+  body:
+    type: json
+    data: |-
+      {
+        "nome": "João Silva",
+        "telefone": "11999999999",
+        "cpfCnpj": "123.456.789-00",
+        "email": "joao@email.com"
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
