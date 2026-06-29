@@ -10,10 +10,10 @@ http:
     type: json
     data: |-
       {
-        "nome": "João Silva",
-        "telefone": "11999999999",
-        "cpfCnpj": "123.456.789-00",
-        "email": "joao@email.com"
+        "nome": "Carlos Souza",
+        "telefone": "31977773333",
+        "cpfCnpj": "456.789.123-00",
+        "email": "carlos.souza@email.com"
       }
 
 settings:

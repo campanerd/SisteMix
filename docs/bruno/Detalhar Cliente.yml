@@ -5,8 +5,10 @@ info:
 
 http:
   method: GET
-  url: http://localhost:8080/clientes/1
-  auth: none
+  url: http://localhost:8080/clientes/{{IdCliente}}
+  body:
+    type: json
+    data: ""
 
 settings:
   encodeUrl: true

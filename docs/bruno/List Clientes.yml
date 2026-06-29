@@ -6,7 +6,9 @@ info:
 http:
   method: GET
   url: http://localhost:8080/clientes
-  auth: none
+  body:
+    type: json
+    data: ""
 
 settings:
   encodeUrl: true
