@@ -48,3 +48,6 @@ logs/
 # Spring Boot
 application-local.properties
 application-local.yml
+
+# Claude Code
+CLAUDE.md
