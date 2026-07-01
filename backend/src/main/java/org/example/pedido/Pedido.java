@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.cliente.model.Client;
-import org.example.vendedor.Vendedor;
+import org.example.vendedor.model.Seller;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,11 +36,11 @@ public class Pedido {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_vendedor")
-    private Vendedor vendedor;
+    private Seller seller;
 
     private Boolean ativo;
 
-    public Pedido(DadosCadastroPedido dados, Client client, Vendedor vendedor) {
+    public Pedido(DadosCadastroPedido dados, Client client, Seller seller) {
         this.numeroPedido = dados.numeroPedido();
         this.dataEmissao = dados.dataEmissao();
         this.dataPedido = dados.dataPedido();
@@ -48,16 +48,16 @@ public class Pedido {
         this.totalParcelas = dados.totalParcelas();
         this.observacao = dados.observacao();
         this.client = client;
-        this.vendedor = vendedor;
+        this.seller = seller;
         this.ativo = true;
     }
 
-    public void atualizarInformacoes(DadosAtualizacaoPedido dados, Vendedor vendedor) {
+    public void atualizarInformacoes(DadosAtualizacaoPedido dados, Seller seller) {
         if (dados.dataEmissao() != null) this.dataEmissao = dados.dataEmissao();
         if (dados.dataPedido() != null) this.dataPedido = dados.dataPedido();
         if (dados.valorTotal() != null) this.valorTotal = dados.valorTotal();
         if (dados.observacao() != null) this.observacao = dados.observacao();
-        if (vendedor != null) this.vendedor = vendedor;
+        if (seller != null) this.seller = seller;
     }
 
     public void excluir() {

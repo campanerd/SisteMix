@@ -3,7 +3,7 @@ package org.example.controller;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.example.pedido.*;
-import org.example.vendedor.VendedorRepository;
+import org.example.vendedor.repository.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +23,7 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @Autowired
-    private VendedorRepository vendedorRepository;
+    private SellerRepository sellerRepository;
 
     @PostMapping
     @Transactional
@@ -43,10 +43,10 @@ public class PedidoController {
     @Transactional
     public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoPedido dados) {
         var pedido = repository.getReferenceById(dados.id());
-        var vendedor = dados.idVendedor() != null
-                ? vendedorRepository.getReferenceById(dados.idVendedor())
+        var seller = dados.idVendedor() != null
+                ? sellerRepository.getReferenceById(dados.idVendedor())
                 : null;
-        pedido.atualizarInformacoes(dados, vendedor);
+        pedido.atualizarInformacoes(dados, seller);
         return ResponseEntity.ok(new DadosDetalhamentoPedido(pedido));
     }
 

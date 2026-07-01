@@ -3,7 +3,7 @@ package org.example.pedido;
 import org.example.cliente.repository.ClientRepository;
 import org.example.parcela.Parcela;
 import org.example.parcela.ParcelaRepository;
-import org.example.vendedor.VendedorRepository;
+import org.example.vendedor.repository.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +23,12 @@ public class PedidoService {
     private ClientRepository clientRepository;
 
     @Autowired
-    private VendedorRepository vendedorRepository;
+    private SellerRepository sellerRepository;
 
     public Pedido cadastrar(DadosCadastroPedido dados) {
         var client = clientRepository.getReferenceById(dados.idCliente());
-        var vendedor = vendedorRepository.getReferenceById(dados.idVendedor());
-        var pedido = pedidoRepository.save(new Pedido(dados, client, vendedor));
+        var seller = sellerRepository.getReferenceById(dados.idVendedor());
+        var pedido = pedidoRepository.save(new Pedido(dados, client, seller));
 
         gerarParcelas(pedido);
 

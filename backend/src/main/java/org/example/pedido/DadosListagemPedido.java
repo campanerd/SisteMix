@@ -17,7 +17,7 @@ public record DadosListagemPedido(
                 pedido.getId(),
                 pedido.getNumeroPedido(),
                 pedido.getClient().getNome(),
-                pedido.getVendedor().getNome(),
+                pedido.getSeller().getNome(),
                 pedido.getValorTotal(),
                 pedido.getTotalParcelas(),
                 pedido.getDataPedido()

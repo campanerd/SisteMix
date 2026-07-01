@@ -27,8 +27,8 @@ public record DadosDetalhamentoPedido(
                 pedido.getObservacao(),
                 pedido.getClient().getId(),
                 pedido.getClient().getNome(),
-                pedido.getVendedor().getId(),
-                pedido.getVendedor().getNome()
+                pedido.getSeller().getId(),
+                pedido.getSeller().getNome()
         );
     }
 }
