@@ -2,7 +2,7 @@ package org.example.pedido;
 
 import org.example.cliente.Cliente;
 import org.example.cliente.CreateClientRequest;
-import org.example.vendedor.DadosCadastroVendedor;
+import org.example.vendedor.CreateSellerRequest;
 import org.example.vendedor.Vendedor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ class PedidoTest {
     @BeforeEach
     void setUp() {
         cliente = new Cliente(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
-        vendedor = new Vendedor(new DadosCadastroVendedor("Maria Souza", "98765432100", "11988888888"));
+        vendedor = new Vendedor(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888"));
     }
 
     @Test
@@ -68,7 +68,7 @@ class PedidoTest {
                 new BigDecimal("300.00"), 3, null, 1L, 1L
         );
         var pedido = new Pedido(dados, cliente, vendedor);
-        var novoVendedor = new Vendedor(new DadosCadastroVendedor("Carlos Lima", "11122233344", "11977777777"));
+        var novoVendedor = new Vendedor(new CreateSellerRequest("Carlos Lima", "11122233344", "11977777777"));
 
         var atualizacao = new DadosAtualizacaoPedido(1L, null, null, null, null, 2L);
         pedido.atualizarInformacoes(atualizacao, novoVendedor);

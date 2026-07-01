@@ -10,7 +10,7 @@ import org.example.parcela.ParcelaRepository;
 import org.example.parcela.StatusParcela;
 import org.example.pedido.DadosCadastroPedido;
 import org.example.pedido.Pedido;
-import org.example.vendedor.DadosCadastroVendedor;
+import org.example.vendedor.CreateSellerRequest;
 import org.example.vendedor.Vendedor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class ParcelaControllerTest {
     @BeforeEach
     void setUp() {
         var cliente = new Cliente(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
-        var vendedor = new Vendedor(new DadosCadastroVendedor("Maria Souza", "98765432100", "11988888888"));
+        var vendedor = new Vendedor(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888"));
         var dadosPedido = new DadosCadastroPedido("PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L);
