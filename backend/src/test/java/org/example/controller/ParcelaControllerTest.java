@@ -2,11 +2,13 @@ package org.example.controller;
 
 import org.example.cliente.dto.CreateClientRequest;
 import org.example.cliente.model.Client;
-import org.example.parcela.DadosAtualizacaoParcela;
-import org.example.parcela.DadosDetalhamentoParcela;
-import org.example.parcela.Parcela;
-import org.example.parcela.ParcelaRepository;
-import org.example.parcela.StatusParcela;
+import org.example.parcela.dto.DadosAtualizacaoParcela;
+import org.example.parcela.dto.DadosDetalhamentoParcela;
+import org.example.parcela.dto.DadosListagemParcela;
+import org.example.parcela.enums.StatusParcela;
+import org.example.parcela.model.Parcela;
+import org.example.parcela.service.ParcelaService;
+import org.example.parcela.web.ParcelaController;
 import org.example.pedido.model.Pedido;
 import org.example.vendedor.dto.CreateSellerRequest;
 import org.example.vendedor.model.Seller;
@@ -30,12 +32,13 @@ import static org.mockito.Mockito.when;
 class ParcelaControllerTest {
 
     @Mock
-    private ParcelaRepository repository;
+    private ParcelaService service;
 
     @InjectMocks
     private ParcelaController controller;
 
-    private Parcela parcela;
+    private DadosListagemParcela listagem;
+    private DadosDetalhamentoParcela detalhamento;
 
     @BeforeEach
     void setUp() {
@@ -44,29 +47,30 @@ class ParcelaControllerTest {
         var pedido = new Pedido(1L, "PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, client, seller, true);
-        parcela = new Parcela(1L, 1, new BigDecimal("100.00"),
+        var parcela = new Parcela(1L, 1, new BigDecimal("100.00"),
                 LocalDate.of(2026, 2, 15), StatusParcela.PENDENTE, null, pedido);
+        listagem = new DadosListagemParcela(parcela);
+        detalhamento = new DadosDetalhamentoParcela(parcela);
     }
 
     @Test
     void deveriaListarParcelasSemFiltros() {
-        when(repository.findWithFilters(any(), any(), any(), any(), any())).thenReturn(List.of(parcela));
+        when(service.list(any(), any(), any(), any(), any())).thenReturn(List.of(listagem));
 
-        var response = controller.listar(null, null, null, null, null);
+        var response = controller.list(null, null, null, null, null);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).hasSize(1);
-        var item = response.getBody().get(0);
-        assertThat(item.numeroPedido()).isEqualTo("PED-001");
-        assertThat(item.nomeCliente()).isEqualTo("João Silva");
-        assertThat(item.status()).isEqualTo(StatusParcela.PENDENTE);
+        assertThat(response.getBody().get(0).numeroPedido()).isEqualTo("PED-001");
+        assertThat(response.getBody().get(0).nomeCliente()).isEqualTo("João Silva");
+        assertThat(response.getBody().get(0).status()).isEqualTo(StatusParcela.PENDENTE);
     }
 
     @Test
     void deveriaListarParcelasComFiltroDeStatus() {
-        when(repository.findWithFilters(any(), any(), any(), any(), any())).thenReturn(List.of(parcela));
+        when(service.list(any(), any(), any(), any(), any())).thenReturn(List.of(listagem));
 
-        var response = controller.listar(StatusParcela.PENDENTE, null, null, null, null);
+        var response = controller.list(StatusParcela.PENDENTE, null, null, null, null);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).hasSize(1);
@@ -75,26 +79,25 @@ class ParcelaControllerTest {
 
     @Test
     void deveriaDetalharParcelaERetornar200() {
-        when(repository.getReferenceById(1L)).thenReturn(parcela);
+        when(service.findById(1L)).thenReturn(detalhamento);
 
-        var response = controller.detalhar(1L);
+        var response = controller.findById(1L);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        var body = (DadosDetalhamentoParcela) response.getBody();
-        assertThat(body.id()).isEqualTo(1L);
-        assertThat(body.numeroParcela()).isEqualTo(1);
-        assertThat(body.totalParcelas()).isEqualTo(3);
-        assertThat(body.numeroPedido()).isEqualTo("PED-001");
-        assertThat(body.nomeCliente()).isEqualTo("João Silva");
-        assertThat(body.status()).isEqualTo(StatusParcela.PENDENTE);
-        assertThat(body.dataPagamento()).isNull();
+        assertThat(response.getBody().id()).isEqualTo(1L);
+        assertThat(response.getBody().numeroParcela()).isEqualTo(1);
+        assertThat(response.getBody().totalParcelas()).isEqualTo(3);
+        assertThat(response.getBody().numeroPedido()).isEqualTo("PED-001");
+        assertThat(response.getBody().nomeCliente()).isEqualTo("João Silva");
+        assertThat(response.getBody().status()).isEqualTo(StatusParcela.PENDENTE);
+        assertThat(response.getBody().dataPagamento()).isNull();
     }
 
     @Test
     void deveriaListarParcelasPorPedido() {
-        when(repository.findByPedidoId(1L)).thenReturn(List.of(parcela));
+        when(service.listByOrder(1L)).thenReturn(List.of(listagem));
 
-        var response = controller.listarPorPedido(1L);
+        var response = controller.listByOrder(1L);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).hasSize(1);
@@ -103,25 +106,29 @@ class ParcelaControllerTest {
 
     @Test
     void deveriaAtualizarStatusParaPagoERetornarDataPagamento() {
-        when(repository.getReferenceById(1L)).thenReturn(parcela);
+        var pagoDetalhamento = new DadosDetalhamentoParcela(1L, 1, 3, new BigDecimal("100.00"),
+                LocalDate.of(2026, 2, 15), StatusParcela.PAGO, LocalDate.now(),
+                1L, "PED-001", "João Silva", "Maria Souza");
+        when(service.updateStatus(any(Long.class), any(DadosAtualizacaoParcela.class))).thenReturn(pagoDetalhamento);
 
-        var response = controller.atualizarStatus(1L, new DadosAtualizacaoParcela(StatusParcela.PAGO));
+        var response = controller.updateStatus(1L, new DadosAtualizacaoParcela(StatusParcela.PAGO));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        var body = (DadosDetalhamentoParcela) response.getBody();
-        assertThat(body.status()).isEqualTo(StatusParcela.PAGO);
-        assertThat(body.dataPagamento()).isEqualTo(LocalDate.now());
+        assertThat(response.getBody().status()).isEqualTo(StatusParcela.PAGO);
+        assertThat(response.getBody().dataPagamento()).isEqualTo(LocalDate.now());
     }
 
     @Test
     void deveriaAtualizarStatusParaEmAtrasoSemDataPagamento() {
-        when(repository.getReferenceById(1L)).thenReturn(parcela);
+        var atrasadoDetalhamento = new DadosDetalhamentoParcela(1L, 1, 3, new BigDecimal("100.00"),
+                LocalDate.of(2026, 2, 15), StatusParcela.EM_ATRASO, null,
+                1L, "PED-001", "João Silva", "Maria Souza");
+        when(service.updateStatus(any(Long.class), any(DadosAtualizacaoParcela.class))).thenReturn(atrasadoDetalhamento);
 
-        var response = controller.atualizarStatus(1L, new DadosAtualizacaoParcela(StatusParcela.EM_ATRASO));
+        var response = controller.updateStatus(1L, new DadosAtualizacaoParcela(StatusParcela.EM_ATRASO));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        var body = (DadosDetalhamentoParcela) response.getBody();
-        assertThat(body.status()).isEqualTo(StatusParcela.EM_ATRASO);
-        assertThat(body.dataPagamento()).isNull();
+        assertThat(response.getBody().status()).isEqualTo(StatusParcela.EM_ATRASO);
+        assertThat(response.getBody().dataPagamento()).isNull();
     }
 }

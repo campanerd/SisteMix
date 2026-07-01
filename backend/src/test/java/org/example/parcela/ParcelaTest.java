@@ -2,6 +2,8 @@ package org.example.parcela;
 
 import org.example.cliente.dto.CreateClientRequest;
 import org.example.cliente.model.Client;
+import org.example.parcela.enums.StatusParcela;
+import org.example.parcela.model.Parcela;
 import org.example.pedido.dto.CreateOrderRequest;
 import org.example.pedido.model.Pedido;
 import org.example.vendedor.dto.CreateSellerRequest;
