@@ -1,9 +1,7 @@
 package org.example.controller;
 
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.example.pedido.*;
-import org.example.vendedor.VendedorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,50 +15,33 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class PedidoController {
 
     @Autowired
-    private PedidoRepository repository;
-
-    @Autowired
-    private PedidoService pedidoService;
-
-    @Autowired
-    private VendedorRepository vendedorRepository;
+    private PedidoService service;
 
     @PostMapping
-    @Transactional
-    public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroPedido dados, UriComponentsBuilder uriBuilder) {
-        var pedido = pedidoService.cadastrar(dados);
+    public ResponseEntity<OrderResponse> create(@RequestBody @Valid CreateOrderRequest data, UriComponentsBuilder uriBuilder) {
+        var pedido = service.create(data);
         var uri = uriBuilder.path("/pedidos/{id}").buildAndExpand(pedido.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DadosDetalhamentoPedido(pedido));
+        return ResponseEntity.created(uri).body(new OrderResponse(pedido));
     }
 
     @GetMapping
-    public ResponseEntity<Page<DadosListagemPedido>> listar(@PageableDefault(size = 10, sort = {"dataPedido"}) Pageable paginacao) {
-        var page = repository.findAllByAtivoTrue(paginacao).map(DadosListagemPedido::new);
-        return ResponseEntity.ok(page);
+    public ResponseEntity<Page<OrderSummary>> list(@PageableDefault(size = 10, sort = {"dataPedido"}) Pageable pageable) {
+        return ResponseEntity.ok(service.list(pageable));
     }
 
     @PutMapping
-    @Transactional
-    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoPedido dados) {
-        var pedido = repository.getReferenceById(dados.id());
-        var vendedor = dados.idVendedor() != null
-                ? vendedorRepository.getReferenceById(dados.idVendedor())
-                : null;
-        pedido.atualizarInformacoes(dados, vendedor);
-        return ResponseEntity.ok(new DadosDetalhamentoPedido(pedido));
+    public ResponseEntity<OrderResponse> update(@RequestBody @Valid UpdateOrderRequest data) {
+        return ResponseEntity.ok(service.update(data));
     }
 
     @DeleteMapping("/{id}")
-    @Transactional
-    public ResponseEntity excluir(@PathVariable Long id) {
-        var pedido = repository.getReferenceById(id);
-        pedido.excluir();
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity detalhar(@PathVariable Long id) {
-        var pedido = repository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalhamentoPedido(pedido));
+    public ResponseEntity<OrderResponse> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findById(id));
     }
 }

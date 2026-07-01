@@ -7,9 +7,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ClienteTest {
 
     @Test
-    void deveriaCriarClienteComTodosOsCamposEAtivoTrue() {
-        var dados = new DadosCadastroCliente("João Silva", "11999999999", "12345678900", "joao@email.com");
-        var cliente = new Cliente(dados);
+    void shouldCreateClientWithAllFieldsAndAtivoTrue() {
+        var data = new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com");
+        var cliente = new Cliente(data);
 
         assertThat(cliente.getNome()).isEqualTo("João Silva");
         assertThat(cliente.getTelefone()).isEqualTo("11999999999");
@@ -19,12 +19,12 @@ class ClienteTest {
     }
 
     @Test
-    void deveriaAtualizarSomenteOsCamposInformados() {
-        var dados = new DadosCadastroCliente("João Silva", "11999999999", "12345678900", "joao@email.com");
-        var cliente = new Cliente(dados);
+    void shouldUpdateOnlyProvidedFields() {
+        var data = new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com");
+        var cliente = new Cliente(data);
 
-        var atualizacao = new DadosAtualizacaoCliente(null, "José Santos", null, null);
-        cliente.atualizarInformacoes(atualizacao);
+        var updateData = new UpdateClientRequest(null, "José Santos", null, null);
+        cliente.update(updateData);
 
         assertThat(cliente.getNome()).isEqualTo("José Santos");
         assertThat(cliente.getTelefone()).isEqualTo("11999999999");
@@ -32,12 +32,12 @@ class ClienteTest {
     }
 
     @Test
-    void deveriaManterTodosOsCamposQuandoAtualizacaoForNula() {
-        var dados = new DadosCadastroCliente("João Silva", "11999999999", "12345678900", "joao@email.com");
-        var cliente = new Cliente(dados);
+    void shouldKeepAllFieldsWhenUpdateDataIsNull() {
+        var data = new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com");
+        var cliente = new Cliente(data);
 
-        var atualizacao = new DadosAtualizacaoCliente(null, null, null, null);
-        cliente.atualizarInformacoes(atualizacao);
+        var updateData = new UpdateClientRequest(null, null, null, null);
+        cliente.update(updateData);
 
         assertThat(cliente.getNome()).isEqualTo("João Silva");
         assertThat(cliente.getTelefone()).isEqualTo("11999999999");
@@ -45,12 +45,12 @@ class ClienteTest {
     }
 
     @Test
-    void deveriaDefinirAtivoFalsoAoExcluir() {
-        var dados = new DadosCadastroCliente("João Silva", null, null, null);
-        var cliente = new Cliente(dados);
+    void shouldSetAtivoFalseWhenDeactivated() {
+        var data = new CreateClientRequest("João Silva", null, null, null);
+        var cliente = new Cliente(data);
 
         assertThat(cliente.getAtivo()).isTrue();
-        cliente.excluir();
+        cliente.deactivate();
         assertThat(cliente.getAtivo()).isFalse();
     }
 }

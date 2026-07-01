@@ -24,21 +24,21 @@ public class Cliente {
     private String email;
     private Boolean ativo;
 
-    public Cliente(DadosCadastroCliente dados) {
-        this.nome = dados.nome();
-        this.telefone = dados.telefone();
-        this.cpfCnpj = dados.cpfCnpj();
-        this.email = dados.email();
+    public Cliente(CreateClientRequest data) {
+        this.nome = data.nome();
+        this.telefone = data.telefone();
+        this.cpfCnpj = data.cpfCnpj();
+        this.email = data.email();
         this.ativo = true;
     }
 
-    public void atualizarInformacoes(DadosAtualizacaoCliente dados) {
-        if (dados.nome() != null) this.nome = dados.nome();
-        if (dados.telefone() != null) this.telefone = dados.telefone();
-        if (dados.email() != null) this.email = dados.email();
+    public void update(UpdateClientRequest data) {
+        if (data.nome() != null) this.nome = data.nome();
+        if (data.telefone() != null) this.telefone = data.telefone();
+        if (data.email() != null) this.email = data.email();
     }
 
-    public void excluir() {
+    public void deactivate() {
         this.ativo = false;
     }
 }

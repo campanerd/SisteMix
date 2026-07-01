@@ -1,0 +1,23 @@
+info:
+  name: Update Client
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: http://localhost:8080/api/clientes
+  body:
+    type: json
+    data: |-
+      {
+        "id": 1,
+        "nome": "Jorge Washington",
+        "telefone": "11988877888",
+        "email": "jorge.novo@email.com"
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

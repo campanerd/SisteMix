@@ -1,0 +1,27 @@
+info:
+  name: Create Order
+  type: http
+  seq: 11
+
+http:
+  method: POST
+  url: http://localhost:8080/api/pedidos
+  body:
+    type: json
+    data: |-
+      {
+        "numeroPedido": "PED-0001",
+        "dataEmissao": "2026-06-29",
+        "dataPedido": "2026-06-29",
+        "valorTotal": 1908.31,
+        "totalParcelas": 2,
+        "observacao": "Pedido de teste",
+        "idCliente": 1,
+        "idVendedor": 1
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -23,19 +23,19 @@ public class Vendedor {
     private String telefone;
     private Boolean ativo;
 
-    public Vendedor(DadosCadastroVendedor dados) {
-        this.nome = dados.nome();
-        this.cpf = dados.cpf();
-        this.telefone = dados.telefone();
+    public Vendedor(CreateSellerRequest data) {
+        this.nome = data.nome();
+        this.cpf = data.cpf();
+        this.telefone = data.telefone();
         this.ativo = true;
     }
 
-    public void atualizarInformacoes(DadosAtualizacaoVendedor dados) {
-        if (dados.nome() != null) this.nome = dados.nome();
-        if (dados.telefone() != null) this.telefone = dados.telefone();
+    public void update(UpdateSellerRequest data) {
+        if (data.nome() != null) this.nome = data.nome();
+        if (data.telefone() != null) this.telefone = data.telefone();
     }
 
-    public void excluir() {
+    public void deactivate() {
         this.ativo = false;
     }
 }

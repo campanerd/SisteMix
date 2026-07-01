@@ -1,0 +1,14 @@
+info:
+  name: Delete Seller
+  type: http
+  seq: 10
+
+http:
+  method: DELETE
+  url: http://localhost:8080/api/vendedores/{{IdVendedor}}
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

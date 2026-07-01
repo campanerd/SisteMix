@@ -51,3 +51,6 @@ application-local.yml
 
 # Claude Code
 CLAUDE.md
+
+# Frontend build copiado para o backend (gerado, não versionar)
+backend/src/main/resources/static/

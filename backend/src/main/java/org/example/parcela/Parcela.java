@@ -27,7 +27,7 @@ public class Parcela {
     private LocalDate vencimento;
 
     @Enumerated(EnumType.STRING)
-    private StatusParcela status;
+    private InstallmentStatus status;
 
     private LocalDate dataPagamento;
 
@@ -39,12 +39,12 @@ public class Parcela {
         this.numeroParcela = numeroParcela;
         this.valor = valor;
         this.vencimento = vencimento;
-        this.status = StatusParcela.PENDENTE;
+        this.status = InstallmentStatus.PENDENTE;
         this.pedido = pedido;
     }
 
-    public void atualizarStatus(StatusParcela novoStatus) {
-        this.status = novoStatus;
-        this.dataPagamento = novoStatus == StatusParcela.PAGO ? LocalDate.now() : null;
+    public void updateStatus(InstallmentStatus newStatus) {
+        this.status = newStatus;
+        this.dataPagamento = newStatus == InstallmentStatus.PAGO ? LocalDate.now() : null;
     }
 }
