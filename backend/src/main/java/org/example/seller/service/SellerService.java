@@ -1,8 +1,8 @@
-package org.example.vendedor.service;
+package org.example.seller.service;
 
-import org.example.vendedor.dto.*;
-import org.example.vendedor.model.Seller;
-import org.example.vendedor.repository.SellerRepository;
+import org.example.seller.dto.*;
+import org.example.seller.model.Seller;
+import org.example.seller.repository.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +21,7 @@ public class SellerService {
     }
 
     public Page<SellerSummary> list(Pageable pageable) {
-        return repository.findAllByAtivoTrue(pageable).map(SellerSummary::new);
+        return repository.findAllByActiveTrue(pageable).map(SellerSummary::new);
     }
 
     @Transactional
