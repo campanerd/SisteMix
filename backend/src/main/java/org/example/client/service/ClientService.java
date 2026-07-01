@@ -1,11 +1,11 @@
-package org.example.cliente.service;
+package org.example.client.service;
 
-import org.example.cliente.dto.CreateClientRequest;
-import org.example.cliente.dto.UpdateClientRequest;
-import org.example.cliente.dto.ClientResponse;
-import org.example.cliente.dto.ClientSummary;
-import org.example.cliente.model.Client;
-import org.example.cliente.repository.ClientRepository;
+import org.example.client.dto.CreateClientRequest;
+import org.example.client.dto.UpdateClientRequest;
+import org.example.client.dto.ClientResponse;
+import org.example.client.dto.ClientSummary;
+import org.example.client.model.Client;
+import org.example.client.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +24,7 @@ public class ClientService {
     }
 
     public Page<ClientSummary> list(Pageable pageable) {
-        return repository.findAllByAtivoTrue(pageable).map(ClientSummary::new);
+        return repository.findAllByActiveTrue(pageable).map(ClientSummary::new);
     }
 
     @Transactional
