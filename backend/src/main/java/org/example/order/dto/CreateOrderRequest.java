@@ -1,4 +1,4 @@
-package org.example.pedido.dto;
+package org.example.order.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,12 +8,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record CreateOrderRequest(
-        @NotBlank String numeroPedido,
-        @NotNull LocalDate dataEmissao,
-        @NotNull LocalDate dataPedido,
-        @NotNull @Positive BigDecimal valorTotal,
-        @NotNull @Positive Integer totalParcelas,
-        String observacao,
-        @NotNull Long idCliente,
-        @NotNull Long idVendedor
+        @NotBlank String orderNumber,
+        @NotNull LocalDate issueDate,
+        @NotNull LocalDate orderDate,
+        @NotNull @Positive BigDecimal totalAmount,
+        @NotNull @Positive Integer totalInstallments,
+        String notes,
+        @NotNull Long clientId,
+        @NotNull Long sellerId
 ) {}
