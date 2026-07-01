@@ -1,5 +1,8 @@
 package org.example.vendedor;
 
+import org.example.vendedor.dto.CreateSellerRequest;
+import org.example.vendedor.dto.UpdateSellerRequest;
+import org.example.vendedor.model.Seller;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -7,47 +10,47 @@ import static org.assertj.core.api.Assertions.assertThat;
 class VendedorTest {
 
     @Test
-    void shouldCreateSellerWithAllFieldsAndAtivoTrue() {
-        var data = new CreateSellerRequest("Maria Souza", "12345678900", "11988888888");
-        var vendedor = new Vendedor(data);
+    void deveriaCriarVendedorComTodosOsCamposEAtivoTrue() {
+        var dados = new CreateSellerRequest("Maria Souza", "12345678900", "11988888888");
+        var seller = new Seller(dados);
 
-        assertThat(vendedor.getNome()).isEqualTo("Maria Souza");
-        assertThat(vendedor.getCpf()).isEqualTo("12345678900");
-        assertThat(vendedor.getTelefone()).isEqualTo("11988888888");
-        assertThat(vendedor.getAtivo()).isTrue();
+        assertThat(seller.getNome()).isEqualTo("Maria Souza");
+        assertThat(seller.getCpf()).isEqualTo("12345678900");
+        assertThat(seller.getTelefone()).isEqualTo("11988888888");
+        assertThat(seller.getAtivo()).isTrue();
     }
 
     @Test
-    void shouldUpdateOnlyProvidedFields() {
-        var data = new CreateSellerRequest("Maria Souza", "12345678900", "11988888888");
-        var vendedor = new Vendedor(data);
+    void deveriaAtualizarSomenteOsCamposInformados() {
+        var dados = new CreateSellerRequest("Maria Souza", "12345678900", "11988888888");
+        var seller = new Seller(dados);
 
-        var updateData = new UpdateSellerRequest(null, "Maria Santos", null);
-        vendedor.update(updateData);
+        var atualizacao = new UpdateSellerRequest(null, "Maria Santos", null);
+        seller.update(atualizacao);
 
-        assertThat(vendedor.getNome()).isEqualTo("Maria Santos");
-        assertThat(vendedor.getTelefone()).isEqualTo("11988888888");
+        assertThat(seller.getNome()).isEqualTo("Maria Santos");
+        assertThat(seller.getTelefone()).isEqualTo("11988888888");
     }
 
     @Test
-    void shouldKeepAllFieldsWhenUpdateDataIsNull() {
-        var data = new CreateSellerRequest("Maria Souza", "12345678900", "11988888888");
-        var vendedor = new Vendedor(data);
+    void deveriaManterTodosOsCamposQuandoAtualizacaoForNula() {
+        var dados = new CreateSellerRequest("Maria Souza", "12345678900", "11988888888");
+        var seller = new Seller(dados);
 
-        var updateData = new UpdateSellerRequest(null, null, null);
-        vendedor.update(updateData);
+        var atualizacao = new UpdateSellerRequest(null, null, null);
+        seller.update(atualizacao);
 
-        assertThat(vendedor.getNome()).isEqualTo("Maria Souza");
-        assertThat(vendedor.getTelefone()).isEqualTo("11988888888");
+        assertThat(seller.getNome()).isEqualTo("Maria Souza");
+        assertThat(seller.getTelefone()).isEqualTo("11988888888");
     }
 
     @Test
-    void shouldSetAtivoFalseWhenDeactivated() {
-        var data = new CreateSellerRequest("Maria Souza", null, null);
-        var vendedor = new Vendedor(data);
+    void deveriaDefinirAtivoFalsoAoDesativar() {
+        var dados = new CreateSellerRequest("Maria Souza", null, null);
+        var seller = new Seller(dados);
 
-        assertThat(vendedor.getAtivo()).isTrue();
-        vendedor.deactivate();
-        assertThat(vendedor.getAtivo()).isFalse();
+        assertThat(seller.getAtivo()).isTrue();
+        seller.deactivate();
+        assertThat(seller.getAtivo()).isFalse();
     }
 }

@@ -1,0 +1,51 @@
+package org.example.parcela.model;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.example.parcela.enums.StatusParcela;
+import org.example.pedido.model.Pedido;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Table(name = "parcelas")
+@Entity(name = "Parcela")
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+public class Parcela {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Integer numeroParcela;
+    private BigDecimal valor;
+    private LocalDate vencimento;
+
+    @Enumerated(EnumType.STRING)
+    private StatusParcela status;
+
+    private LocalDate dataPagamento;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_pedido")
+    private Pedido pedido;
+
+    public Parcela(Integer numeroParcela, BigDecimal valor, LocalDate vencimento, Pedido pedido) {
+        this.numeroParcela = numeroParcela;
+        this.valor = valor;
+        this.vencimento = vencimento;
+        this.status = StatusParcela.PENDENTE;
+        this.pedido = pedido;
+    }
+
+    public void atualizarStatus(StatusParcela novoStatus) {
+        this.status = novoStatus;
+        this.dataPagamento = novoStatus == StatusParcela.PAGO ? LocalDate.now() : null;
+    }
+}

@@ -1,5 +1,8 @@
 package org.example.cliente;
 
+import org.example.cliente.dto.CreateClientRequest;
+import org.example.cliente.dto.UpdateClientRequest;
+import org.example.cliente.model.Client;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -7,50 +10,50 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ClienteTest {
 
     @Test
-    void shouldCreateClientWithAllFieldsAndAtivoTrue() {
-        var data = new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com");
-        var cliente = new Cliente(data);
+    void deveriaCriarClienteComTodosOsCamposEAtivoTrue() {
+        var dados = new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com");
+        var client = new Client(dados);
 
-        assertThat(cliente.getNome()).isEqualTo("João Silva");
-        assertThat(cliente.getTelefone()).isEqualTo("11999999999");
-        assertThat(cliente.getCpfCnpj()).isEqualTo("12345678900");
-        assertThat(cliente.getEmail()).isEqualTo("joao@email.com");
-        assertThat(cliente.getAtivo()).isTrue();
+        assertThat(client.getNome()).isEqualTo("João Silva");
+        assertThat(client.getTelefone()).isEqualTo("11999999999");
+        assertThat(client.getCpfCnpj()).isEqualTo("12345678900");
+        assertThat(client.getEmail()).isEqualTo("joao@email.com");
+        assertThat(client.getAtivo()).isTrue();
     }
 
     @Test
-    void shouldUpdateOnlyProvidedFields() {
-        var data = new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com");
-        var cliente = new Cliente(data);
+    void deveriaAtualizarSomenteOsCamposInformados() {
+        var dados = new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com");
+        var client = new Client(dados);
 
-        var updateData = new UpdateClientRequest(null, "José Santos", null, null);
-        cliente.update(updateData);
+        var atualizacao = new UpdateClientRequest(null, "José Santos", null, null);
+        client.update(atualizacao);
 
-        assertThat(cliente.getNome()).isEqualTo("José Santos");
-        assertThat(cliente.getTelefone()).isEqualTo("11999999999");
-        assertThat(cliente.getEmail()).isEqualTo("joao@email.com");
+        assertThat(client.getNome()).isEqualTo("José Santos");
+        assertThat(client.getTelefone()).isEqualTo("11999999999");
+        assertThat(client.getEmail()).isEqualTo("joao@email.com");
     }
 
     @Test
-    void shouldKeepAllFieldsWhenUpdateDataIsNull() {
-        var data = new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com");
-        var cliente = new Cliente(data);
+    void deveriaManterTodosOsCamposQuandoAtualizacaoForNula() {
+        var dados = new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com");
+        var client = new Client(dados);
 
-        var updateData = new UpdateClientRequest(null, null, null, null);
-        cliente.update(updateData);
+        var atualizacao = new UpdateClientRequest(null, null, null, null);
+        client.update(atualizacao);
 
-        assertThat(cliente.getNome()).isEqualTo("João Silva");
-        assertThat(cliente.getTelefone()).isEqualTo("11999999999");
-        assertThat(cliente.getEmail()).isEqualTo("joao@email.com");
+        assertThat(client.getNome()).isEqualTo("João Silva");
+        assertThat(client.getTelefone()).isEqualTo("11999999999");
+        assertThat(client.getEmail()).isEqualTo("joao@email.com");
     }
 
     @Test
-    void shouldSetAtivoFalseWhenDeactivated() {
-        var data = new CreateClientRequest("João Silva", null, null, null);
-        var cliente = new Cliente(data);
+    void deveriaDefinirAtivoFalsoAoDesativar() {
+        var dados = new CreateClientRequest("João Silva", null, null, null);
+        var client = new Client(dados);
 
-        assertThat(cliente.getAtivo()).isTrue();
-        cliente.deactivate();
-        assertThat(cliente.getAtivo()).isFalse();
+        assertThat(client.getAtivo()).isTrue();
+        client.deactivate();
+        assertThat(client.getAtivo()).isFalse();
     }
 }

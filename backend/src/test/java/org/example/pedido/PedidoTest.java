@@ -1,9 +1,12 @@
 package org.example.pedido;
 
-import org.example.cliente.Cliente;
-import org.example.cliente.CreateClientRequest;
-import org.example.vendedor.CreateSellerRequest;
-import org.example.vendedor.Vendedor;
+import org.example.cliente.dto.CreateClientRequest;
+import org.example.cliente.model.Client;
+import org.example.pedido.dto.CreateOrderRequest;
+import org.example.pedido.dto.UpdateOrderRequest;
+import org.example.pedido.model.Pedido;
+import org.example.vendedor.dto.CreateSellerRequest;
+import org.example.vendedor.model.Seller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,17 +17,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class PedidoTest {
 
-    private Cliente cliente;
-    private Vendedor vendedor;
+    private Client client;
+    private Seller seller;
 
     @BeforeEach
     void setUp() {
-        cliente = new Cliente(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
-        vendedor = new Vendedor(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888"));
+        client = new Client(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
+        seller = new Seller(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888"));
     }
 
     @Test
-    void shouldCreateOrderWithAllFieldsAndAtivoTrue() {
+    void deveriaCriarPedidoComTodosOsCamposEAtivoTrue() {
         var data = new CreateOrderRequest(
                 "PED-001",
                 LocalDate.of(2026, 1, 1),
@@ -35,54 +38,54 @@ class PedidoTest {
                 1L, 1L
         );
 
-        var pedido = new Pedido(data, cliente, vendedor);
+        var pedido = new Pedido(data, client, seller);
 
         assertThat(pedido.getNumeroPedido()).isEqualTo("PED-001");
         assertThat(pedido.getValorTotal()).isEqualByComparingTo("300.00");
         assertThat(pedido.getTotalParcelas()).isEqualTo(3);
-        assertThat(pedido.getCliente()).isEqualTo(cliente);
-        assertThat(pedido.getVendedor()).isEqualTo(vendedor);
+        assertThat(pedido.getClient()).isEqualTo(client);
+        assertThat(pedido.getSeller()).isEqualTo(seller);
         assertThat(pedido.getAtivo()).isTrue();
     }
 
     @Test
-    void shouldUpdateOnlyProvidedFields() {
+    void deveriaAtualizarSomenteOsCamposInformados() {
         var data = new CreateOrderRequest(
                 "PED-001", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L
         );
-        var pedido = new Pedido(data, cliente, vendedor);
+        var pedido = new Pedido(data, client, seller);
 
         var updateData = new UpdateOrderRequest(1L, null, null, null, "Nova obs", null);
         pedido.update(updateData, null);
 
         assertThat(pedido.getObservacao()).isEqualTo("Nova obs");
         assertThat(pedido.getValorTotal()).isEqualByComparingTo("300.00");
-        assertThat(pedido.getVendedor()).isEqualTo(vendedor);
+        assertThat(pedido.getSeller()).isEqualTo(seller);
     }
 
     @Test
-    void shouldUpdateSellerWhenProvided() {
+    void deveriaAtualizarVendedorQuandoInformado() {
         var data = new CreateOrderRequest(
                 "PED-001", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L
         );
-        var pedido = new Pedido(data, cliente, vendedor);
-        var novoVendedor = new Vendedor(new CreateSellerRequest("Carlos Lima", "11122233344", "11977777777"));
+        var pedido = new Pedido(data, client, seller);
+        var novoSeller = new Seller(new CreateSellerRequest("Carlos Lima", "11122233344", "11977777777"));
 
         var updateData = new UpdateOrderRequest(1L, null, null, null, null, 2L);
-        pedido.update(updateData, novoVendedor);
+        pedido.update(updateData, novoSeller);
 
-        assertThat(pedido.getVendedor()).isEqualTo(novoVendedor);
+        assertThat(pedido.getSeller()).isEqualTo(novoSeller);
     }
 
     @Test
-    void shouldSetAtivoFalseWhenDeactivated() {
+    void deveriaDefinirAtivoFalsoAoExcluir() {
         var data = new CreateOrderRequest(
                 "PED-001", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L
         );
-        var pedido = new Pedido(data, cliente, vendedor);
+        var pedido = new Pedido(data, client, seller);
 
         assertThat(pedido.getAtivo()).isTrue();
         pedido.deactivate();

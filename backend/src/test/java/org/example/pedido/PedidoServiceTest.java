@@ -1,13 +1,17 @@
 package org.example.pedido;
 
-import org.example.cliente.Cliente;
-import org.example.cliente.ClienteRepository;
-import org.example.cliente.CreateClientRequest;
-import org.example.parcela.Parcela;
-import org.example.parcela.ParcelaRepository;
-import org.example.vendedor.CreateSellerRequest;
-import org.example.vendedor.Vendedor;
-import org.example.vendedor.VendedorRepository;
+import org.example.cliente.dto.CreateClientRequest;
+import org.example.cliente.model.Client;
+import org.example.cliente.repository.ClientRepository;
+import org.example.parcela.model.Parcela;
+import org.example.parcela.repository.ParcelaRepository;
+import org.example.pedido.dto.CreateOrderRequest;
+import org.example.pedido.model.Pedido;
+import org.example.pedido.repository.PedidoRepository;
+import org.example.pedido.service.PedidoService;
+import org.example.vendedor.dto.CreateSellerRequest;
+import org.example.vendedor.model.Seller;
+import org.example.vendedor.repository.SellerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,26 +38,26 @@ class PedidoServiceTest {
     @Mock
     private ParcelaRepository parcelaRepository;
     @Mock
-    private ClienteRepository clienteRepository;
+    private ClientRepository clientRepository;
     @Mock
-    private VendedorRepository vendedorRepository;
+    private SellerRepository sellerRepository;
 
     @InjectMocks
     private PedidoService service;
 
-    private Cliente cliente;
-    private Vendedor vendedor;
+    private Client client;
+    private Seller seller;
 
     @BeforeEach
     void setUp() {
-        cliente = new Cliente(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
-        vendedor = new Vendedor(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888"));
-        when(clienteRepository.getReferenceById(1L)).thenReturn(cliente);
-        when(vendedorRepository.getReferenceById(1L)).thenReturn(vendedor);
+        client = new Client(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
+        seller = new Seller(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888"));
+        when(clientRepository.getReferenceById(1L)).thenReturn(client);
+        when(sellerRepository.getReferenceById(1L)).thenReturn(seller);
     }
 
     @Test
-    void shouldCreateCorrectNumberOfInstallments() {
+    void deveriaCriarNumeroCertoDeParcelas() {
         var data = orderWith(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15));
         var pedido = savedOrder(data);
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
@@ -64,8 +68,7 @@ class PedidoServiceTest {
     }
 
     @Test
-    void shouldDistributeValueWithRoundingOnLastInstallment() {
-        // R$100,00 / 3 = 33,33 + 33,33 + 33,34
+    void deveriaDistribuirValorComArredondamentoNaUltimaParcela() {
         var data = orderWith(new BigDecimal("100.00"), 3, LocalDate.of(2026, 1, 15));
         var pedido = savedOrder(data);
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
@@ -82,8 +85,7 @@ class PedidoServiceTest {
     }
 
     @Test
-    void shouldDistributeEquallyWhenDivisionIsExact() {
-        // R$300,00 / 3 = 100,00 each
+    void deveriaDistribuirValorIgualQuandoDivisaoExata() {
         var data = orderWith(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15));
         var pedido = savedOrder(data);
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
@@ -100,7 +102,7 @@ class PedidoServiceTest {
     }
 
     @Test
-    void shouldSetMonthlyDueDatesFromOrderDate() {
+    void deveriaDefinirVencimentosMensaisAPartirDaDataDoPedido() {
         var orderDate = LocalDate.of(2026, 1, 15);
         var data = orderWith(new BigDecimal("200.00"), 2, orderDate);
         var pedido = savedOrder(data);
@@ -117,19 +119,11 @@ class PedidoServiceTest {
     }
 
     private CreateOrderRequest orderWith(BigDecimal valor, int totalParcelas, LocalDate dataPedido) {
-        return new CreateOrderRequest(
-                "PED-001",
-                dataPedido,
-                dataPedido,
-                valor,
-                totalParcelas,
-                null,
-                1L, 1L
-        );
+        return new CreateOrderRequest("PED-001", dataPedido, dataPedido, valor, totalParcelas, null, 1L, 1L);
     }
 
     private Pedido savedOrder(CreateOrderRequest data) {
         return new Pedido(1L, data.numeroPedido(), data.dataEmissao(), data.dataPedido(),
-                data.valorTotal(), data.totalParcelas(), data.observacao(), cliente, vendedor, true);
+                data.valorTotal(), data.totalParcelas(), data.observacao(), client, seller, true);
     }
 }

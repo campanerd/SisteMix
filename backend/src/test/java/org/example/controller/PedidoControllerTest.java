@@ -1,8 +1,14 @@
 package org.example.controller;
 
-import org.example.cliente.Cliente;
-import org.example.pedido.*;
-import org.example.vendedor.Vendedor;
+import org.example.cliente.model.Client;
+import org.example.pedido.dto.CreateOrderRequest;
+import org.example.pedido.dto.OrderResponse;
+import org.example.pedido.dto.OrderSummary;
+import org.example.pedido.dto.UpdateOrderRequest;
+import org.example.pedido.model.Pedido;
+import org.example.pedido.service.PedidoService;
+import org.example.pedido.web.PedidoController;
+import org.example.vendedor.model.Seller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,17 +39,20 @@ class PedidoControllerTest {
     private PedidoController controller;
 
     private Pedido pedido;
+    private OrderResponse orderResponse;
     private UriComponentsBuilder uriBuilder;
 
     @BeforeEach
     void setUp() {
-        var cliente = new Cliente(1L, "João Silva", "11999999999", "12345678900", "joao@email.com", true);
-        var vendedor = new Vendedor(1L, "Maria Souza", "98765432100", "11988888888", true);
+        var client = new Client(1L, "João Silva", "11999999999", "12345678900", "joao@email.com", true);
+        var seller = new Seller(1L, "Maria Souza", "98765432100", "11988888888", true);
         pedido = new Pedido(1L, "PED-001",
-                LocalDate.of(2026, 1, 1),
-                LocalDate.of(2026, 1, 15),
+                LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
+                new BigDecimal("300.00"), 3, null, client, seller, true);
+        orderResponse = new OrderResponse(1L, "PED-001",
+                LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null,
-                cliente, vendedor, true);
+                1L, "João Silva", 1L, "Maria Souza");
         uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
     }
 
@@ -52,7 +61,7 @@ class PedidoControllerTest {
         var data = new CreateOrderRequest("PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L);
-        when(service.create(any(CreateOrderRequest.class))).thenReturn(pedido);
+        when(service.create(any(CreateOrderRequest.class))).thenReturn(orderResponse);
 
         var response = controller.create(data, uriBuilder);
 
@@ -78,26 +87,28 @@ class PedidoControllerTest {
     }
 
     @Test
-    void shouldUpdateOrderAndReturnUpdatedData() {
+    void shouldUpdateOrderAndReturn200() {
         var data = new UpdateOrderRequest(1L, null, null, null, "Nova observação", null);
-        var updated = new OrderResponse(pedido);
-        when(service.update(any(UpdateOrderRequest.class))).thenReturn(updated);
+        var updatedResponse = new OrderResponse(1L, "PED-001",
+                LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
+                new BigDecimal("300.00"), 3, "Nova observação",
+                1L, "João Silva", 1L, "Maria Souza");
+        when(service.update(any(UpdateOrderRequest.class))).thenReturn(updatedResponse);
 
         var response = controller.update(data);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().valorTotal()).isEqualByComparingTo("300.00");
+        assertThat(response.getBody().observacao()).isEqualTo("Nova observação");
     }
 
     @Test
-    void shouldUpdateOrderSellerWhenProvided() {
-        var novoVendedor = new Vendedor(2L, "Carlos Lima", "11122233344", "11977777777", true);
-        var pedidoAtualizado = new Pedido(1L, "PED-001",
+    void shouldUpdateSellerInOrder() {
+        var data = new UpdateOrderRequest(1L, null, null, null, null, 2L);
+        var updatedResponse = new OrderResponse(1L, "PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null,
-                pedido.getCliente(), novoVendedor, true);
-        var data = new UpdateOrderRequest(1L, null, null, null, null, 2L);
-        when(service.update(any(UpdateOrderRequest.class))).thenReturn(new OrderResponse(pedidoAtualizado));
+                1L, "João Silva", 2L, "Carlos Lima");
+        when(service.update(any(UpdateOrderRequest.class))).thenReturn(updatedResponse);
 
         var response = controller.update(data);
 
@@ -115,7 +126,6 @@ class PedidoControllerTest {
 
     @Test
     void shouldFindOrderByIdAndReturn200() {
-        var orderResponse = new OrderResponse(pedido);
         when(service.findById(1L)).thenReturn(orderResponse);
 
         var response = controller.findById(1L);

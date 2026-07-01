@@ -1,11 +1,13 @@
 package org.example.parcela;
 
-import org.example.cliente.Cliente;
-import org.example.cliente.CreateClientRequest;
-import org.example.pedido.CreateOrderRequest;
-import org.example.pedido.Pedido;
-import org.example.vendedor.CreateSellerRequest;
-import org.example.vendedor.Vendedor;
+import org.example.cliente.dto.CreateClientRequest;
+import org.example.cliente.model.Client;
+import org.example.parcela.enums.StatusParcela;
+import org.example.parcela.model.Parcela;
+import org.example.pedido.dto.CreateOrderRequest;
+import org.example.pedido.model.Pedido;
+import org.example.vendedor.dto.CreateSellerRequest;
+import org.example.vendedor.model.Seller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,53 +22,53 @@ class ParcelaTest {
 
     @BeforeEach
     void setUp() {
-        var cliente = new Cliente(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
-        var vendedor = new Vendedor(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888"));
+        var client = new Client(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
+        var seller = new Seller(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888"));
         var data = new CreateOrderRequest("PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L);
-        pedido = new Pedido(data, cliente, vendedor);
+        pedido = new Pedido(data, client, seller);
     }
 
     @Test
-    void shouldCreateInstallmentWithPendingStatusAndNullPaymentDate() {
+    void deveriaCriarParcelaComStatusPendenteEDataPagamentoNula() {
         var parcela = new Parcela(1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), pedido);
 
-        assertThat(parcela.getStatus()).isEqualTo(InstallmentStatus.PENDENTE);
+        assertThat(parcela.getStatus()).isEqualTo(StatusParcela.PENDENTE);
         assertThat(parcela.getDataPagamento()).isNull();
         assertThat(parcela.getValor()).isEqualByComparingTo("100.00");
         assertThat(parcela.getNumeroParcela()).isEqualTo(1);
     }
 
     @Test
-    void shouldSetPaymentDateWhenMarkedAsPaid() {
+    void deveriaDefinirDataPagamentoAoMarcarComoPago() {
         var parcela = new Parcela(1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), pedido);
 
-        parcela.updateStatus(InstallmentStatus.PAGO);
+        parcela.atualizarStatus(StatusParcela.PAGO);
 
-        assertThat(parcela.getStatus()).isEqualTo(InstallmentStatus.PAGO);
+        assertThat(parcela.getStatus()).isEqualTo(StatusParcela.PAGO);
         assertThat(parcela.getDataPagamento()).isEqualTo(LocalDate.now());
     }
 
     @Test
-    void shouldClearPaymentDateWhenRevertedToPending() {
+    void deveriaLimparDataPagamentoAoVoltarParaPendente() {
         var parcela = new Parcela(1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), pedido);
-        parcela.updateStatus(InstallmentStatus.PAGO);
+        parcela.atualizarStatus(StatusParcela.PAGO);
 
-        parcela.updateStatus(InstallmentStatus.PENDENTE);
+        parcela.atualizarStatus(StatusParcela.PENDENTE);
 
-        assertThat(parcela.getStatus()).isEqualTo(InstallmentStatus.PENDENTE);
+        assertThat(parcela.getStatus()).isEqualTo(StatusParcela.PENDENTE);
         assertThat(parcela.getDataPagamento()).isNull();
     }
 
     @Test
-    void shouldClearPaymentDateWhenMarkedAsOverdue() {
+    void deveriaLimparDataPagamentoAoMarcarComoEmAtraso() {
         var parcela = new Parcela(1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), pedido);
-        parcela.updateStatus(InstallmentStatus.PAGO);
+        parcela.atualizarStatus(StatusParcela.PAGO);
 
-        parcela.updateStatus(InstallmentStatus.EM_ATRASO);
+        parcela.atualizarStatus(StatusParcela.EM_ATRASO);
 
-        assertThat(parcela.getStatus()).isEqualTo(InstallmentStatus.EM_ATRASO);
+        assertThat(parcela.getStatus()).isEqualTo(StatusParcela.EM_ATRASO);
         assertThat(parcela.getDataPagamento()).isNull();
     }
 }

@@ -1,6 +1,12 @@
 package org.example.controller;
 
-import org.example.vendedor.*;
+import org.example.vendedor.dto.CreateSellerRequest;
+import org.example.vendedor.dto.SellerResponse;
+import org.example.vendedor.dto.SellerSummary;
+import org.example.vendedor.dto.UpdateSellerRequest;
+import org.example.vendedor.model.Seller;
+import org.example.vendedor.service.SellerService;
+import org.example.vendedor.web.SellerController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +22,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -23,36 +30,37 @@ import static org.mockito.Mockito.when;
 class VendedorControllerTest {
 
     @Mock
-    private VendedorService service;
+    private SellerService service;
 
     @InjectMocks
-    private VendedorController controller;
+    private SellerController controller;
 
-    private Vendedor vendedor;
+    private Seller seller;
     private UriComponentsBuilder uriBuilder;
 
     @BeforeEach
     void setUp() {
-        vendedor = new Vendedor(1L, "Maria Souza", "12345678900", "11988888888", true);
+        seller = new Seller(1L, "Maria Souza", "12345678900", "11988888888", true);
         uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
     }
 
     @Test
-    void shouldCreateSellerAndReturn201() {
-        var data = new CreateSellerRequest("Maria Souza", "12345678900", "11988888888");
-        when(service.create(any(CreateSellerRequest.class))).thenReturn(vendedor);
+    void deveriaCadastrarVendedorERetornar201() {
+        var dados = new CreateSellerRequest("Maria Souza", "12345678900", "11988888888");
+        when(service.create(any(CreateSellerRequest.class))).thenReturn(seller);
 
-        var response = controller.create(data, uriBuilder);
+        var response = controller.create(dados, uriBuilder);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(response.getBody().id()).isEqualTo(1L);
-        assertThat(response.getBody().nome()).isEqualTo("Maria Souza");
-        assertThat(response.getBody().cpf()).isEqualTo("12345678900");
+        var body = response.getBody();
+        assertThat(body.id()).isEqualTo(1L);
+        assertThat(body.nome()).isEqualTo("Maria Souza");
+        assertThat(body.cpf()).isEqualTo("12345678900");
     }
 
     @Test
-    void shouldListActiveSellers() {
-        var summary = new SellerSummary(vendedor);
+    void deveriaListarVendedoresAtivos() {
+        var summary = new SellerSummary(1L, "Maria Souza", "12345678900");
         var page = new PageImpl<>(List.of(summary));
         when(service.list(any(Pageable.class))).thenReturn(page);
 
@@ -65,19 +73,21 @@ class VendedorControllerTest {
     }
 
     @Test
-    void shouldUpdateSellerAndReturnUpdatedData() {
-        var data = new UpdateSellerRequest(1L, "Maria Santos", null);
+    void deveriaAtualizarVendedorERetornarDadosAtualizados() {
+        var dados = new UpdateSellerRequest(1L, "Maria Santos", null);
         var updated = new SellerResponse(1L, "Maria Santos", "12345678900", "11988888888");
-        when(service.update(any(UpdateSellerRequest.class))).thenReturn(updated);
+        when(service.update(dados)).thenReturn(updated);
 
-        var response = controller.update(data);
+        var response = controller.update(dados);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().nome()).isEqualTo("Maria Santos");
     }
 
     @Test
-    void shouldDeleteSellerAndReturn204() {
+    void deveriaExcluirVendedorERetornar204() {
+        doNothing().when(service).delete(1L);
+
         var response = controller.delete(1L);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
@@ -85,15 +95,16 @@ class VendedorControllerTest {
     }
 
     @Test
-    void shouldFindSellerByIdAndReturn200() {
+    void deveriaDetalharVendedorERetornar200() {
         var sellerResponse = new SellerResponse(1L, "Maria Souza", "12345678900", "11988888888");
         when(service.findById(1L)).thenReturn(sellerResponse);
 
         var response = controller.findById(1L);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().id()).isEqualTo(1L);
-        assertThat(response.getBody().nome()).isEqualTo("Maria Souza");
-        assertThat(response.getBody().cpf()).isEqualTo("12345678900");
+        var body = response.getBody();
+        assertThat(body.id()).isEqualTo(1L);
+        assertThat(body.nome()).isEqualTo("Maria Souza");
+        assertThat(body.cpf()).isEqualTo("12345678900");
     }
 }
