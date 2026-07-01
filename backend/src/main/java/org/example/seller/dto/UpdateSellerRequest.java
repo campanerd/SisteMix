@@ -1,9 +1,9 @@
-package org.example.vendedor.dto;
+package org.example.seller.dto;
 
 import jakarta.validation.constraints.NotNull;
 
 public record UpdateSellerRequest(
         @NotNull Long id,
-        String nome,
-        String telefone
+        String name,
+        String phone
 ) {}
