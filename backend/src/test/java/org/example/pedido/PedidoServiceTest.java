@@ -2,7 +2,7 @@ package org.example.pedido;
 
 import org.example.cliente.Cliente;
 import org.example.cliente.ClienteRepository;
-import org.example.cliente.DadosCadastroCliente;
+import org.example.cliente.CreateClientRequest;
 import org.example.parcela.Parcela;
 import org.example.parcela.ParcelaRepository;
 import org.example.vendedor.DadosCadastroVendedor;
@@ -46,7 +46,7 @@ class PedidoServiceTest {
 
     @BeforeEach
     void setUp() {
-        cliente = new Cliente(new DadosCadastroCliente("João Silva", "11999999999", "12345678900", "joao@email.com"));
+        cliente = new Cliente(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
         vendedor = new Vendedor(new DadosCadastroVendedor("Maria Souza", "98765432100", "11988888888"));
         when(clienteRepository.getReferenceById(1L)).thenReturn(cliente);
         when(vendedorRepository.getReferenceById(1L)).thenReturn(vendedor);

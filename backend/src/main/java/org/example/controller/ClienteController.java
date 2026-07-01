@@ -1,6 +1,5 @@
 package org.example.controller;
 
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.example.cliente.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,41 +15,33 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class ClienteController {
 
     @Autowired
-    private ClienteRepository repository;
+    private ClienteService service;
 
     @PostMapping
-    @Transactional
-    public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroCliente dados, UriComponentsBuilder uriBuilder) {
-        var cliente = repository.save(new Cliente(dados));
+    public ResponseEntity<ClientResponse> create(@RequestBody @Valid CreateClientRequest data, UriComponentsBuilder uriBuilder) {
+        var cliente = service.create(data);
         var uri = uriBuilder.path("/clientes/{id}").buildAndExpand(cliente.getId()).toUri();
-        return ResponseEntity.created(uri).body(new DadosDetalhamentoCliente(cliente));
+        return ResponseEntity.created(uri).body(new ClientResponse(cliente));
     }
 
     @GetMapping
-    public ResponseEntity<Page<DadosListagemCliente>> listar(@PageableDefault(size = 10, sort = {"nome"}) Pageable paginacao) {
-        var page = repository.findAllByAtivoTrue(paginacao).map(DadosListagemCliente::new);
-        return ResponseEntity.ok(page);
+    public ResponseEntity<Page<ClientSummary>> list(@PageableDefault(size = 10, sort = {"nome"}) Pageable pageable) {
+        return ResponseEntity.ok(service.list(pageable));
     }
 
     @PutMapping
-    @Transactional
-    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoCliente dados) {
-        var cliente = repository.getReferenceById(dados.id());
-        cliente.atualizarInformacoes(dados);
-        return ResponseEntity.ok(new DadosDetalhamentoCliente(cliente));
+    public ResponseEntity<ClientResponse> update(@RequestBody @Valid UpdateClientRequest data) {
+        return ResponseEntity.ok(service.update(data));
     }
 
     @DeleteMapping("/{id}")
-    @Transactional
-    public ResponseEntity excluir(@PathVariable Long id) {
-        var cliente = repository.getReferenceById(id);
-        cliente.excluir();
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity detalhar(@PathVariable Long id) {
-        var cliente = repository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalhamentoCliente(cliente));
+    public ResponseEntity<ClientResponse> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findById(id));
     }
 }

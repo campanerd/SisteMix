@@ -1,7 +1,7 @@
 package org.example.controller;
 
 import org.example.cliente.Cliente;
-import org.example.cliente.DadosCadastroCliente;
+import org.example.cliente.CreateClientRequest;
 import org.example.parcela.DadosAtualizacaoParcela;
 import org.example.parcela.DadosDetalhamentoParcela;
 import org.example.parcela.DadosListagemParcela;
@@ -41,7 +41,7 @@ class ParcelaControllerTest {
 
     @BeforeEach
     void setUp() {
-        var cliente = new Cliente(new DadosCadastroCliente("João Silva", "11999999999", "12345678900", "joao@email.com"));
+        var cliente = new Cliente(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
         var vendedor = new Vendedor(new DadosCadastroVendedor("Maria Souza", "98765432100", "11988888888"));
         var dadosPedido = new DadosCadastroPedido("PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),

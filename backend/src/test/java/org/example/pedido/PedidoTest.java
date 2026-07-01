@@ -1,7 +1,7 @@
 package org.example.pedido;
 
 import org.example.cliente.Cliente;
-import org.example.cliente.DadosCadastroCliente;
+import org.example.cliente.CreateClientRequest;
 import org.example.vendedor.DadosCadastroVendedor;
 import org.example.vendedor.Vendedor;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +19,7 @@ class PedidoTest {
 
     @BeforeEach
     void setUp() {
-        cliente = new Cliente(new DadosCadastroCliente("João Silva", "11999999999", "12345678900", "joao@email.com"));
+        cliente = new Cliente(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
         vendedor = new Vendedor(new DadosCadastroVendedor("Maria Souza", "98765432100", "11988888888"));
     }
 
