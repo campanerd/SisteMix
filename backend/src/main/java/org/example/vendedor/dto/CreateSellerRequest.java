@@ -1,8 +1,8 @@
-package org.example.vendedor;
+package org.example.vendedor.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record DadosCadastroVendedor(
+public record CreateSellerRequest(
         @NotBlank String nome,
         String cpf,
         String telefone
