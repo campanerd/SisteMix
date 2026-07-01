@@ -1,0 +1,39 @@
+Table client {
+  id       integer [pk, increment]
+  name     varchar [not null]
+  phone    varchar
+  cpf_cnpj varchar [unique]
+  email    varchar
+  active   boolean [not null, default: true]
+}
+
+Table seller {
+  id       integer [pk, increment]
+  name     varchar [not null]
+  cpf      varchar [unique]
+  phone    varchar
+  active   boolean [not null, default: true]
+}
+
+Table order {
+  id                  integer       [pk, increment]
+  order_number        varchar       [unique, not null]
+  issue_date          date          [not null]
+  order_date          date          [not null]
+  total_amount        decimal(15,2) [not null]
+  total_installments  integer       [not null]
+  notes               text
+  client_id           integer       [not null, ref: > client.id]
+  seller_id           integer       [not null, ref: > seller.id]
+  active              boolean       [not null, default: true]
+}
+
+Table installment {
+  id                   integer       [pk, increment]
+  installment_number   integer       [not null, note: 'Ex: 1, 2, 3 (of N)']
+  amount               decimal(15,2) [not null]
+  due_date             date          [not null]
+  status               varchar       [not null, note: 'PAID | PENDING | OVERDUE']
+  payment_date         date          [note: 'Filled when status = PAID']
+  order_id             integer       [not null, ref: > order.id]
+}
