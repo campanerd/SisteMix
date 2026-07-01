@@ -1,10 +1,10 @@
-package org.example.cliente.dto;
+package org.example.client.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
 public record CreateClientRequest(
-        @NotBlank String nome,
-        String telefone,
+        @NotBlank String name,
+        String phone,
         String cpfCnpj,
         String email
 ) {}
