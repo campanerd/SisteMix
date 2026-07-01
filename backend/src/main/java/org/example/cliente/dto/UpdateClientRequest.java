@@ -1,8 +1,8 @@
-package org.example.cliente;
+package org.example.cliente.dto;
 
 import jakarta.validation.constraints.NotNull;
 
-public record DadosAtualizacaoCliente(
+public record UpdateClientRequest(
         @NotNull Long id,
         String nome,
         String telefone,
