@@ -1,4 +1,4 @@
-package org.example.pedido.dto;
+package org.example.order.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -8,9 +8,9 @@ import java.time.LocalDate;
 
 public record UpdateOrderRequest(
         @NotNull Long id,
-        LocalDate dataEmissao,
-        LocalDate dataPedido,
-        @Positive BigDecimal valorTotal,
-        String observacao,
-        Long idVendedor
+        LocalDate issueDate,
+        LocalDate orderDate,
+        @Positive BigDecimal totalAmount,
+        String notes,
+        Long sellerId
 ) {}
