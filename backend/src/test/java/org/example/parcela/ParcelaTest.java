@@ -2,8 +2,8 @@ package org.example.parcela;
 
 import org.example.cliente.dto.CreateClientRequest;
 import org.example.cliente.model.Client;
-import org.example.pedido.DadosCadastroPedido;
-import org.example.pedido.Pedido;
+import org.example.pedido.dto.CreateOrderRequest;
+import org.example.pedido.model.Pedido;
 import org.example.vendedor.dto.CreateSellerRequest;
 import org.example.vendedor.model.Seller;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,10 +22,10 @@ class ParcelaTest {
     void setUp() {
         var client = new Client(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
         var seller = new Seller(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888"));
-        var dados = new DadosCadastroPedido("PED-001",
+        var data = new CreateOrderRequest("PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L);
-        pedido = new Pedido(dados, client, seller);
+        pedido = new Pedido(data, client, seller);
     }
 
     @Test

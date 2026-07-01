@@ -2,6 +2,9 @@ package org.example.pedido;
 
 import org.example.cliente.dto.CreateClientRequest;
 import org.example.cliente.model.Client;
+import org.example.pedido.dto.CreateOrderRequest;
+import org.example.pedido.dto.UpdateOrderRequest;
+import org.example.pedido.model.Pedido;
 import org.example.vendedor.dto.CreateSellerRequest;
 import org.example.vendedor.model.Seller;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +28,7 @@ class PedidoTest {
 
     @Test
     void deveriaCriarPedidoComTodosOsCamposEAtivoTrue() {
-        var dados = new DadosCadastroPedido(
+        var data = new CreateOrderRequest(
                 "PED-001",
                 LocalDate.of(2026, 1, 1),
                 LocalDate.of(2026, 1, 15),
@@ -35,7 +38,7 @@ class PedidoTest {
                 1L, 1L
         );
 
-        var pedido = new Pedido(dados, client, seller);
+        var pedido = new Pedido(data, client, seller);
 
         assertThat(pedido.getNumeroPedido()).isEqualTo("PED-001");
         assertThat(pedido.getValorTotal()).isEqualByComparingTo("300.00");
@@ -47,14 +50,14 @@ class PedidoTest {
 
     @Test
     void deveriaAtualizarSomenteOsCamposInformados() {
-        var dados = new DadosCadastroPedido(
+        var data = new CreateOrderRequest(
                 "PED-001", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L
         );
-        var pedido = new Pedido(dados, client, seller);
+        var pedido = new Pedido(data, client, seller);
 
-        var atualizacao = new DadosAtualizacaoPedido(1L, null, null, null, "Nova obs", null);
-        pedido.atualizarInformacoes(atualizacao, null);
+        var updateData = new UpdateOrderRequest(1L, null, null, null, "Nova obs", null);
+        pedido.update(updateData, null);
 
         assertThat(pedido.getObservacao()).isEqualTo("Nova obs");
         assertThat(pedido.getValorTotal()).isEqualByComparingTo("300.00");
@@ -63,29 +66,29 @@ class PedidoTest {
 
     @Test
     void deveriaAtualizarVendedorQuandoInformado() {
-        var dados = new DadosCadastroPedido(
+        var data = new CreateOrderRequest(
                 "PED-001", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L
         );
-        var pedido = new Pedido(dados, client, seller);
+        var pedido = new Pedido(data, client, seller);
         var novoSeller = new Seller(new CreateSellerRequest("Carlos Lima", "11122233344", "11977777777"));
 
-        var atualizacao = new DadosAtualizacaoPedido(1L, null, null, null, null, 2L);
-        pedido.atualizarInformacoes(atualizacao, novoSeller);
+        var updateData = new UpdateOrderRequest(1L, null, null, null, null, 2L);
+        pedido.update(updateData, novoSeller);
 
         assertThat(pedido.getSeller()).isEqualTo(novoSeller);
     }
 
     @Test
     void deveriaDefinirAtivoFalsoAoExcluir() {
-        var dados = new DadosCadastroPedido(
+        var data = new CreateOrderRequest(
                 "PED-001", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L
         );
-        var pedido = new Pedido(dados, client, seller);
+        var pedido = new Pedido(data, client, seller);
 
         assertThat(pedido.getAtivo()).isTrue();
-        pedido.excluir();
+        pedido.deactivate();
         assertThat(pedido.getAtivo()).isFalse();
     }
 }

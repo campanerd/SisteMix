@@ -5,6 +5,10 @@ import org.example.cliente.model.Client;
 import org.example.cliente.repository.ClientRepository;
 import org.example.parcela.Parcela;
 import org.example.parcela.ParcelaRepository;
+import org.example.pedido.dto.CreateOrderRequest;
+import org.example.pedido.model.Pedido;
+import org.example.pedido.repository.PedidoRepository;
+import org.example.pedido.service.PedidoService;
 import org.example.vendedor.dto.CreateSellerRequest;
 import org.example.vendedor.model.Seller;
 import org.example.vendedor.repository.SellerRepository;
@@ -54,22 +58,22 @@ class PedidoServiceTest {
 
     @Test
     void deveriaCriarNumeroCertoDeParcelas() {
-        var dados = dadosCom(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15));
-        var pedido = pedidoSalvo(dados);
+        var data = orderWith(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15));
+        var pedido = savedOrder(data);
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
 
-        service.cadastrar(dados);
+        service.create(data);
 
         verify(parcelaRepository, times(3)).save(any(Parcela.class));
     }
 
     @Test
     void deveriaDistribuirValorComArredondamentoNaUltimaParcela() {
-        var dados = dadosCom(new BigDecimal("100.00"), 3, LocalDate.of(2026, 1, 15));
-        var pedido = pedidoSalvo(dados);
+        var data = orderWith(new BigDecimal("100.00"), 3, LocalDate.of(2026, 1, 15));
+        var pedido = savedOrder(data);
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
 
-        service.cadastrar(dados);
+        service.create(data);
 
         var captor = ArgumentCaptor.forClass(Parcela.class);
         verify(parcelaRepository, times(3)).save(captor.capture());
@@ -82,11 +86,11 @@ class PedidoServiceTest {
 
     @Test
     void deveriaDistribuirValorIgualQuandoDivisaoExata() {
-        var dados = dadosCom(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15));
-        var pedido = pedidoSalvo(dados);
+        var data = orderWith(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15));
+        var pedido = savedOrder(data);
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
 
-        service.cadastrar(dados);
+        service.create(data);
 
         var captor = ArgumentCaptor.forClass(Parcela.class);
         verify(parcelaRepository, times(3)).save(captor.capture());
@@ -99,12 +103,12 @@ class PedidoServiceTest {
 
     @Test
     void deveriaDefinirVencimentosMensaisAPartirDaDataDoPedido() {
-        var dataPedido = LocalDate.of(2026, 1, 15);
-        var dados = dadosCom(new BigDecimal("200.00"), 2, dataPedido);
-        var pedido = pedidoSalvo(dados);
+        var orderDate = LocalDate.of(2026, 1, 15);
+        var data = orderWith(new BigDecimal("200.00"), 2, orderDate);
+        var pedido = savedOrder(data);
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
 
-        service.cadastrar(dados);
+        service.create(data);
 
         var captor = ArgumentCaptor.forClass(Parcela.class);
         verify(parcelaRepository, times(2)).save(captor.capture());
@@ -114,12 +118,12 @@ class PedidoServiceTest {
         assertThat(parcelas.get(1).getVencimento()).isEqualTo(LocalDate.of(2026, 3, 15));
     }
 
-    private DadosCadastroPedido dadosCom(BigDecimal valor, int totalParcelas, LocalDate dataPedido) {
-        return new DadosCadastroPedido("PED-001", dataPedido, dataPedido, valor, totalParcelas, null, 1L, 1L);
+    private CreateOrderRequest orderWith(BigDecimal valor, int totalParcelas, LocalDate dataPedido) {
+        return new CreateOrderRequest("PED-001", dataPedido, dataPedido, valor, totalParcelas, null, 1L, 1L);
     }
 
-    private Pedido pedidoSalvo(DadosCadastroPedido dados) {
-        return new Pedido(1L, dados.numeroPedido(), dados.dataEmissao(), dados.dataPedido(),
-                dados.valorTotal(), dados.totalParcelas(), dados.observacao(), client, seller, true);
+    private Pedido savedOrder(CreateOrderRequest data) {
+        return new Pedido(1L, data.numeroPedido(), data.dataEmissao(), data.dataPedido(),
+                data.valorTotal(), data.totalParcelas(), data.observacao(), client, seller, true);
     }
 }

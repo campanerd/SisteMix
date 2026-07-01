@@ -1,14 +1,14 @@
 package org.example.controller;
 
 import org.example.cliente.model.Client;
-import org.example.pedido.DadosAtualizacaoPedido;
-import org.example.pedido.DadosCadastroPedido;
-import org.example.pedido.DadosDetalhamentoPedido;
-import org.example.pedido.Pedido;
-import org.example.pedido.PedidoRepository;
-import org.example.pedido.PedidoService;
+import org.example.pedido.dto.CreateOrderRequest;
+import org.example.pedido.dto.OrderResponse;
+import org.example.pedido.dto.OrderSummary;
+import org.example.pedido.dto.UpdateOrderRequest;
+import org.example.pedido.model.Pedido;
+import org.example.pedido.service.PedidoService;
+import org.example.pedido.web.PedidoController;
 import org.example.vendedor.model.Seller;
-import org.example.vendedor.repository.SellerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,22 +26,20 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PedidoControllerTest {
 
     @Mock
-    private PedidoRepository repository;
-    @Mock
-    private PedidoService pedidoService;
-    @Mock
-    private SellerRepository sellerRepository;
+    private PedidoService service;
 
     @InjectMocks
     private PedidoController controller;
 
     private Pedido pedido;
+    private OrderResponse orderResponse;
     private UriComponentsBuilder uriBuilder;
 
     @BeforeEach
@@ -49,35 +47,37 @@ class PedidoControllerTest {
         var client = new Client(1L, "João Silva", "11999999999", "12345678900", "joao@email.com", true);
         var seller = new Seller(1L, "Maria Souza", "98765432100", "11988888888", true);
         pedido = new Pedido(1L, "PED-001",
-                LocalDate.of(2026, 1, 1),
-                LocalDate.of(2026, 1, 15),
+                LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
+                new BigDecimal("300.00"), 3, null, client, seller, true);
+        orderResponse = new OrderResponse(1L, "PED-001",
+                LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null,
-                client, seller, true);
+                1L, "João Silva", 1L, "Maria Souza");
         uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
     }
 
     @Test
-    void deveriaCadastrarPedidoERetornar201() {
-        var dados = new DadosCadastroPedido("PED-001",
+    void shouldCreateOrderAndReturn201() {
+        var data = new CreateOrderRequest("PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L);
-        when(pedidoService.cadastrar(dados)).thenReturn(pedido);
+        when(service.create(any(CreateOrderRequest.class))).thenReturn(orderResponse);
 
-        var response = controller.cadastrar(dados, uriBuilder);
+        var response = controller.create(data, uriBuilder);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        var body = (DadosDetalhamentoPedido) response.getBody();
-        assertThat(body.id()).isEqualTo(1L);
-        assertThat(body.numeroPedido()).isEqualTo("PED-001");
-        assertThat(body.nomeCliente()).isEqualTo("João Silva");
+        assertThat(response.getBody().id()).isEqualTo(1L);
+        assertThat(response.getBody().numeroPedido()).isEqualTo("PED-001");
+        assertThat(response.getBody().nomeCliente()).isEqualTo("João Silva");
     }
 
     @Test
-    void deveriaListarPedidosAtivos() {
-        var page = new PageImpl<>(List.of(pedido));
-        when(repository.findAllByAtivoTrue(any(Pageable.class))).thenReturn(page);
+    void shouldListActiveOrders() {
+        var summary = new OrderSummary(pedido);
+        var page = new PageImpl<>(List.of(summary));
+        when(service.list(any(Pageable.class))).thenReturn(page);
 
-        var response = controller.listar(Pageable.ofSize(10));
+        var response = controller.list(Pageable.ofSize(10));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         var content = response.getBody().getContent();
@@ -87,51 +87,52 @@ class PedidoControllerTest {
     }
 
     @Test
-    void deveriaAtualizarPedidoERetornarDadosAtualizados() {
-        var dados = new DadosAtualizacaoPedido(1L, null, null, null, "Nova observação", null);
-        when(repository.getReferenceById(1L)).thenReturn(pedido);
+    void shouldUpdateOrderAndReturn200() {
+        var data = new UpdateOrderRequest(1L, null, null, null, "Nova observação", null);
+        var updatedResponse = new OrderResponse(1L, "PED-001",
+                LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
+                new BigDecimal("300.00"), 3, "Nova observação",
+                1L, "João Silva", 1L, "Maria Souza");
+        when(service.update(any(UpdateOrderRequest.class))).thenReturn(updatedResponse);
 
-        var response = controller.atualizar(dados);
+        var response = controller.update(data);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        var body = (DadosDetalhamentoPedido) response.getBody();
-        assertThat(body.observacao()).isEqualTo("Nova observação");
+        assertThat(response.getBody().observacao()).isEqualTo("Nova observação");
     }
 
     @Test
-    void deveriaAtualizarVendedorDoPedido() {
-        var novoSeller = new Seller(2L, "Carlos Lima", "11122233344", "11977777777", true);
-        var dados = new DadosAtualizacaoPedido(1L, null, null, null, null, 2L);
-        when(repository.getReferenceById(1L)).thenReturn(pedido);
-        when(sellerRepository.getReferenceById(2L)).thenReturn(novoSeller);
+    void shouldUpdateSellerInOrder() {
+        var data = new UpdateOrderRequest(1L, null, null, null, null, 2L);
+        var updatedResponse = new OrderResponse(1L, "PED-001",
+                LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
+                new BigDecimal("300.00"), 3, null,
+                1L, "João Silva", 2L, "Carlos Lima");
+        when(service.update(any(UpdateOrderRequest.class))).thenReturn(updatedResponse);
 
-        var response = controller.atualizar(dados);
+        var response = controller.update(data);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        var body = (DadosDetalhamentoPedido) response.getBody();
-        assertThat(body.nomeVendedor()).isEqualTo("Carlos Lima");
+        assertThat(response.getBody().nomeVendedor()).isEqualTo("Carlos Lima");
     }
 
     @Test
-    void deveriaExcluirPedidoERetornar204() {
-        when(repository.getReferenceById(1L)).thenReturn(pedido);
-
-        var response = controller.excluir(1L);
+    void shouldDeleteOrderAndReturn204() {
+        var response = controller.delete(1L);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        assertThat(pedido.getAtivo()).isFalse();
+        verify(service).delete(1L);
     }
 
     @Test
-    void deveriaDetalharPedidoERetornar200() {
-        when(repository.getReferenceById(1L)).thenReturn(pedido);
+    void shouldFindOrderByIdAndReturn200() {
+        when(service.findById(1L)).thenReturn(orderResponse);
 
-        var response = controller.detalhar(1L);
+        var response = controller.findById(1L);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        var body = (DadosDetalhamentoPedido) response.getBody();
-        assertThat(body.id()).isEqualTo(1L);
-        assertThat(body.valorTotal()).isEqualByComparingTo("300.00");
-        assertThat(body.totalParcelas()).isEqualTo(3);
+        assertThat(response.getBody().id()).isEqualTo(1L);
+        assertThat(response.getBody().valorTotal()).isEqualByComparingTo("300.00");
+        assertThat(response.getBody().totalParcelas()).isEqualTo(3);
     }
 }
