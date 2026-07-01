@@ -1,8 +1,8 @@
 package org.example.pedido.service;
 
 import org.example.cliente.repository.ClientRepository;
-import org.example.parcela.Parcela;
-import org.example.parcela.ParcelaRepository;
+import org.example.parcela.model.Parcela;
+import org.example.parcela.repository.ParcelaRepository;
 import org.example.pedido.dto.CreateOrderRequest;
 import org.example.pedido.dto.OrderResponse;
 import org.example.pedido.dto.OrderSummary;
