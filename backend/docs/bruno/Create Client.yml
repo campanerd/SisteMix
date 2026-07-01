@@ -1,11 +1,11 @@
 info:
-  name: Create Cliente
+  name: Create Client
   type: http
   seq: 1
 
 http:
   method: POST
-  url: http://localhost:8080/clientes
+  url: http://localhost:8080/api/clientes
   body:
     type: json
     data: |-

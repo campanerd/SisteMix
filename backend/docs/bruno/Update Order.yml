@@ -1,11 +1,11 @@
 info:
-  name: Update Pedido
+  name: Update Order
   type: http
   seq: 14
 
 http:
   method: PUT
-  url: http://localhost:8080/pedidos
+  url: http://localhost:8080/api/pedidos
   body:
     type: json
     data: |-

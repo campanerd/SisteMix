@@ -1,11 +1,11 @@
 info:
-  name: Delete Vendedor
+  name: Get Seller
   type: http
-  seq: 10
+  seq: 8
 
 http:
-  method: DELETE
-  url: http://localhost:8080/vendedores/{{IdVendedor}}
+  method: GET
+  url: http://localhost:8080/api/vendedores/{{IdVendedor}}
 
 settings:
   encodeUrl: true
