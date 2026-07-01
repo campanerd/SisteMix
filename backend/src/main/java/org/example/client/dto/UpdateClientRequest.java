@@ -1,10 +1,10 @@
-package org.example.cliente.dto;
+package org.example.client.dto;
 
 import jakarta.validation.constraints.NotNull;
 
 public record UpdateClientRequest(
         @NotNull Long id,
-        String nome,
-        String telefone,
+        String name,
+        String phone,
         String email
 ) {}
