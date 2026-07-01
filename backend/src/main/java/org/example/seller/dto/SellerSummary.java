@@ -1,9 +1,9 @@
-package org.example.vendedor.dto;
+package org.example.seller.dto;
 
-import org.example.vendedor.model.Seller;
+import org.example.seller.model.Seller;
 
-public record SellerSummary(Long id, String nome, String cpf) {
+public record SellerSummary(Long id, String name, String cpf) {
     public SellerSummary(Seller seller) {
-        this(seller.getId(), seller.getNome(), seller.getCpf());
+        this(seller.getId(), seller.getName(), seller.getCpf());
     }
 }
