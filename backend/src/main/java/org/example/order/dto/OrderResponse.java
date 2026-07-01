@@ -1,36 +1,36 @@
-package org.example.pedido.dto;
+package org.example.order.dto;
 
-import org.example.pedido.model.Pedido;
+import org.example.order.model.Order;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record OrderResponse(
         Long id,
-        String numeroPedido,
-        LocalDate dataEmissao,
-        LocalDate dataPedido,
-        BigDecimal valorTotal,
-        Integer totalParcelas,
-        String observacao,
-        Long idCliente,
-        String nomeCliente,
-        Long idVendedor,
-        String nomeVendedor
+        String orderNumber,
+        LocalDate issueDate,
+        LocalDate orderDate,
+        BigDecimal totalAmount,
+        Integer totalInstallments,
+        String notes,
+        Long clientId,
+        String clientName,
+        Long sellerId,
+        String sellerName
 ) {
-    public OrderResponse(Pedido pedido) {
+    public OrderResponse(Order order) {
         this(
-                pedido.getId(),
-                pedido.getNumeroPedido(),
-                pedido.getDataEmissao(),
-                pedido.getDataPedido(),
-                pedido.getValorTotal(),
-                pedido.getTotalParcelas(),
-                pedido.getObservacao(),
-                pedido.getClient().getId(),
-                pedido.getClient().getNome(),
-                pedido.getSeller().getId(),
-                pedido.getSeller().getNome()
+                order.getId(),
+                order.getOrderNumber(),
+                order.getIssueDate(),
+                order.getOrderDate(),
+                order.getTotalAmount(),
+                order.getTotalInstallments(),
+                order.getNotes(),
+                order.getClient().getId(),
+                order.getClient().getName(),
+                order.getSeller().getId(),
+                order.getSeller().getName()
         );
     }
 }
