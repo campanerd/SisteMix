@@ -1,9 +1,11 @@
-package org.example.pedido;
+package org.example.pedido.dto;
+
+import org.example.pedido.model.Pedido;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record DadosListagemPedido(
+public record OrderSummary(
         Long id,
         String numeroPedido,
         String nomeCliente,
@@ -12,7 +14,7 @@ public record DadosListagemPedido(
         Integer totalParcelas,
         LocalDate dataPedido
 ) {
-    public DadosListagemPedido(Pedido pedido) {
+    public OrderSummary(Pedido pedido) {
         this(
                 pedido.getId(),
                 pedido.getNumeroPedido(),

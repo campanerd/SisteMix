@@ -1,5 +1,6 @@
-package org.example.pedido;
+package org.example.pedido.repository;
 
+import org.example.pedido.model.Pedido;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
