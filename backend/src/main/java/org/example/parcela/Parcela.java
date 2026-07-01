@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.pedido.Pedido;
+import org.example.pedido.model.Pedido;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
