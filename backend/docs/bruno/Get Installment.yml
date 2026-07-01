@@ -1,11 +1,11 @@
 info:
-  name: Delete Pedido
+  name: Get Installment
   type: http
-  seq: 15
+  seq: 19
 
 http:
-  method: DELETE
-  url: http://localhost:8080/pedidos/{{IdPedido}}
+  method: GET
+  url: http://localhost:8080/api/parcelas/{{IdParcela}}
 
 settings:
   encodeUrl: true

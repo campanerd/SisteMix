@@ -1,11 +1,11 @@
 info:
-  name: Create Vendedor
+  name: Create Seller
   type: http
   seq: 6
 
 http:
   method: POST
-  url: http://localhost:8080/vendedores
+  url: http://localhost:8080/api/vendedores
   body:
     type: json
     data: |-

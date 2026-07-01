@@ -1,11 +1,11 @@
 info:
-  name: Update Cliente
+  name: Update Client
   type: http
   seq: 4
 
 http:
   method: PUT
-  url: http://localhost:8080/clientes
+  url: http://localhost:8080/api/clientes
   body:
     type: json
     data: |-

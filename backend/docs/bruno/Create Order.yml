@@ -1,11 +1,11 @@
 info:
-  name: Create Pedido
+  name: Create Order
   type: http
   seq: 11
 
 http:
   method: POST
-  url: http://localhost:8080/pedidos
+  url: http://localhost:8080/api/pedidos
   body:
     type: json
     data: |-

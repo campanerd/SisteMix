@@ -1,11 +1,11 @@
 info:
-  name: Update Vendedor
+  name: Update Seller
   type: http
   seq: 9
 
 http:
   method: PUT
-  url: http://localhost:8080/vendedores
+  url: http://localhost:8080/api/vendedores
   body:
     type: json
     data: |-
