@@ -1,4 +1,4 @@
-package org.example.parcela;
+package org.example.parcela.enums;
 
 public enum StatusParcela {
     PAGO,

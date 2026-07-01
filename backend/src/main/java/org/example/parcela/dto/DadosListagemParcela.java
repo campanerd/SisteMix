@@ -1,9 +1,12 @@
-package org.example.parcela;
+package org.example.parcela.dto;
+
+import org.example.parcela.model.Parcela;
+import org.example.parcela.enums.StatusParcela;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record DadosDetalhamentoParcela(
+public record DadosListagemParcela(
         Long id,
         Integer numeroParcela,
         Integer totalParcelas,
@@ -11,12 +14,10 @@ public record DadosDetalhamentoParcela(
         LocalDate vencimento,
         StatusParcela status,
         LocalDate dataPagamento,
-        Long idPedido,
         String numeroPedido,
-        String nomeCliente,
-        String nomeVendedor
+        String nomeCliente
 ) {
-    public DadosDetalhamentoParcela(Parcela parcela) {
+    public DadosListagemParcela(Parcela parcela) {
         this(
                 parcela.getId(),
                 parcela.getNumeroParcela(),
@@ -25,10 +26,8 @@ public record DadosDetalhamentoParcela(
                 parcela.getVencimento(),
                 parcela.getStatus(),
                 parcela.getDataPagamento(),
-                parcela.getPedido().getId(),
                 parcela.getPedido().getNumeroPedido(),
-                parcela.getPedido().getClient().getNome(),
-                parcela.getPedido().getSeller().getNome()
+                parcela.getPedido().getClient().getNome()
         );
     }
 }

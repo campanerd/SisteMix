@@ -1,5 +1,7 @@
-package org.example.parcela;
+package org.example.parcela.repository;
 
+import org.example.parcela.enums.StatusParcela;
+import org.example.parcela.model.Parcela;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

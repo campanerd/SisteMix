@@ -1,10 +1,11 @@
-package org.example.parcela;
+package org.example.parcela.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.parcela.enums.StatusParcela;
 import org.example.pedido.model.Pedido;
 
 import java.math.BigDecimal;
