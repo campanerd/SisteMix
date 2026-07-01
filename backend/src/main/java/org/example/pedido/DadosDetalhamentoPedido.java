@@ -25,8 +25,8 @@ public record DadosDetalhamentoPedido(
                 pedido.getValorTotal(),
                 pedido.getTotalParcelas(),
                 pedido.getObservacao(),
-                pedido.getCliente().getId(),
-                pedido.getCliente().getNome(),
+                pedido.getClient().getId(),
+                pedido.getClient().getNome(),
                 pedido.getVendedor().getId(),
                 pedido.getVendedor().getNome()
         );

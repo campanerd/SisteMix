@@ -1,6 +1,6 @@
 package org.example.pedido;
 
-import org.example.cliente.ClienteRepository;
+import org.example.cliente.repository.ClientRepository;
 import org.example.parcela.Parcela;
 import org.example.parcela.ParcelaRepository;
 import org.example.vendedor.VendedorRepository;
@@ -20,15 +20,15 @@ public class PedidoService {
     private ParcelaRepository parcelaRepository;
 
     @Autowired
-    private ClienteRepository clienteRepository;
+    private ClientRepository clientRepository;
 
     @Autowired
     private VendedorRepository vendedorRepository;
 
     public Pedido cadastrar(DadosCadastroPedido dados) {
-        var cliente = clienteRepository.getReferenceById(dados.idCliente());
+        var client = clientRepository.getReferenceById(dados.idCliente());
         var vendedor = vendedorRepository.getReferenceById(dados.idVendedor());
-        var pedido = pedidoRepository.save(new Pedido(dados, cliente, vendedor));
+        var pedido = pedidoRepository.save(new Pedido(dados, client, vendedor));
 
         gerarParcelas(pedido);
 

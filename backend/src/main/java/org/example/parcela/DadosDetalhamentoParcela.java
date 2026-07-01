@@ -27,7 +27,7 @@ public record DadosDetalhamentoParcela(
                 parcela.getDataPagamento(),
                 parcela.getPedido().getId(),
                 parcela.getPedido().getNumeroPedido(),
-                parcela.getPedido().getCliente().getNome(),
+                parcela.getPedido().getClient().getNome(),
                 parcela.getPedido().getVendedor().getNome()
         );
     }

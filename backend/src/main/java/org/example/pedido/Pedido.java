@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.cliente.Cliente;
+import org.example.cliente.model.Client;
 import org.example.vendedor.Vendedor;
 
 import java.math.BigDecimal;
@@ -32,7 +32,7 @@ public class Pedido {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cliente")
-    private Cliente cliente;
+    private Client client;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_vendedor")
@@ -40,14 +40,14 @@ public class Pedido {
 
     private Boolean ativo;
 
-    public Pedido(DadosCadastroPedido dados, Cliente cliente, Vendedor vendedor) {
+    public Pedido(DadosCadastroPedido dados, Client client, Vendedor vendedor) {
         this.numeroPedido = dados.numeroPedido();
         this.dataEmissao = dados.dataEmissao();
         this.dataPedido = dados.dataPedido();
         this.valorTotal = dados.valorTotal();
         this.totalParcelas = dados.totalParcelas();
         this.observacao = dados.observacao();
-        this.cliente = cliente;
+        this.client = client;
         this.vendedor = vendedor;
         this.ativo = true;
     }
