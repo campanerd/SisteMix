@@ -1,8 +1,8 @@
-package org.example.vendedor.web;
+package org.example.seller.web;
 
 import jakarta.validation.Valid;
-import org.example.vendedor.dto.*;
-import org.example.vendedor.service.SellerService;
+import org.example.seller.dto.*;
+import org.example.seller.service.SellerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("vendedores")
+@RequestMapping("sellers")
 public class SellerController {
 
     @Autowired
@@ -21,12 +21,12 @@ public class SellerController {
     @PostMapping
     public ResponseEntity<SellerResponse> create(@RequestBody @Valid CreateSellerRequest data, UriComponentsBuilder uriBuilder) {
         var seller = service.create(data);
-        var uri = uriBuilder.path("/vendedores/{id}").buildAndExpand(seller.getId()).toUri();
+        var uri = uriBuilder.path("/sellers/{id}").buildAndExpand(seller.getId()).toUri();
         return ResponseEntity.created(uri).body(new SellerResponse(seller));
     }
 
     @GetMapping
-    public ResponseEntity<Page<SellerSummary>> list(@PageableDefault(size = 10, sort = {"nome"}) Pageable pageable) {
+    public ResponseEntity<Page<SellerSummary>> list(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable) {
         return ResponseEntity.ok(service.list(pageable));
     }
 
