@@ -1,9 +1,9 @@
-package org.example.cliente.dto;
+package org.example.client.dto;
 
-import org.example.cliente.model.Client;
+import org.example.client.model.Client;
 
-public record ClientSummary(Long id, String nome, String telefone, String cpfCnpj) {
+public record ClientSummary(Long id, String name, String phone, String cpfCnpj) {
     public ClientSummary(Client client) {
-        this(client.getId(), client.getNome(), client.getTelefone(), client.getCpfCnpj());
+        this(client.getId(), client.getName(), client.getPhone(), client.getCpfCnpj());
     }
 }
