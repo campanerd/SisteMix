@@ -1,11 +1,12 @@
 package org.example.controller;
 
-import org.example.cliente.Cliente;
-import org.example.cliente.ClienteRepository;
-import org.example.cliente.DadosAtualizacaoCliente;
-import org.example.cliente.DadosCadastroCliente;
-import org.example.cliente.DadosDetalhamentoCliente;
-import org.example.cliente.DadosListagemCliente;
+import org.example.cliente.dto.ClientResponse;
+import org.example.cliente.dto.ClientSummary;
+import org.example.cliente.dto.CreateClientRequest;
+import org.example.cliente.dto.UpdateClientRequest;
+import org.example.cliente.model.Client;
+import org.example.cliente.service.ClientService;
+import org.example.cliente.web.ClientController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,35 +22,37 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ClienteControllerTest {
 
     @Mock
-    private ClienteRepository repository;
+    private ClientService service;
 
     @InjectMocks
-    private ClienteController controller;
+    private ClientController controller;
 
-    private Cliente cliente;
+    private Client client;
     private UriComponentsBuilder uriBuilder;
 
     @BeforeEach
     void setUp() {
-        cliente = new Cliente(1L, "João Silva", "11999999999", "12345678900", "joao@email.com", true);
+        client = new Client(1L, "João Silva", "11999999999", "12345678900", "joao@email.com", true);
         uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
     }
 
     @Test
     void deveriaCadastrarClienteERetornar201() {
-        var dados = new DadosCadastroCliente("João Silva", "11999999999", "12345678900", "joao@email.com");
-        when(repository.save(any(Cliente.class))).thenReturn(cliente);
+        var dados = new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com");
+        when(service.create(any(CreateClientRequest.class))).thenReturn(client);
 
-        var response = controller.cadastrar(dados, uriBuilder);
+        var response = controller.create(dados, uriBuilder);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        var body = (DadosDetalhamentoCliente) response.getBody();
+        var body = response.getBody();
         assertThat(body.id()).isEqualTo(1L);
         assertThat(body.nome()).isEqualTo("João Silva");
         assertThat(body.cpfCnpj()).isEqualTo("12345678900");
@@ -57,10 +60,11 @@ class ClienteControllerTest {
 
     @Test
     void deveriaListarClientesAtivos() {
-        var page = new PageImpl<>(List.of(cliente));
-        when(repository.findAllByAtivoTrue(any(Pageable.class))).thenReturn(page);
+        var summary = new ClientSummary(1L, "João Silva", "11999999999", "12345678900");
+        var page = new PageImpl<>(List.of(summary));
+        when(service.list(any(Pageable.class))).thenReturn(page);
 
-        var response = controller.listar(Pageable.ofSize(10));
+        var response = controller.list(Pageable.ofSize(10));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         var content = response.getBody().getContent();
@@ -70,34 +74,35 @@ class ClienteControllerTest {
 
     @Test
     void deveriaAtualizarClienteERetornarDadosAtualizados() {
-        var dados = new DadosAtualizacaoCliente(1L, "João Atualizado", null, null);
-        when(repository.getReferenceById(1L)).thenReturn(cliente);
+        var dados = new UpdateClientRequest(1L, "João Atualizado", null, null);
+        var updated = new ClientResponse(1L, "João Atualizado", "11999999999", "12345678900", "joao@email.com");
+        when(service.update(dados)).thenReturn(updated);
 
-        var response = controller.atualizar(dados);
+        var response = controller.update(dados);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        var body = (DadosDetalhamentoCliente) response.getBody();
-        assertThat(body.nome()).isEqualTo("João Atualizado");
+        assertThat(response.getBody().nome()).isEqualTo("João Atualizado");
     }
 
     @Test
     void deveriaExcluirClienteERetornar204() {
-        when(repository.getReferenceById(1L)).thenReturn(cliente);
+        doNothing().when(service).delete(1L);
 
-        var response = controller.excluir(1L);
+        var response = controller.delete(1L);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        assertThat(cliente.getAtivo()).isFalse();
+        verify(service).delete(1L);
     }
 
     @Test
     void deveriaDetalharClienteERetornar200() {
-        when(repository.getReferenceById(1L)).thenReturn(cliente);
+        var clientResponse = new ClientResponse(1L, "João Silva", "11999999999", "12345678900", "joao@email.com");
+        when(service.findById(1L)).thenReturn(clientResponse);
 
-        var response = controller.detalhar(1L);
+        var response = controller.findById(1L);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        var body = (DadosDetalhamentoCliente) response.getBody();
+        var body = response.getBody();
         assertThat(body.id()).isEqualTo(1L);
         assertThat(body.nome()).isEqualTo("João Silva");
         assertThat(body.email()).isEqualTo("joao@email.com");

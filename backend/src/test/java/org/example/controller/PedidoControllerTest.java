@@ -1,14 +1,12 @@
 package org.example.controller;
 
-import org.example.cliente.Cliente;
-import org.example.cliente.DadosCadastroCliente;
+import org.example.cliente.model.Client;
 import org.example.pedido.DadosAtualizacaoPedido;
 import org.example.pedido.DadosCadastroPedido;
 import org.example.pedido.DadosDetalhamentoPedido;
 import org.example.pedido.Pedido;
 import org.example.pedido.PedidoRepository;
 import org.example.pedido.PedidoService;
-import org.example.vendedor.DadosCadastroVendedor;
 import org.example.vendedor.Vendedor;
 import org.example.vendedor.VendedorRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,13 +46,13 @@ class PedidoControllerTest {
 
     @BeforeEach
     void setUp() {
-        var cliente = new Cliente(1L, "João Silva", "11999999999", "12345678900", "joao@email.com", true);
+        var client = new Client(1L, "João Silva", "11999999999", "12345678900", "joao@email.com", true);
         var vendedor = new Vendedor(1L, "Maria Souza", "98765432100", "11988888888", true);
         pedido = new Pedido(1L, "PED-001",
                 LocalDate.of(2026, 1, 1),
                 LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null,
-                cliente, vendedor, true);
+                client, vendedor, true);
         uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
     }
 

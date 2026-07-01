@@ -1,7 +1,7 @@
 package org.example.pedido;
 
-import org.example.cliente.Cliente;
-import org.example.cliente.DadosCadastroCliente;
+import org.example.cliente.dto.CreateClientRequest;
+import org.example.cliente.model.Client;
 import org.example.vendedor.DadosCadastroVendedor;
 import org.example.vendedor.Vendedor;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,12 +14,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class PedidoTest {
 
-    private Cliente cliente;
+    private Client client;
     private Vendedor vendedor;
 
     @BeforeEach
     void setUp() {
-        cliente = new Cliente(new DadosCadastroCliente("João Silva", "11999999999", "12345678900", "joao@email.com"));
+        client = new Client(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
         vendedor = new Vendedor(new DadosCadastroVendedor("Maria Souza", "98765432100", "11988888888"));
     }
 
@@ -35,12 +35,12 @@ class PedidoTest {
                 1L, 1L
         );
 
-        var pedido = new Pedido(dados, cliente, vendedor);
+        var pedido = new Pedido(dados, client, vendedor);
 
         assertThat(pedido.getNumeroPedido()).isEqualTo("PED-001");
         assertThat(pedido.getValorTotal()).isEqualByComparingTo("300.00");
         assertThat(pedido.getTotalParcelas()).isEqualTo(3);
-        assertThat(pedido.getCliente()).isEqualTo(cliente);
+        assertThat(pedido.getClient()).isEqualTo(client);
         assertThat(pedido.getVendedor()).isEqualTo(vendedor);
         assertThat(pedido.getAtivo()).isTrue();
     }
@@ -51,7 +51,7 @@ class PedidoTest {
                 "PED-001", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L
         );
-        var pedido = new Pedido(dados, cliente, vendedor);
+        var pedido = new Pedido(dados, client, vendedor);
 
         var atualizacao = new DadosAtualizacaoPedido(1L, null, null, null, "Nova obs", null);
         pedido.atualizarInformacoes(atualizacao, null);
@@ -67,7 +67,7 @@ class PedidoTest {
                 "PED-001", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L
         );
-        var pedido = new Pedido(dados, cliente, vendedor);
+        var pedido = new Pedido(dados, client, vendedor);
         var novoVendedor = new Vendedor(new DadosCadastroVendedor("Carlos Lima", "11122233344", "11977777777"));
 
         var atualizacao = new DadosAtualizacaoPedido(1L, null, null, null, null, 2L);
@@ -82,7 +82,7 @@ class PedidoTest {
                 "PED-001", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L
         );
-        var pedido = new Pedido(dados, cliente, vendedor);
+        var pedido = new Pedido(dados, client, vendedor);
 
         assertThat(pedido.getAtivo()).isTrue();
         pedido.excluir();

@@ -1,7 +1,7 @@
 package org.example.controller;
 
-import org.example.cliente.Cliente;
-import org.example.cliente.DadosCadastroCliente;
+import org.example.cliente.dto.CreateClientRequest;
+import org.example.cliente.model.Client;
 import org.example.parcela.DadosAtualizacaoParcela;
 import org.example.parcela.DadosDetalhamentoParcela;
 import org.example.parcela.DadosListagemParcela;
@@ -41,14 +41,14 @@ class ParcelaControllerTest {
 
     @BeforeEach
     void setUp() {
-        var cliente = new Cliente(new DadosCadastroCliente("João Silva", "11999999999", "12345678900", "joao@email.com"));
+        var client = new Client(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
         var vendedor = new Vendedor(new DadosCadastroVendedor("Maria Souza", "98765432100", "11988888888"));
         var dadosPedido = new DadosCadastroPedido("PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L);
         var pedido = new Pedido(1L, "PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
-                new BigDecimal("300.00"), 3, null, cliente, vendedor, true);
+                new BigDecimal("300.00"), 3, null, client, vendedor, true);
         parcela = new Parcela(1L, 1, new BigDecimal("100.00"),
                 LocalDate.of(2026, 2, 15), StatusParcela.PENDENTE, null, pedido);
     }

@@ -1,7 +1,7 @@
 package org.example.parcela;
 
-import org.example.cliente.Cliente;
-import org.example.cliente.DadosCadastroCliente;
+import org.example.cliente.dto.CreateClientRequest;
+import org.example.cliente.model.Client;
 import org.example.pedido.DadosCadastroPedido;
 import org.example.pedido.Pedido;
 import org.example.vendedor.DadosCadastroVendedor;
@@ -20,12 +20,12 @@ class ParcelaTest {
 
     @BeforeEach
     void setUp() {
-        var cliente = new Cliente(new DadosCadastroCliente("João Silva", "11999999999", "12345678900", "joao@email.com"));
+        var client = new Client(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
         var vendedor = new Vendedor(new DadosCadastroVendedor("Maria Souza", "98765432100", "11988888888"));
         var dados = new DadosCadastroPedido("PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L);
-        pedido = new Pedido(dados, cliente, vendedor);
+        pedido = new Pedido(dados, client, vendedor);
     }
 
     @Test

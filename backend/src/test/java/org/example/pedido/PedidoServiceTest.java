@@ -1,8 +1,8 @@
 package org.example.pedido;
 
-import org.example.cliente.Cliente;
-import org.example.cliente.ClienteRepository;
-import org.example.cliente.DadosCadastroCliente;
+import org.example.cliente.dto.CreateClientRequest;
+import org.example.cliente.model.Client;
+import org.example.cliente.repository.ClientRepository;
 import org.example.parcela.Parcela;
 import org.example.parcela.ParcelaRepository;
 import org.example.vendedor.DadosCadastroVendedor;
@@ -34,21 +34,21 @@ class PedidoServiceTest {
     @Mock
     private ParcelaRepository parcelaRepository;
     @Mock
-    private ClienteRepository clienteRepository;
+    private ClientRepository clientRepository;
     @Mock
     private VendedorRepository vendedorRepository;
 
     @InjectMocks
     private PedidoService service;
 
-    private Cliente cliente;
+    private Client client;
     private Vendedor vendedor;
 
     @BeforeEach
     void setUp() {
-        cliente = new Cliente(new DadosCadastroCliente("João Silva", "11999999999", "12345678900", "joao@email.com"));
+        client = new Client(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
         vendedor = new Vendedor(new DadosCadastroVendedor("Maria Souza", "98765432100", "11988888888"));
-        when(clienteRepository.getReferenceById(1L)).thenReturn(cliente);
+        when(clientRepository.getReferenceById(1L)).thenReturn(client);
         when(vendedorRepository.getReferenceById(1L)).thenReturn(vendedor);
     }
 
@@ -130,6 +130,6 @@ class PedidoServiceTest {
 
     private Pedido pedidoSalvo(DadosCadastroPedido dados) {
         return new Pedido(1L, dados.numeroPedido(), dados.dataEmissao(), dados.dataPedido(),
-                dados.valorTotal(), dados.totalParcelas(), dados.observacao(), cliente, vendedor, true);
+                dados.valorTotal(), dados.totalParcelas(), dados.observacao(), client, vendedor, true);
     }
 }
