@@ -5,9 +5,9 @@ import org.example.cliente.model.Client;
 import org.example.cliente.repository.ClientRepository;
 import org.example.parcela.Parcela;
 import org.example.parcela.ParcelaRepository;
-import org.example.vendedor.DadosCadastroVendedor;
-import org.example.vendedor.Vendedor;
-import org.example.vendedor.VendedorRepository;
+import org.example.vendedor.dto.CreateSellerRequest;
+import org.example.vendedor.model.Seller;
+import org.example.vendedor.repository.SellerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,20 +36,20 @@ class PedidoServiceTest {
     @Mock
     private ClientRepository clientRepository;
     @Mock
-    private VendedorRepository vendedorRepository;
+    private SellerRepository sellerRepository;
 
     @InjectMocks
     private PedidoService service;
 
     private Client client;
-    private Vendedor vendedor;
+    private Seller seller;
 
     @BeforeEach
     void setUp() {
         client = new Client(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
-        vendedor = new Vendedor(new DadosCadastroVendedor("Maria Souza", "98765432100", "11988888888"));
+        seller = new Seller(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888"));
         when(clientRepository.getReferenceById(1L)).thenReturn(client);
-        when(vendedorRepository.getReferenceById(1L)).thenReturn(vendedor);
+        when(sellerRepository.getReferenceById(1L)).thenReturn(seller);
     }
 
     @Test
@@ -65,7 +65,6 @@ class PedidoServiceTest {
 
     @Test
     void deveriaDistribuirValorComArredondamentoNaUltimaParcela() {
-        // R$100,00 / 3 = 33,33 + 33,33 + 33,34
         var dados = dadosCom(new BigDecimal("100.00"), 3, LocalDate.of(2026, 1, 15));
         var pedido = pedidoSalvo(dados);
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
@@ -83,7 +82,6 @@ class PedidoServiceTest {
 
     @Test
     void deveriaDistribuirValorIgualQuandoDivisaoExata() {
-        // R$300,00 / 3 = 100,00 cada
         var dados = dadosCom(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15));
         var pedido = pedidoSalvo(dados);
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
@@ -117,19 +115,11 @@ class PedidoServiceTest {
     }
 
     private DadosCadastroPedido dadosCom(BigDecimal valor, int totalParcelas, LocalDate dataPedido) {
-        return new DadosCadastroPedido(
-                "PED-001",
-                dataPedido,
-                dataPedido,
-                valor,
-                totalParcelas,
-                null,
-                1L, 1L
-        );
+        return new DadosCadastroPedido("PED-001", dataPedido, dataPedido, valor, totalParcelas, null, 1L, 1L);
     }
 
     private Pedido pedidoSalvo(DadosCadastroPedido dados) {
         return new Pedido(1L, dados.numeroPedido(), dados.dataEmissao(), dados.dataPedido(),
-                dados.valorTotal(), dados.totalParcelas(), dados.observacao(), client, vendedor, true);
+                dados.valorTotal(), dados.totalParcelas(), dados.observacao(), client, seller, true);
     }
 }

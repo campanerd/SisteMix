@@ -7,8 +7,8 @@ import org.example.pedido.DadosDetalhamentoPedido;
 import org.example.pedido.Pedido;
 import org.example.pedido.PedidoRepository;
 import org.example.pedido.PedidoService;
-import org.example.vendedor.Vendedor;
-import org.example.vendedor.VendedorRepository;
+import org.example.vendedor.model.Seller;
+import org.example.vendedor.repository.SellerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +36,7 @@ class PedidoControllerTest {
     @Mock
     private PedidoService pedidoService;
     @Mock
-    private VendedorRepository vendedorRepository;
+    private SellerRepository sellerRepository;
 
     @InjectMocks
     private PedidoController controller;
@@ -47,12 +47,12 @@ class PedidoControllerTest {
     @BeforeEach
     void setUp() {
         var client = new Client(1L, "João Silva", "11999999999", "12345678900", "joao@email.com", true);
-        var vendedor = new Vendedor(1L, "Maria Souza", "98765432100", "11988888888", true);
+        var seller = new Seller(1L, "Maria Souza", "98765432100", "11988888888", true);
         pedido = new Pedido(1L, "PED-001",
                 LocalDate.of(2026, 1, 1),
                 LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null,
-                client, vendedor, true);
+                client, seller, true);
         uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
     }
 
@@ -100,10 +100,10 @@ class PedidoControllerTest {
 
     @Test
     void deveriaAtualizarVendedorDoPedido() {
-        var novoVendedor = new Vendedor(2L, "Carlos Lima", "11122233344", "11977777777", true);
+        var novoSeller = new Seller(2L, "Carlos Lima", "11122233344", "11977777777", true);
         var dados = new DadosAtualizacaoPedido(1L, null, null, null, null, 2L);
         when(repository.getReferenceById(1L)).thenReturn(pedido);
-        when(vendedorRepository.getReferenceById(2L)).thenReturn(novoVendedor);
+        when(sellerRepository.getReferenceById(2L)).thenReturn(novoSeller);
 
         var response = controller.atualizar(dados);
 

@@ -1,10 +1,12 @@
 package org.example.controller;
 
-import org.example.vendedor.DadosAtualizacaoVendedor;
-import org.example.vendedor.DadosCadastroVendedor;
-import org.example.vendedor.DadosDetalhamentoVendedor;
-import org.example.vendedor.Vendedor;
-import org.example.vendedor.VendedorRepository;
+import org.example.vendedor.dto.CreateSellerRequest;
+import org.example.vendedor.dto.SellerResponse;
+import org.example.vendedor.dto.SellerSummary;
+import org.example.vendedor.dto.UpdateSellerRequest;
+import org.example.vendedor.model.Seller;
+import org.example.vendedor.service.SellerService;
+import org.example.vendedor.web.SellerController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,35 +22,37 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class VendedorControllerTest {
 
     @Mock
-    private VendedorRepository repository;
+    private SellerService service;
 
     @InjectMocks
-    private VendedorController controller;
+    private SellerController controller;
 
-    private Vendedor vendedor;
+    private Seller seller;
     private UriComponentsBuilder uriBuilder;
 
     @BeforeEach
     void setUp() {
-        vendedor = new Vendedor(1L, "Maria Souza", "12345678900", "11988888888", true);
+        seller = new Seller(1L, "Maria Souza", "12345678900", "11988888888", true);
         uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
     }
 
     @Test
     void deveriaCadastrarVendedorERetornar201() {
-        var dados = new DadosCadastroVendedor("Maria Souza", "12345678900", "11988888888");
-        when(repository.save(any(Vendedor.class))).thenReturn(vendedor);
+        var dados = new CreateSellerRequest("Maria Souza", "12345678900", "11988888888");
+        when(service.create(any(CreateSellerRequest.class))).thenReturn(seller);
 
-        var response = controller.cadastrar(dados, uriBuilder);
+        var response = controller.create(dados, uriBuilder);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        var body = (DadosDetalhamentoVendedor) response.getBody();
+        var body = response.getBody();
         assertThat(body.id()).isEqualTo(1L);
         assertThat(body.nome()).isEqualTo("Maria Souza");
         assertThat(body.cpf()).isEqualTo("12345678900");
@@ -56,10 +60,11 @@ class VendedorControllerTest {
 
     @Test
     void deveriaListarVendedoresAtivos() {
-        var page = new PageImpl<>(List.of(vendedor));
-        when(repository.findAllByAtivoTrue(any(Pageable.class))).thenReturn(page);
+        var summary = new SellerSummary(1L, "Maria Souza", "12345678900");
+        var page = new PageImpl<>(List.of(summary));
+        when(service.list(any(Pageable.class))).thenReturn(page);
 
-        var response = controller.listar(Pageable.ofSize(10));
+        var response = controller.list(Pageable.ofSize(10));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         var content = response.getBody().getContent();
@@ -69,34 +74,35 @@ class VendedorControllerTest {
 
     @Test
     void deveriaAtualizarVendedorERetornarDadosAtualizados() {
-        var dados = new DadosAtualizacaoVendedor(1L, "Maria Santos", null);
-        when(repository.getReferenceById(1L)).thenReturn(vendedor);
+        var dados = new UpdateSellerRequest(1L, "Maria Santos", null);
+        var updated = new SellerResponse(1L, "Maria Santos", "12345678900", "11988888888");
+        when(service.update(dados)).thenReturn(updated);
 
-        var response = controller.atualizar(dados);
+        var response = controller.update(dados);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        var body = (DadosDetalhamentoVendedor) response.getBody();
-        assertThat(body.nome()).isEqualTo("Maria Santos");
+        assertThat(response.getBody().nome()).isEqualTo("Maria Santos");
     }
 
     @Test
     void deveriaExcluirVendedorERetornar204() {
-        when(repository.getReferenceById(1L)).thenReturn(vendedor);
+        doNothing().when(service).delete(1L);
 
-        var response = controller.excluir(1L);
+        var response = controller.delete(1L);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        assertThat(vendedor.getAtivo()).isFalse();
+        verify(service).delete(1L);
     }
 
     @Test
     void deveriaDetalharVendedorERetornar200() {
-        when(repository.getReferenceById(1L)).thenReturn(vendedor);
+        var sellerResponse = new SellerResponse(1L, "Maria Souza", "12345678900", "11988888888");
+        when(service.findById(1L)).thenReturn(sellerResponse);
 
-        var response = controller.detalhar(1L);
+        var response = controller.findById(1L);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        var body = (DadosDetalhamentoVendedor) response.getBody();
+        var body = response.getBody();
         assertThat(body.id()).isEqualTo(1L);
         assertThat(body.nome()).isEqualTo("Maria Souza");
         assertThat(body.cpf()).isEqualTo("12345678900");
