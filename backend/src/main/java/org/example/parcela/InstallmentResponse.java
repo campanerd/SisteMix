@@ -3,20 +3,20 @@ package org.example.parcela;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record DadosDetalhamentoParcela(
+public record InstallmentResponse(
         Long id,
         Integer numeroParcela,
         Integer totalParcelas,
         BigDecimal valor,
         LocalDate vencimento,
-        StatusParcela status,
+        InstallmentStatus status,
         LocalDate dataPagamento,
         Long idPedido,
         String numeroPedido,
         String nomeCliente,
         String nomeVendedor
 ) {
-    public DadosDetalhamentoParcela(Parcela parcela) {
+    public InstallmentResponse(Parcela parcela) {
         this(
                 parcela.getId(),
                 parcela.getNumeroParcela(),

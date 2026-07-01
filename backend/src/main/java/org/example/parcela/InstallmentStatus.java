@@ -1,6 +1,6 @@
 package org.example.parcela;
 
-public enum StatusParcela {
+public enum InstallmentStatus {
     PAGO,
     PENDENTE,
     EM_ATRASO

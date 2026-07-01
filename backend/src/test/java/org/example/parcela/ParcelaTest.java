@@ -22,51 +22,51 @@ class ParcelaTest {
     void setUp() {
         var cliente = new Cliente(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
         var vendedor = new Vendedor(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888"));
-        var dados = new CreateOrderRequest("PED-001",
+        var data = new CreateOrderRequest("PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L);
-        pedido = new Pedido(dados, cliente, vendedor);
+        pedido = new Pedido(data, cliente, vendedor);
     }
 
     @Test
-    void deveriaCriarParcelaComStatusPendenteEDataPagamentoNula() {
+    void shouldCreateInstallmentWithPendingStatusAndNullPaymentDate() {
         var parcela = new Parcela(1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), pedido);
 
-        assertThat(parcela.getStatus()).isEqualTo(StatusParcela.PENDENTE);
+        assertThat(parcela.getStatus()).isEqualTo(InstallmentStatus.PENDENTE);
         assertThat(parcela.getDataPagamento()).isNull();
         assertThat(parcela.getValor()).isEqualByComparingTo("100.00");
         assertThat(parcela.getNumeroParcela()).isEqualTo(1);
     }
 
     @Test
-    void deveriaDefinirDataPagamentoAoMarcarComoPago() {
+    void shouldSetPaymentDateWhenMarkedAsPaid() {
         var parcela = new Parcela(1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), pedido);
 
-        parcela.atualizarStatus(StatusParcela.PAGO);
+        parcela.updateStatus(InstallmentStatus.PAGO);
 
-        assertThat(parcela.getStatus()).isEqualTo(StatusParcela.PAGO);
+        assertThat(parcela.getStatus()).isEqualTo(InstallmentStatus.PAGO);
         assertThat(parcela.getDataPagamento()).isEqualTo(LocalDate.now());
     }
 
     @Test
-    void deveriaLimparDataPagamentoAoVoltarParaPendente() {
+    void shouldClearPaymentDateWhenRevertedToPending() {
         var parcela = new Parcela(1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), pedido);
-        parcela.atualizarStatus(StatusParcela.PAGO);
+        parcela.updateStatus(InstallmentStatus.PAGO);
 
-        parcela.atualizarStatus(StatusParcela.PENDENTE);
+        parcela.updateStatus(InstallmentStatus.PENDENTE);
 
-        assertThat(parcela.getStatus()).isEqualTo(StatusParcela.PENDENTE);
+        assertThat(parcela.getStatus()).isEqualTo(InstallmentStatus.PENDENTE);
         assertThat(parcela.getDataPagamento()).isNull();
     }
 
     @Test
-    void deveriaLimparDataPagamentoAoMarcarComoEmAtraso() {
+    void shouldClearPaymentDateWhenMarkedAsOverdue() {
         var parcela = new Parcela(1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), pedido);
-        parcela.atualizarStatus(StatusParcela.PAGO);
+        parcela.updateStatus(InstallmentStatus.PAGO);
 
-        parcela.atualizarStatus(StatusParcela.EM_ATRASO);
+        parcela.updateStatus(InstallmentStatus.EM_ATRASO);
 
-        assertThat(parcela.getStatus()).isEqualTo(StatusParcela.EM_ATRASO);
+        assertThat(parcela.getStatus()).isEqualTo(InstallmentStatus.EM_ATRASO);
         assertThat(parcela.getDataPagamento()).isNull();
     }
 }

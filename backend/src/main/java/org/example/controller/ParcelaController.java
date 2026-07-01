@@ -1,6 +1,5 @@
 package org.example.controller;
 
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.example.parcela.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,39 +15,31 @@ import java.util.List;
 public class ParcelaController {
 
     @Autowired
-    private ParcelaRepository repository;
+    private ParcelaService service;
 
     @GetMapping
-    public ResponseEntity<List<DadosListagemParcela>> listar(
-            @RequestParam(required = false) StatusParcela status,
+    public ResponseEntity<List<InstallmentSummary>> list(
+            @RequestParam(required = false) InstallmentStatus status,
             @RequestParam(required = false) LocalDate vencimentoInicio,
             @RequestParam(required = false) LocalDate vencimentoFim,
             @RequestParam(required = false) BigDecimal valorMin,
             @RequestParam(required = false) BigDecimal valorMax
     ) {
-        var parcelas = repository.findWithFilters(status, vencimentoInicio, vencimentoFim, valorMin, valorMax)
-                .stream().map(DadosListagemParcela::new).toList();
-        return ResponseEntity.ok(parcelas);
+        return ResponseEntity.ok(service.list(status, vencimentoInicio, vencimentoFim, valorMin, valorMax));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity detalhar(@PathVariable Long id) {
-        var parcela = repository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalhamentoParcela(parcela));
+    public ResponseEntity<InstallmentResponse> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findById(id));
     }
 
-    @GetMapping("/pedido/{idPedido}")
-    public ResponseEntity<List<DadosListagemParcela>> listarPorPedido(@PathVariable Long idPedido) {
-        var parcelas = repository.findByPedidoId(idPedido)
-                .stream().map(DadosListagemParcela::new).toList();
-        return ResponseEntity.ok(parcelas);
+    @GetMapping("/pedido/{orderId}")
+    public ResponseEntity<List<InstallmentSummary>> listByOrder(@PathVariable Long orderId) {
+        return ResponseEntity.ok(service.listByOrder(orderId));
     }
 
     @PatchMapping("/{id}/status")
-    @Transactional
-    public ResponseEntity atualizarStatus(@PathVariable Long id, @RequestBody @Valid DadosAtualizacaoParcela dados) {
-        var parcela = repository.getReferenceById(id);
-        parcela.atualizarStatus(dados.status());
-        return ResponseEntity.ok(new DadosDetalhamentoParcela(parcela));
+    public ResponseEntity<InstallmentResponse> updateStatus(@PathVariable Long id, @RequestBody @Valid UpdateInstallmentStatusRequest data) {
+        return ResponseEntity.ok(service.updateStatus(id, data));
     }
 }

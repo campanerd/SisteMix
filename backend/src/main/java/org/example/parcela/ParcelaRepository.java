@@ -19,7 +19,7 @@ public interface ParcelaRepository extends JpaRepository<Parcela, Long> {
            "(:valorMin IS NULL OR p.valor >= :valorMin) AND " +
            "(:valorMax IS NULL OR p.valor <= :valorMax)")
     List<Parcela> findWithFilters(
-            @Param("status") StatusParcela status,
+            @Param("status") InstallmentStatus status,
             @Param("vencimentoInicio") LocalDate vencimentoInicio,
             @Param("vencimentoFim") LocalDate vencimentoFim,
             @Param("valorMin") BigDecimal valorMin,
