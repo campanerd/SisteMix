@@ -1,11 +1,11 @@
-package org.example.cliente.web;
+package org.example.client.web;
 
 import jakarta.validation.Valid;
-import org.example.cliente.dto.CreateClientRequest;
-import org.example.cliente.dto.UpdateClientRequest;
-import org.example.cliente.dto.ClientResponse;
-import org.example.cliente.dto.ClientSummary;
-import org.example.cliente.service.ClientService;
+import org.example.client.dto.CreateClientRequest;
+import org.example.client.dto.UpdateClientRequest;
+import org.example.client.dto.ClientResponse;
+import org.example.client.dto.ClientSummary;
+import org.example.client.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("clientes")
+@RequestMapping("clients")
 public class ClientController {
 
     @Autowired
@@ -24,12 +24,12 @@ public class ClientController {
     @PostMapping
     public ResponseEntity<ClientResponse> create(@RequestBody @Valid CreateClientRequest data, UriComponentsBuilder uriBuilder) {
         var client = service.create(data);
-        var uri = uriBuilder.path("/clientes/{id}").buildAndExpand(client.getId()).toUri();
+        var uri = uriBuilder.path("/clients/{id}").buildAndExpand(client.getId()).toUri();
         return ResponseEntity.created(uri).body(new ClientResponse(client));
     }
 
     @GetMapping
-    public ResponseEntity<Page<ClientSummary>> list(@PageableDefault(size = 10, sort = {"nome"}) Pageable pageable) {
+    public ResponseEntity<Page<ClientSummary>> list(@PageableDefault(size = 10, sort = {"name"}) Pageable pageable) {
         return ResponseEntity.ok(service.list(pageable));
     }
 
