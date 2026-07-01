@@ -34,8 +34,8 @@ Mapeamento adotado:
 | `parcelas` | `installments` |
 | `nome` | `name` |
 | `telefone` | `phone` |
-| `cpf_cnpj` | `tax_id` |
-| `cpf` | `tax_id` |
+| `cpf_cnpj` | `cpf_cnpj` *(mantido)* |
+| `cpf` | `cpf` *(mantido)* |
 | `ativo` | `active` |
 | `numero_pedido` | `order_number` |
 | `data_emissao` | `issue_date` |
