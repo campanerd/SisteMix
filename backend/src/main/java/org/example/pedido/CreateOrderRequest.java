@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record DadosCadastroPedido(
+public record CreateOrderRequest(
         @NotBlank String numeroPedido,
         @NotNull LocalDate dataEmissao,
         @NotNull LocalDate dataPedido,

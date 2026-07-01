@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record DadosAtualizacaoPedido(
+public record UpdateOrderRequest(
         @NotNull Long id,
         LocalDate dataEmissao,
         LocalDate dataPedido,

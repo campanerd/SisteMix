@@ -53,24 +53,24 @@ class PedidoServiceTest {
     }
 
     @Test
-    void deveriaCriarNumeroCertoDeParcelas() {
-        var dados = dadosCom(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15));
-        var pedido = pedidoSalvo(dados);
+    void shouldCreateCorrectNumberOfInstallments() {
+        var data = orderWith(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15));
+        var pedido = savedOrder(data);
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
 
-        service.cadastrar(dados);
+        service.create(data);
 
         verify(parcelaRepository, times(3)).save(any(Parcela.class));
     }
 
     @Test
-    void deveriaDistribuirValorComArredondamentoNaUltimaParcela() {
+    void shouldDistributeValueWithRoundingOnLastInstallment() {
         // R$100,00 / 3 = 33,33 + 33,33 + 33,34
-        var dados = dadosCom(new BigDecimal("100.00"), 3, LocalDate.of(2026, 1, 15));
-        var pedido = pedidoSalvo(dados);
+        var data = orderWith(new BigDecimal("100.00"), 3, LocalDate.of(2026, 1, 15));
+        var pedido = savedOrder(data);
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
 
-        service.cadastrar(dados);
+        service.create(data);
 
         var captor = ArgumentCaptor.forClass(Parcela.class);
         verify(parcelaRepository, times(3)).save(captor.capture());
@@ -82,13 +82,13 @@ class PedidoServiceTest {
     }
 
     @Test
-    void deveriaDistribuirValorIgualQuandoDivisaoExata() {
-        // R$300,00 / 3 = 100,00 cada
-        var dados = dadosCom(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15));
-        var pedido = pedidoSalvo(dados);
+    void shouldDistributeEquallyWhenDivisionIsExact() {
+        // R$300,00 / 3 = 100,00 each
+        var data = orderWith(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15));
+        var pedido = savedOrder(data);
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
 
-        service.cadastrar(dados);
+        service.create(data);
 
         var captor = ArgumentCaptor.forClass(Parcela.class);
         verify(parcelaRepository, times(3)).save(captor.capture());
@@ -100,13 +100,13 @@ class PedidoServiceTest {
     }
 
     @Test
-    void deveriaDefinirVencimentosMensaisAPartirDaDataDoPedido() {
-        var dataPedido = LocalDate.of(2026, 1, 15);
-        var dados = dadosCom(new BigDecimal("200.00"), 2, dataPedido);
-        var pedido = pedidoSalvo(dados);
+    void shouldSetMonthlyDueDatesFromOrderDate() {
+        var orderDate = LocalDate.of(2026, 1, 15);
+        var data = orderWith(new BigDecimal("200.00"), 2, orderDate);
+        var pedido = savedOrder(data);
         when(pedidoRepository.save(any(Pedido.class))).thenReturn(pedido);
 
-        service.cadastrar(dados);
+        service.create(data);
 
         var captor = ArgumentCaptor.forClass(Parcela.class);
         verify(parcelaRepository, times(2)).save(captor.capture());
@@ -116,8 +116,8 @@ class PedidoServiceTest {
         assertThat(parcelas.get(1).getVencimento()).isEqualTo(LocalDate.of(2026, 3, 15));
     }
 
-    private DadosCadastroPedido dadosCom(BigDecimal valor, int totalParcelas, LocalDate dataPedido) {
-        return new DadosCadastroPedido(
+    private CreateOrderRequest orderWith(BigDecimal valor, int totalParcelas, LocalDate dataPedido) {
+        return new CreateOrderRequest(
                 "PED-001",
                 dataPedido,
                 dataPedido,
@@ -128,8 +128,8 @@ class PedidoServiceTest {
         );
     }
 
-    private Pedido pedidoSalvo(DadosCadastroPedido dados) {
-        return new Pedido(1L, dados.numeroPedido(), dados.dataEmissao(), dados.dataPedido(),
-                dados.valorTotal(), dados.totalParcelas(), dados.observacao(), cliente, vendedor, true);
+    private Pedido savedOrder(CreateOrderRequest data) {
+        return new Pedido(1L, data.numeroPedido(), data.dataEmissao(), data.dataPedido(),
+                data.valorTotal(), data.totalParcelas(), data.observacao(), cliente, vendedor, true);
     }
 }

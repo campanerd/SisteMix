@@ -40,27 +40,27 @@ public class Pedido {
 
     private Boolean ativo;
 
-    public Pedido(DadosCadastroPedido dados, Cliente cliente, Vendedor vendedor) {
-        this.numeroPedido = dados.numeroPedido();
-        this.dataEmissao = dados.dataEmissao();
-        this.dataPedido = dados.dataPedido();
-        this.valorTotal = dados.valorTotal();
-        this.totalParcelas = dados.totalParcelas();
-        this.observacao = dados.observacao();
+    public Pedido(CreateOrderRequest data, Cliente cliente, Vendedor vendedor) {
+        this.numeroPedido = data.numeroPedido();
+        this.dataEmissao = data.dataEmissao();
+        this.dataPedido = data.dataPedido();
+        this.valorTotal = data.valorTotal();
+        this.totalParcelas = data.totalParcelas();
+        this.observacao = data.observacao();
         this.cliente = cliente;
         this.vendedor = vendedor;
         this.ativo = true;
     }
 
-    public void atualizarInformacoes(DadosAtualizacaoPedido dados, Vendedor vendedor) {
-        if (dados.dataEmissao() != null) this.dataEmissao = dados.dataEmissao();
-        if (dados.dataPedido() != null) this.dataPedido = dados.dataPedido();
-        if (dados.valorTotal() != null) this.valorTotal = dados.valorTotal();
-        if (dados.observacao() != null) this.observacao = dados.observacao();
+    public void update(UpdateOrderRequest data, Vendedor vendedor) {
+        if (data.dataEmissao() != null) this.dataEmissao = data.dataEmissao();
+        if (data.dataPedido() != null) this.dataPedido = data.dataPedido();
+        if (data.valorTotal() != null) this.valorTotal = data.valorTotal();
+        if (data.observacao() != null) this.observacao = data.observacao();
         if (vendedor != null) this.vendedor = vendedor;
     }
 
-    public void excluir() {
+    public void deactivate() {
         this.ativo = false;
     }
 }

@@ -3,7 +3,7 @@ package org.example.pedido;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record DadosDetalhamentoPedido(
+public record OrderResponse(
         Long id,
         String numeroPedido,
         LocalDate dataEmissao,
@@ -16,7 +16,7 @@ public record DadosDetalhamentoPedido(
         Long idVendedor,
         String nomeVendedor
 ) {
-    public DadosDetalhamentoPedido(Pedido pedido) {
+    public OrderResponse(Pedido pedido) {
         this(
                 pedido.getId(),
                 pedido.getNumeroPedido(),
