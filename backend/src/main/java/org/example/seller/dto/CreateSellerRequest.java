@@ -1,9 +1,9 @@
-package org.example.vendedor.dto;
+package org.example.seller.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
 public record CreateSellerRequest(
-        @NotBlank String nome,
+        @NotBlank String name,
         String cpf,
-        String telefone
+        String phone
 ) {}
