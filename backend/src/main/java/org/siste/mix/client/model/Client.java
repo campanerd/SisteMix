@@ -1,12 +1,12 @@
-package org.example.client.model;
+package org.siste.mix.client.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.client.dto.CreateClientRequest;
-import org.example.client.dto.UpdateClientRequest;
+import org.siste.mix.client.dto.CreateClientRequest;
+import org.siste.mix.client.dto.UpdateClientRequest;
 
 @Table(name = "clients")
 @Entity(name = "Client")

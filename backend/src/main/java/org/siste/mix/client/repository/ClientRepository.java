@@ -1,6 +1,6 @@
-package org.example.client.repository;
+package org.siste.mix.client.repository;
 
-import org.example.client.model.Client;
+import org.siste.mix.client.model.Client;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

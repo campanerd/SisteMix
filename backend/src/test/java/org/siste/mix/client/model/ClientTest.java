@@ -1,8 +1,7 @@
-package org.example.client;
+package org.siste.mix.client.model;
 
-import org.example.client.dto.CreateClientRequest;
-import org.example.client.dto.UpdateClientRequest;
-import org.example.client.model.Client;
+import org.siste.mix.client.dto.CreateClientRequest;
+import org.siste.mix.client.dto.UpdateClientRequest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

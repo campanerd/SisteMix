@@ -1,11 +1,11 @@
-package org.example.client.web;
+package org.siste.mix.client.web;
 
 import jakarta.validation.Valid;
-import org.example.client.dto.CreateClientRequest;
-import org.example.client.dto.UpdateClientRequest;
-import org.example.client.dto.ClientResponse;
-import org.example.client.dto.ClientSummary;
-import org.example.client.service.ClientService;
+import org.siste.mix.client.dto.CreateClientRequest;
+import org.siste.mix.client.dto.UpdateClientRequest;
+import org.siste.mix.client.dto.ClientResponse;
+import org.siste.mix.client.dto.ClientSummary;
+import org.siste.mix.client.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

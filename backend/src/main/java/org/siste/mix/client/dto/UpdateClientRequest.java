@@ -1,4 +1,4 @@
-package org.example.client.dto;
+package org.siste.mix.client.dto;
 
 import jakarta.validation.constraints.NotNull;
 

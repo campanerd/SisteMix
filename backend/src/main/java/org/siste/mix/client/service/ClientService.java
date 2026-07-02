@@ -1,11 +1,11 @@
-package org.example.client.service;
+package org.siste.mix.client.service;
 
-import org.example.client.dto.CreateClientRequest;
-import org.example.client.dto.UpdateClientRequest;
-import org.example.client.dto.ClientResponse;
-import org.example.client.dto.ClientSummary;
-import org.example.client.model.Client;
-import org.example.client.repository.ClientRepository;
+import org.siste.mix.client.dto.CreateClientRequest;
+import org.siste.mix.client.dto.UpdateClientRequest;
+import org.siste.mix.client.dto.ClientResponse;
+import org.siste.mix.client.dto.ClientSummary;
+import org.siste.mix.client.model.Client;
+import org.siste.mix.client.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
