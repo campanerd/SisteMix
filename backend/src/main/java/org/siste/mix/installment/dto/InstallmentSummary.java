@@ -1,12 +1,12 @@
-package org.example.installment.dto;
+package org.siste.mix.installment.dto;
 
-import org.example.installment.enums.InstallmentStatus;
-import org.example.installment.model.Installment;
+import org.siste.mix.installment.enums.InstallmentStatus;
+import org.siste.mix.installment.model.Installment;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record InstallmentResponse(
+public record InstallmentSummary(
         Long id,
         Integer installmentNumber,
         Integer totalInstallments,
@@ -14,12 +14,10 @@ public record InstallmentResponse(
         LocalDate dueDate,
         InstallmentStatus status,
         LocalDate paymentDate,
-        Long orderId,
         String orderNumber,
-        String clientName,
-        String sellerName
+        String clientName
 ) {
-    public InstallmentResponse(Installment installment) {
+    public InstallmentSummary(Installment installment) {
         this(
                 installment.getId(),
                 installment.getInstallmentNumber(),
@@ -28,10 +26,8 @@ public record InstallmentResponse(
                 installment.getDueDate(),
                 installment.getStatus(),
                 installment.getPaymentDate(),
-                installment.getOrder().getId(),
                 installment.getOrder().getOrderNumber(),
-                installment.getOrder().getClient().getName(),
-                installment.getOrder().getSeller().getName()
+                installment.getOrder().getClient().getName()
         );
     }
 }

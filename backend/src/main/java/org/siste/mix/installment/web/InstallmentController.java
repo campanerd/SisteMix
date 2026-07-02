@@ -1,11 +1,11 @@
-package org.example.installment.web;
+package org.siste.mix.installment.web;
 
 import jakarta.validation.Valid;
-import org.example.installment.dto.InstallmentResponse;
-import org.example.installment.dto.InstallmentSummary;
-import org.example.installment.dto.UpdateInstallmentStatusRequest;
-import org.example.installment.enums.InstallmentStatus;
-import org.example.installment.service.InstallmentService;
+import org.siste.mix.installment.dto.InstallmentResponse;
+import org.siste.mix.installment.dto.InstallmentSummary;
+import org.siste.mix.installment.dto.UpdateInstallmentStatusRequest;
+import org.siste.mix.installment.enums.InstallmentStatus;
+import org.siste.mix.installment.service.InstallmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,7 +1,7 @@
-package org.example.installment.dto;
+package org.siste.mix.installment.dto;
 
 import jakarta.validation.constraints.NotNull;
-import org.example.installment.enums.InstallmentStatus;
+import org.siste.mix.installment.enums.InstallmentStatus;
 
 public record UpdateInstallmentStatusRequest(
         @NotNull InstallmentStatus status

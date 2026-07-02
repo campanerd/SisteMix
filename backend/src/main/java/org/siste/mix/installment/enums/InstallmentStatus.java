@@ -1,4 +1,4 @@
-package org.example.installment.enums;
+package org.siste.mix.installment.enums;
 
 public enum InstallmentStatus {
     PAGO,

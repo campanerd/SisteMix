@@ -1,12 +1,12 @@
-package org.example.installment.model;
+package org.siste.mix.installment.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.installment.enums.InstallmentStatus;
-import org.example.order.model.Order;
+import org.siste.mix.installment.enums.InstallmentStatus;
+import org.siste.mix.order.model.Order;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

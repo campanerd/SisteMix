@@ -1,7 +1,7 @@
-package org.example.installment.repository;
+package org.siste.mix.installment.repository;
 
-import org.example.installment.enums.InstallmentStatus;
-import org.example.installment.model.Installment;
+import org.siste.mix.installment.enums.InstallmentStatus;
+import org.siste.mix.installment.model.Installment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
