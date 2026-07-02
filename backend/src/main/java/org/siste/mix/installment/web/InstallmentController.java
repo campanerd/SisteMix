@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("installments")
+@RequestMapping("/installments")
 public class InstallmentController {
 
     @Autowired
