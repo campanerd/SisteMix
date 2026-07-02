@@ -1,6 +1,6 @@
-package org.example.seller.dto;
+package org.siste.mix.seller.dto;
 
-import org.example.seller.model.Seller;
+import org.siste.mix.seller.model.Seller;
 
 public record SellerResponse(Long id, String name, String cpf, String phone) {
     public SellerResponse(Seller seller) {

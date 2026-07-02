@@ -1,8 +1,12 @@
-package org.example.seller.web;
+package org.siste.mix.seller.web;
 
 import jakarta.validation.Valid;
 import org.example.seller.dto.*;
-import org.example.seller.service.SellerService;
+import org.siste.mix.seller.dto.CreateSellerRequest;
+import org.siste.mix.seller.dto.SellerResponse;
+import org.siste.mix.seller.dto.SellerSummary;
+import org.siste.mix.seller.dto.UpdateSellerRequest;
+import org.siste.mix.seller.service.SellerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,4 +1,4 @@
-package org.example.seller.dto;
+package org.siste.mix.seller.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

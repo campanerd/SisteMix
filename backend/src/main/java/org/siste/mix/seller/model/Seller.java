@@ -1,9 +1,9 @@
-package org.example.seller.model;
+package org.siste.mix.seller.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.example.seller.dto.CreateSellerRequest;
-import org.example.seller.dto.UpdateSellerRequest;
+import org.siste.mix.seller.dto.CreateSellerRequest;
+import org.siste.mix.seller.dto.UpdateSellerRequest;
 
 @Table(name = "sellers")
 @Entity(name = "Seller")

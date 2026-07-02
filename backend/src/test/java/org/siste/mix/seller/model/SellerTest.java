@@ -1,8 +1,7 @@
-package org.example.seller;
+package org.siste.mix.seller.model;
 
-import org.example.seller.dto.CreateSellerRequest;
-import org.example.seller.dto.UpdateSellerRequest;
-import org.example.seller.model.Seller;
+import org.siste.mix.seller.dto.CreateSellerRequest;
+import org.siste.mix.seller.dto.UpdateSellerRequest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -1,8 +1,12 @@
-package org.example.seller.service;
+package org.siste.mix.seller.service;
 
 import org.example.seller.dto.*;
-import org.example.seller.model.Seller;
-import org.example.seller.repository.SellerRepository;
+import org.siste.mix.seller.dto.CreateSellerRequest;
+import org.siste.mix.seller.dto.SellerResponse;
+import org.siste.mix.seller.dto.SellerSummary;
+import org.siste.mix.seller.dto.UpdateSellerRequest;
+import org.siste.mix.seller.model.Seller;
+import org.siste.mix.seller.repository.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
