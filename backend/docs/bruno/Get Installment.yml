@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: http://localhost:8080/api/parcelas/{{IdParcela}}
+  url: http://localhost:8080/installments/{{IdParcela}}
 
 settings:
   encodeUrl: true

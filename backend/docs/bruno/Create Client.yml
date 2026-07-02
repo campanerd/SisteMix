@@ -5,13 +5,13 @@ info:
 
 http:
   method: POST
-  url: http://localhost:8080/api/clientes
+  url: http://localhost:8080/clients
   body:
     type: json
     data: |-
       {
-        "nome": "Carlos Souza",
-        "telefone": "31977773333",
+        "name": "Carlos Souza",
+        "phone": "31977773333",
         "cpfCnpj": "456.789.123-00",
         "email": "carlos.souza@email.com"
       }

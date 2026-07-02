@@ -5,14 +5,14 @@ info:
 
 http:
   method: PUT
-  url: http://localhost:8080/api/clientes
+  url: http://localhost:8080/clients
   body:
     type: json
     data: |-
       {
         "id": 1,
-        "nome": "Jorge Washington",
-        "telefone": "11988877888",
+        "name": "Jorge Washington",
+        "phone": "11988877888",
         "email": "jorge.novo@email.com"
       }
 

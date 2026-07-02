@@ -5,14 +5,14 @@ info:
 
 http:
   method: PUT
-  url: http://localhost:8080/api/vendedores
+  url: http://localhost:8080/sellers
   body:
     type: json
     data: |-
       {
         "id": 2,
-        "nome": "Ana Livia",
-        "telefone": "11988880001"
+        "name": "Ana Livia",
+        "phone": "11988880001"
       }
 
 settings:

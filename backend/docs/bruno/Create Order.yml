@@ -5,19 +5,19 @@ info:
 
 http:
   method: POST
-  url: http://localhost:8080/api/pedidos
+  url: http://localhost:8080/orders
   body:
     type: json
     data: |-
       {
-        "numeroPedido": "PED-0001",
-        "dataEmissao": "2026-06-29",
-        "dataPedido": "2026-06-29",
-        "valorTotal": 1908.31,
-        "totalParcelas": 2,
-        "observacao": "Pedido de teste",
-        "idCliente": 1,
-        "idVendedor": 1
+        "orderNumber": "PED-0001",
+        "issueDate": "2026-06-29",
+        "orderDate": "2026-06-29",
+        "totalAmount": 1908.31,
+        "totalInstallments": 2,
+        "notes": "Pedido de teste",
+        "clientId": 1,
+        "sellerId": 1
       }
 
 settings:

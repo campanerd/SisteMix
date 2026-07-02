@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: http://localhost:8080/api/parcelas?status=PENDENTE&vencimentoInicio=2026-06-01&vencimentoFim=2026-12-31
+  url: http://localhost:8080/installments?status=PENDENTE&dueDateFrom=2026-06-01&dueDateTo=2026-12-31
 
 settings:
   encodeUrl: true

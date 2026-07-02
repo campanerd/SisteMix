@@ -5,14 +5,14 @@ info:
 
 http:
   method: POST
-  url: http://localhost:8080/api/vendedores
+  url: http://localhost:8080/sellers
   body:
     type: json
     data: |-
       {
-        "nome": "Ana Lima",
+        "name": "Ana Lima",
         "cpf": "661.222.333-44",
-        "telefone": "11977990001"
+        "phone": "11977990001"
       }
 
 settings:
