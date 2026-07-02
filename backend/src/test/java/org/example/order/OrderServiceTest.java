@@ -84,13 +84,13 @@ class OrderServiceTest {
         service.create(request);
 
         var captor = ArgumentCaptor.forClass(Installment.class);
-        List<Installment> installments = captor.getAllValues();
 
         // InOrder
         InOrder inOrder = inOrder(orderRepository, installmentRepository);
         inOrder.verify(orderRepository).save(any(Order.class));
         inOrder.verify(installmentRepository, times(3)).save(captor.capture());
 
+        List<Installment> installments = captor.getAllValues();
         assertEquals(0, installments.get(0).getAmount().compareTo(new BigDecimal("33.33")));
         assertEquals(0, installments.get(1).getAmount().compareTo(new BigDecimal("33.33")));
         assertEquals(0, installments.get(2).getAmount().compareTo(new BigDecimal("33.34")));
