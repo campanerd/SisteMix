@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
-@RequestMapping("clients")
+@RequestMapping("/clients")
 public class ClientController {
 
     @Autowired
@@ -24,7 +24,7 @@ public class ClientController {
     @PostMapping
     public ResponseEntity<ClientResponse> create(@RequestBody @Valid CreateClientRequest data, UriComponentsBuilder uriBuilder) {
         var client = service.create(data);
-        var uri = uriBuilder.path("/clients/{id}").buildAndExpand(client.getId()).toUri();
+        var uri = uriBuilder.path("/{id}").buildAndExpand(client.getId()).toUri();
         return ResponseEntity.created(uri).body(new ClientResponse(client));
     }
 
