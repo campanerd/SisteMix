@@ -1,6 +1,6 @@
 package org.siste.mix.seller.service;
 
-import org.example.seller.dto.*;
+import org.siste.mix.seller.dto.*;
 import org.siste.mix.seller.dto.CreateSellerRequest;
 import org.siste.mix.seller.dto.SellerResponse;
 import org.siste.mix.seller.dto.SellerSummary;

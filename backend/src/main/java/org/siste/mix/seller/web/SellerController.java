@@ -1,7 +1,7 @@
 package org.siste.mix.seller.web;
 
 import jakarta.validation.Valid;
-import org.example.seller.dto.*;
+import org.siste.mix.seller.dto.*;
 import org.siste.mix.seller.dto.CreateSellerRequest;
 import org.siste.mix.seller.dto.SellerResponse;
 import org.siste.mix.seller.dto.SellerSummary;
@@ -25,7 +25,7 @@ public class SellerController {
     @PostMapping
     public ResponseEntity<SellerResponse> create(@RequestBody @Valid CreateSellerRequest data, UriComponentsBuilder uriBuilder) {
         var seller = service.create(data);
-        var uri = uriBuilder.path("/sellers/{id}").buildAndExpand(seller.getId()).toUri();
+        var uri = uriBuilder.path("/{id}").buildAndExpand(seller.getId()).toUri();
         return ResponseEntity.created(uri).body(new SellerResponse(seller));
     }
 
