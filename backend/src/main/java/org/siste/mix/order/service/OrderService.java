@@ -1,15 +1,15 @@
-package org.example.order.service;
+package org.siste.mix.order.service;
 
-import org.example.client.repository.ClientRepository;
-import org.example.installment.model.Installment;
-import org.example.installment.repository.InstallmentRepository;
-import org.example.order.dto.CreateOrderRequest;
-import org.example.order.dto.OrderResponse;
-import org.example.order.dto.OrderSummary;
-import org.example.order.dto.UpdateOrderRequest;
-import org.example.order.model.Order;
-import org.example.order.repository.OrderRepository;
-import org.example.seller.repository.SellerRepository;
+import org.siste.mix.client.repository.ClientRepository;
+import org.siste.mix.installment.model.Installment;
+import org.siste.mix.installment.repository.InstallmentRepository;
+import org.siste.mix.order.dto.CreateOrderRequest;
+import org.siste.mix.order.dto.OrderResponse;
+import org.siste.mix.order.dto.OrderSummary;
+import org.siste.mix.order.dto.UpdateOrderRequest;
+import org.siste.mix.order.model.Order;
+import org.siste.mix.order.repository.OrderRepository;
+import org.siste.mix.seller.repository.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

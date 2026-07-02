@@ -1,14 +1,14 @@
-package org.example.order.model;
+package org.siste.mix.order.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.client.model.Client;
-import org.example.order.dto.CreateOrderRequest;
-import org.example.order.dto.UpdateOrderRequest;
-import org.example.seller.model.Seller;
+import org.siste.mix.client.model.Client;
+import org.siste.mix.order.dto.CreateOrderRequest;
+import org.siste.mix.order.dto.UpdateOrderRequest;
+import org.siste.mix.seller.model.Seller;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

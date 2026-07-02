@@ -1,4 +1,4 @@
-package org.example.order.dto;
+package org.siste.mix.order.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

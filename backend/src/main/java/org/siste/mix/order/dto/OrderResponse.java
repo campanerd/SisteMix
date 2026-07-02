@@ -1,6 +1,6 @@
-package org.example.order.dto;
+package org.siste.mix.order.dto;
 
-import org.example.order.model.Order;
+import org.siste.mix.order.model.Order;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

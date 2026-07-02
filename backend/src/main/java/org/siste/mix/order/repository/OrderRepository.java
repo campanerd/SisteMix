@@ -1,6 +1,6 @@
-package org.example.order.repository;
+package org.siste.mix.order.repository;
 
-import org.example.order.model.Order;
+import org.siste.mix.order.model.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

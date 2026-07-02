@@ -1,11 +1,11 @@
-package org.example.order.web;
+package org.siste.mix.order.web;
 
 import jakarta.validation.Valid;
-import org.example.order.dto.CreateOrderRequest;
-import org.example.order.dto.OrderResponse;
-import org.example.order.dto.OrderSummary;
-import org.example.order.dto.UpdateOrderRequest;
-import org.example.order.service.OrderService;
+import org.siste.mix.order.dto.CreateOrderRequest;
+import org.siste.mix.order.dto.OrderResponse;
+import org.siste.mix.order.dto.OrderSummary;
+import org.siste.mix.order.dto.UpdateOrderRequest;
+import org.siste.mix.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

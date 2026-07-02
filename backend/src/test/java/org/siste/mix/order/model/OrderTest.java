@@ -1,12 +1,11 @@
-package org.example.order;
+package org.siste.mix.order.model;
 
-import org.example.client.dto.CreateClientRequest;
-import org.example.client.model.Client;
-import org.example.order.dto.CreateOrderRequest;
-import org.example.order.dto.UpdateOrderRequest;
-import org.example.order.model.Order;
-import org.example.seller.dto.CreateSellerRequest;
-import org.example.seller.model.Seller;
+import org.siste.mix.client.dto.CreateClientRequest;
+import org.siste.mix.client.model.Client;
+import org.siste.mix.order.dto.CreateOrderRequest;
+import org.siste.mix.order.dto.UpdateOrderRequest;
+import org.siste.mix.seller.dto.CreateSellerRequest;
+import org.siste.mix.seller.model.Seller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
