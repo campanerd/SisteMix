@@ -1,4 +1,4 @@
-package org.example.config;
+package org.siste.mix.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
