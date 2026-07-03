@@ -33,7 +33,7 @@ class InstallmentTest {
     void should_create_installment_with_pending_status_and_null_payment_date() {
         var installment = new Installment(1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), order);
 
-        assertThat(installment.getStatus()).isEqualTo(InstallmentStatus.PENDENTE);
+        assertThat(installment.getStatus()).isEqualTo(InstallmentStatus.PENDING);
         assertThat(installment.getPaymentDate()).isNull();
         assertThat(installment.getAmount()).isEqualByComparingTo("100.00");
         assertThat(installment.getInstallmentNumber()).isEqualTo(1);
@@ -43,31 +43,31 @@ class InstallmentTest {
     void should_set_payment_date_when_marked_as_paid() {
         var installment = new Installment(1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), order);
 
-        installment.updateStatus(InstallmentStatus.PAGO);
+        installment.updateStatus(InstallmentStatus.PAID);
 
-        assertThat(installment.getStatus()).isEqualTo(InstallmentStatus.PAGO);
+        assertThat(installment.getStatus()).isEqualTo(InstallmentStatus.PAID);
         assertThat(installment.getPaymentDate()).isEqualTo(LocalDate.now());
     }
 
     @Test
     void should_clear_payment_date_when_reverted_to_pending() {
         var installment = new Installment(1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), order);
-        installment.updateStatus(InstallmentStatus.PAGO);
+        installment.updateStatus(InstallmentStatus.PAID);
 
-        installment.updateStatus(InstallmentStatus.PENDENTE);
+        installment.updateStatus(InstallmentStatus.PENDING);
 
-        assertThat(installment.getStatus()).isEqualTo(InstallmentStatus.PENDENTE);
+        assertThat(installment.getStatus()).isEqualTo(InstallmentStatus.PENDING);
         assertThat(installment.getPaymentDate()).isNull();
     }
 
     @Test
     void should_clear_payment_date_when_marked_as_overdue() {
         var installment = new Installment(1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), order);
-        installment.updateStatus(InstallmentStatus.PAGO);
+        installment.updateStatus(InstallmentStatus.PAID);
 
-        installment.updateStatus(InstallmentStatus.EM_ATRASO);
+        installment.updateStatus(InstallmentStatus.OVERDUE);
 
-        assertThat(installment.getStatus()).isEqualTo(InstallmentStatus.EM_ATRASO);
+        assertThat(installment.getStatus()).isEqualTo(InstallmentStatus.OVERDUE);
         assertThat(installment.getPaymentDate()).isNull();
     }
 }

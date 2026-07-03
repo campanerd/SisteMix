@@ -46,12 +46,12 @@ public class Installment {
         this.installmentNumber = installmentNumber;
         this.amount = amount;
         this.dueDate = dueDate;
-        this.status = InstallmentStatus.PENDENTE;
+        this.status = InstallmentStatus.PENDING;
         this.order = order;
     }
 
     public void updateStatus(InstallmentStatus newStatus) {
         this.status = newStatus;
-        this.paymentDate = newStatus == InstallmentStatus.PAGO ? LocalDate.now() : null;
+        this.paymentDate = newStatus == InstallmentStatus.PAID ? LocalDate.now() : null;
     }
 }
