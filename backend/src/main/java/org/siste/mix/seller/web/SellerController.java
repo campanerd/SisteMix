@@ -1,5 +1,6 @@
 package org.siste.mix.seller.web;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.siste.mix.seller.dto.*;
 import org.siste.mix.seller.dto.CreateSellerRequest;
@@ -17,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("sellers")
+@Tag(name = "Vendedores", description = "Cadastro e consulta de vendedores")
 public class SellerController {
 
     @Autowired
