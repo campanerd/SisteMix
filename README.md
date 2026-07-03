@@ -13,14 +13,6 @@
 
 ---
 
-## Pré-visualização
-
-<p align="center">
-  <!-- screenshot -->
-</p>
-
----
-
 ## Sumário
 
 - [Funcionalidades](#funcionalidades)
