@@ -1,5 +1,6 @@
 package org.siste.mix.client.web;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.siste.mix.client.dto.CreateClientRequest;
 import org.siste.mix.client.dto.UpdateClientRequest;
@@ -16,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/clients")
+@Tag(name = "Clientes", description = "Cadastro e consulta de clientes")
 public class ClientController {
 
     @Autowired
