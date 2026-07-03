@@ -5,7 +5,17 @@ info:
 
 http:
   method: GET
-  url: http://localhost:8080/installments?status=PENDENTE&dueDateFrom=2026-06-01&dueDateTo=2026-12-31
+  url: http://localhost:8080/installments?status={{status}}&dueDateFrom={{dateFrom}}&dueDateTo={{dateTo}}
+  params:
+    - name: status
+      value: "{{status}}"
+      type: query
+    - name: dueDateFrom
+      value: "{{dateFrom}}"
+      type: query
+    - name: dueDateTo
+      value: "{{dateTo}}"
+      type: query
 
 settings:
   encodeUrl: true
