@@ -1,5 +1,6 @@
 package org.siste.mix.installment.web;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.siste.mix.installment.dto.InstallmentResponse;
 import org.siste.mix.installment.dto.InstallmentSummary;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/installments")
+@Tag(name = "Parcelas", description = "Cadastro e consulta de parcelas")
 public class InstallmentController {
 
     @Autowired
