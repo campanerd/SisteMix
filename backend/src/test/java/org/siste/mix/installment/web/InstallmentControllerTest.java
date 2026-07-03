@@ -50,7 +50,7 @@ class InstallmentControllerTest {
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, client, seller, true);
         var installment = new Installment(1L, 1, new BigDecimal("100.00"),
-                LocalDate.of(2026, 2, 15), InstallmentStatus.PENDENTE, null, order);
+                LocalDate.of(2026, 2, 15), InstallmentStatus.PENDING, null, order);
         summary = new InstallmentSummary(installment);
         detail = new InstallmentResponse(installment);
     }
@@ -68,7 +68,7 @@ class InstallmentControllerTest {
         assertEquals(1, response.getBody().size());
         assertEquals("PED-001", response.getBody().get(0).orderNumber());
         assertEquals("João Silva", response.getBody().get(0).clientName());
-        assertEquals(InstallmentStatus.PENDENTE, response.getBody().get(0).status());
+        assertEquals(InstallmentStatus.PENDING, response.getBody().get(0).status());
 
         // InOrder
         InOrder inOrder = inOrder(service);
@@ -81,12 +81,12 @@ class InstallmentControllerTest {
         when(service.list(any(), any(), any(), any(), any())).thenReturn(List.of(summary));
 
         // ASSERT
-        var response = controller.list(InstallmentStatus.PENDENTE, null, null, null, null);
+        var response = controller.list(InstallmentStatus.PENDING, null, null, null, null);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(1, response.getBody().size());
-        assertEquals(InstallmentStatus.PENDENTE, response.getBody().get(0).status());
+        assertEquals(InstallmentStatus.PENDING, response.getBody().get(0).status());
 
         // InOrder
         InOrder inOrder = inOrder(service);
@@ -108,7 +108,7 @@ class InstallmentControllerTest {
         assertEquals(3, response.getBody().totalInstallments());
         assertEquals("PED-001", response.getBody().orderNumber());
         assertEquals("João Silva", response.getBody().clientName());
-        assertEquals(InstallmentStatus.PENDENTE, response.getBody().status());
+        assertEquals(InstallmentStatus.PENDING, response.getBody().status());
         assertEquals(null, response.getBody().paymentDate());
 
         // InOrder
@@ -137,18 +137,18 @@ class InstallmentControllerTest {
     @Test
     void should_update_status_to_paid_and_return_payment_date() {
         var paidDetail = new InstallmentResponse(1L, 1, 3, new BigDecimal("100.00"),
-                LocalDate.of(2026, 2, 15), InstallmentStatus.PAGO, LocalDate.now(),
+                LocalDate.of(2026, 2, 15), InstallmentStatus.PAID, LocalDate.now(),
                 1L, "PED-001", "João Silva", "Maria Souza");
 
         // WHEN
         when(service.updateStatus(any(Long.class), any(UpdateInstallmentStatusRequest.class))).thenReturn(paidDetail);
 
         // ASSERT
-        var response = controller.updateStatus(1L, new UpdateInstallmentStatusRequest(InstallmentStatus.PAGO));
+        var response = controller.updateStatus(1L, new UpdateInstallmentStatusRequest(InstallmentStatus.PAID));
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(InstallmentStatus.PAGO, response.getBody().status());
+        assertEquals(InstallmentStatus.PAID, response.getBody().status());
         assertEquals(LocalDate.now(), response.getBody().paymentDate());
 
         // InOrder
@@ -159,18 +159,18 @@ class InstallmentControllerTest {
     @Test
     void should_update_status_to_overdue_without_payment_date() {
         var overdueDetail = new InstallmentResponse(1L, 1, 3, new BigDecimal("100.00"),
-                LocalDate.of(2026, 2, 15), InstallmentStatus.EM_ATRASO, null,
+                LocalDate.of(2026, 2, 15), InstallmentStatus.OVERDUE, null,
                 1L, "PED-001", "João Silva", "Maria Souza");
 
         // WHEN
         when(service.updateStatus(any(Long.class), any(UpdateInstallmentStatusRequest.class))).thenReturn(overdueDetail);
 
         // ASSERT
-        var response = controller.updateStatus(1L, new UpdateInstallmentStatusRequest(InstallmentStatus.EM_ATRASO));
+        var response = controller.updateStatus(1L, new UpdateInstallmentStatusRequest(InstallmentStatus.OVERDUE));
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(InstallmentStatus.EM_ATRASO, response.getBody().status());
+        assertEquals(InstallmentStatus.OVERDUE, response.getBody().status());
         assertEquals(null, response.getBody().paymentDate());
 
         // InOrder
