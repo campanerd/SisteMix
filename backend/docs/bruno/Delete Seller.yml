@@ -5,7 +5,7 @@ info:
 
 http:
   method: DELETE
-  url: http://localhost:8080/api/vendedores/{{IdVendedor}}
+  url: http://localhost:8080/sellers/{{IdVendedor}}
 
 settings:
   encodeUrl: true

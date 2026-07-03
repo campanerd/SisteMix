@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: http://localhost:8080/api/vendedores
+  url: http://localhost:8080/sellers
 
 settings:
   encodeUrl: true

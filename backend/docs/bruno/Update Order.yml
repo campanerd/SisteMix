@@ -5,17 +5,17 @@ info:
 
 http:
   method: PUT
-  url: http://localhost:8080/api/pedidos
+  url: http://localhost:8080/orders
   body:
     type: json
     data: |-
       {
         "id": 1,
-        "dataEmissao": null,
-        "dataPedido": null,
-        "valorTotal": 2000.00,
-        "observacao": "Pedido atualizado",
-        "idVendedor": null
+        "issueDate": null,
+        "orderDate": null,
+        "totalAmount": 2000.00,
+        "notes": "Pedido atualizado",
+        "sellerId": null
       }
 
 settings:
