@@ -1,5 +1,6 @@
 package org.siste.mix.order.web;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.siste.mix.order.dto.CreateOrderRequest;
 import org.siste.mix.order.dto.OrderResponse;
@@ -16,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/orders")
+@Tag(name = "Pedidos", description = "Cadastro e consulta de pedidos")
 public class OrderController {
 
     @Autowired
