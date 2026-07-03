@@ -1,5 +1,7 @@
 package org.siste.mix.installment.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.siste.mix.installment.dto.InstallmentResponse;
 import org.siste.mix.installment.dto.InstallmentSummary;
@@ -16,12 +18,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/installments")
+@Tag(name = "Parcelas", description = "Cadastro e consulta de parcelas")
 public class InstallmentController {
 
     @Autowired
     private InstallmentService service;
 
     @GetMapping
+    @Operation(summary = "Listar parcelas com filtros opcionais")
     public ResponseEntity<List<InstallmentSummary>> list(
             @RequestParam(required = false) InstallmentStatus status,
             @RequestParam(required = false) LocalDate dueDateFrom,
@@ -33,16 +37,19 @@ public class InstallmentController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Listar uma parcela por id")
     public ResponseEntity<InstallmentResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
     @GetMapping("/order/{orderId}")
+    @Operation(summary = "Listar parcelas de um pedido")
     public ResponseEntity<List<InstallmentSummary>> listByOrder(@PathVariable Long orderId) {
         return ResponseEntity.ok(service.listByOrder(orderId));
     }
 
     @PatchMapping("/{id}/status")
+    @Operation(summary = "Atualizar o status de uma parcela")
     public ResponseEntity<InstallmentResponse> updateStatus(@PathVariable Long id, @RequestBody @Valid UpdateInstallmentStatusRequest data) {
         return ResponseEntity.ok(service.updateStatus(id, data));
     }
