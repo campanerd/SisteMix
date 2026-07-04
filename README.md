@@ -6,7 +6,8 @@
   <img src="https://img.shields.io/badge/PostgreSQL-Docker-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL"/>
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="React 19"/>
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="TypeScript"/>
-  <img src="https://img.shields.io/badge/status-em%20desenvolvimento-yellow" alt="Status"/>
+<img src="https://github.com/campanerd/siste-mix/actions/workflows/ci.yml/badge.svg" alt="CI"/>  
+<img src="https://img.shields.io/badge/status-em%20desenvolvimento-yellow" alt="Status"/>
 </p>
 
 > Sistema web para **acompanhamento e consulta de boletos parcelados**. Permite que múltiplas máquinas na rede de uma empresa consultem e atualizem o status de parcelas em tempo real. O sistema não emite boletos, registra e acompanha os que já foram gerados externamente.
