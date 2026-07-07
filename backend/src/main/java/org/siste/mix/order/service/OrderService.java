@@ -1,5 +1,6 @@
 package org.siste.mix.order.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.siste.mix.client.repository.ClientRepository;
 import org.siste.mix.installment.model.Installment;
 import org.siste.mix.installment.repository.InstallmentRepository;
@@ -64,7 +65,9 @@ public class OrderService {
     }
 
     public OrderResponse findById(Long id) {
-        var order = orderRepository.getReferenceById(id);
+        var order = orderRepository.findById(id)
+                .filter(o -> Boolean.TRUE.equals(o.getActive()))
+                .orElseThrow(EntityNotFoundException::new);
         return new OrderResponse(order);
     }
 
