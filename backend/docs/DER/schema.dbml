@@ -25,6 +25,7 @@ Table order {
   notes               text
   client_id           integer       [not null, ref: > client.id]
   seller_id           integer       [not null, ref: > seller.id]
+  created_by          bigint        [not null, ref: > user.id]
   active              boolean       [not null, default: true]
 }
 
@@ -36,4 +37,22 @@ Table installment {
   status               varchar       [not null, note: 'PAID | PENDING | OVERDUE']
   payment_date         date          [note: 'Filled when status = PAID']
   order_id             integer       [not null, ref: > order.id]
+}
+
+Table user {
+  id       bigint       [pk, increment]
+  name     varchar(100) [not null]
+  email    varchar(100) [not null, unique]
+  password varchar(255) [not null, note: 'BCrypt hash']
+  role     varchar(20)  [not null, note: 'USER | ADMIN | DEV']
+  active   boolean      [not null, default: true]
+}
+
+Table order_history {
+  id         bigint    [pk, increment]
+  order_id   bigint    [not null, ref: > order.id]
+  user_id    bigint    [not null, ref: > user.id]
+  action     varchar(20) [not null, note: 'UPDATE | DELETE']
+  changed_at timestamp [not null, default: `now()`]
+  changes    jsonb     [note: '[{field, from, to}] — null when action = DELETE']
 }
