@@ -1,4 +1,4 @@
-package org.siste.mix.common;
+package org.siste.mix.infra.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

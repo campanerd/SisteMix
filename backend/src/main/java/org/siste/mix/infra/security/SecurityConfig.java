@@ -1,4 +1,4 @@
-package org.siste.mix.config;
+package org.siste.mix.infra.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

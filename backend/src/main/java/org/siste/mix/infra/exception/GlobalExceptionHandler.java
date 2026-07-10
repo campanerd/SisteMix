@@ -1,7 +1,6 @@
-package org.siste.mix.config;
+package org.siste.mix.infra.exception;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.siste.mix.common.ErrorResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
