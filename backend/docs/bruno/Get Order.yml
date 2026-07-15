@@ -5,7 +5,7 @@ info:
 
 http:
   method: GET
-  url: http://localhost:8080/orders/{{IdOrder}}
+  url: http://localhost:8080/api/orders/{{IdOrder}}
 
 settings:
   encodeUrl: true
