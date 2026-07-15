@@ -1,5 +1,6 @@
 package org.siste.mix.user.web;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.siste.mix.infra.security.JwtService;
 import org.siste.mix.user.dto.LoginRequest;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Auth", description = "Endpoint para login")
 public class AuthController {
 
     @Autowired
