@@ -1,19 +1,19 @@
 info:
-  name: Create Seller
+  name: Login
   type: http
-  seq: 6
+  seq: 22
 
 http:
   method: POST
-  url: http://localhost:8080/api/sellers
+  url: http://localhost:8080/api/auth/login
   body:
     type: json
     data: |-
       {
-        "name": "Ana Lima",
-        "cpf": "661.222.333-44",
-        "phone": "11977990001"
+        "email": "davi.teste@sistemix.com",
+        "password": "123456"
       }
+  auth: inherit
 
 settings:
   encodeUrl: true

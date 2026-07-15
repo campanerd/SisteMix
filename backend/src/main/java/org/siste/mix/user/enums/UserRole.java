@@ -1,7 +1,7 @@
 package org.siste.mix.user.enums;
 
 public enum UserRole {
-    USER,
-    ADMIN,
-    DEV
+    ROLE_USER,
+    ROLE_ADMIN,
+    ROLE_DEV
 }

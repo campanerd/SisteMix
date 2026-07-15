@@ -1,5 +1,6 @@
 package org.siste.mix.user.web;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.siste.mix.user.dto.CreateUserRequest;
 import org.siste.mix.user.dto.UserResponse;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@Tag(name = "Usuários", description = "Cadastro e consulta de Usuários")
 public class UserController {
 
     @Autowired
