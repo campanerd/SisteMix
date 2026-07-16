@@ -2,6 +2,7 @@ package org.siste.mix.user.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.siste.mix.user.dto.CreateUserRequest;
+import org.siste.mix.user.dto.UpdateUserRequest;
 import org.siste.mix.user.dto.UserResponse;
 import org.siste.mix.user.model.User;
 import org.siste.mix.user.repository.UserRepository;
@@ -41,5 +42,22 @@ public class UserService {
                 .filter(u -> Boolean.TRUE.equals(u.getActive()))
                 .orElseThrow(EntityNotFoundException::new);
         user.deactivate();
+    }
+
+    @Transactional
+    public UserResponse update(UpdateUserRequest data) {
+        var user = repository.findById(data.id())
+                .filter(u -> Boolean.TRUE.equals(u.getActive()))
+                .orElseThrow(EntityNotFoundException::new);
+        var hashedPassword = data.password() != null ? passwordEncoder.encode(data.password()) : null;
+        user.update(data, hashedPassword);
+        return new UserResponse(user);
+    }
+
+    public UserResponse findById(Long id) {
+        var user = repository.findById(id)
+                .filter(u -> Boolean.TRUE.equals(u.getActive()))
+                .orElseThrow(EntityNotFoundException::new);
+        return new UserResponse(user);
     }
 }

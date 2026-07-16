@@ -1,8 +1,10 @@
 package org.siste.mix.user.web;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.siste.mix.user.dto.CreateUserRequest;
+import org.siste.mix.user.dto.UpdateUserRequest;
 import org.siste.mix.user.dto.UserResponse;
 import org.siste.mix.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +38,17 @@ public class UserController {
     public ResponseEntity<Void> deactivate(@PathVariable Long id) {
         service.deactivate(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping
+    @Operation(summary = "Atualizar um usuário")
+    public ResponseEntity<UserResponse> update(@RequestBody @Valid UpdateUserRequest data) {
+        return ResponseEntity.ok(service.update(data));
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Listar um usuário por id")
+    public ResponseEntity<UserResponse> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findById(id));
     }
 }

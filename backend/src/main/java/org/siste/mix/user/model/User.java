@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.siste.mix.user.dto.CreateUserRequest;
+import org.siste.mix.user.dto.UpdateUserRequest;
 import org.siste.mix.user.enums.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,6 +41,13 @@ public class User implements UserDetails {
         this.password = hashedPassword;
         this.role = data.role();
         this.active = true;
+    }
+
+    public void update(UpdateUserRequest data, String hashedPassword) {
+        if (data.name() != null) this.name = data.name();
+        if (data.email() != null) this.email = data.email();
+        if (hashedPassword != null) this.password = hashedPassword;
+        if (data.role() != null) this.role = data.role();
     }
 
     public void deactivate() {
