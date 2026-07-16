@@ -11,9 +11,11 @@ http:
     data: |-
       {
         "email": "davi.teste@sistemix.com",
-        "password": "123456"
+        "password": "SenhaNova"
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJTaXN0ZU1peCBBUEkiLCJzdWIiOiJkYXZpLnVzZXJAc2lzdGVtaXguY29tIiwicm9sZSI6IlJPTEVfVVNFUiIsImV4cCI6MTc4NDI0MTMzNn0.m0oGJQoG4OcVBtfDxfK0ubUtfonzX6CWXiWwPZ-OiIg
 
 settings:
   encodeUrl: true
