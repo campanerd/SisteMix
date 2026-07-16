@@ -1,17 +1,20 @@
 info:
-  name: Login
+  name: Update User
   type: http
-  seq: 22
+  seq: 23
 
 http:
-  method: POST
-  url: http://localhost:8080/api/auth/login
+  method: PUT
+  url: http://localhost:8080/api/users
   body:
     type: json
     data: |-
       {
+        "id": 3,
+        "name": "Davi Testando",
         "email": "davi.teste@sistemix.com",
-        "password": "SenhaNova"
+        "password": "SenhaNova",
+        "role": "ROLE_ADMIN"
       }
   auth:
     type: bearer

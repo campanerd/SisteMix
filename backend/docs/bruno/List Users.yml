@@ -1,18 +1,14 @@
 info:
-  name: Login
+  name: List Users
   type: http
   seq: 22
 
 http:
-  method: POST
-  url: http://localhost:8080/api/auth/login
+  method: GET
+  url: http://localhost:8080/api/users
   body:
     type: json
-    data: |-
-      {
-        "email": "davi.teste@sistemix.com",
-        "password": "SenhaNova"
-      }
+    data: ""
   auth:
     type: bearer
     token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJTaXN0ZU1peCBBUEkiLCJzdWIiOiJkYXZpLnVzZXJAc2lzdGVtaXguY29tIiwicm9sZSI6IlJPTEVfVVNFUiIsImV4cCI6MTc4NDI0MTMzNn0.m0oGJQoG4OcVBtfDxfK0ubUtfonzX6CWXiWwPZ-OiIg

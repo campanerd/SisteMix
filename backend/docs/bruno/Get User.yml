@@ -1,0 +1,25 @@
+info:
+  name: Get User
+  type: http
+  seq: 24
+
+http:
+  method: GET
+  url: http://localhost:8080/api/users/{{IdUser}}
+  body:
+    type: json
+    data: ""
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJTaXN0ZU1peCBBUEkiLCJzdWIiOiJkYXZpLnRlc3RlQHNpc3RlbWl4LmNvbSIsInJvbGUiOiJST0xFX0FETUlOIiwiZXhwIjoxNzg0MjQxNjA2fQ.7CCQGuYXoS-B16aVkWS9Z1aI1oamw3OogPWYDWTP6Y4
+
+runtime:
+  variables:
+    - name: IdUser
+      value: "2"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
