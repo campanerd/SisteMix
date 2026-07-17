@@ -3,9 +3,12 @@ package org.siste.mix.order.service;
 import org.siste.mix.client.dto.CreateClientRequest;
 import org.siste.mix.client.model.Client;
 import org.siste.mix.client.repository.ClientRepository;
+import org.siste.mix.installment.enums.InstallmentStatus;
 import org.siste.mix.installment.model.Installment;
 import org.siste.mix.installment.repository.InstallmentRepository;
 import org.siste.mix.order.dto.CreateOrderRequest;
+import org.siste.mix.order.dto.UpdateOrderRequest;
+import org.siste.mix.order.exception.OrderHasPaidInstallmentsException;
 import org.siste.mix.order.model.Order;
 import org.siste.mix.order.repository.OrderRepository;
 import org.siste.mix.seller.dto.CreateSellerRequest;
@@ -24,10 +27,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,8 +60,8 @@ class OrderServiceTest {
     void setUp() {
         client = new Client(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
         seller = new Seller(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888"));
-        when(clientRepository.getReferenceById(1L)).thenReturn(client);
-        when(sellerRepository.getReferenceById(1L)).thenReturn(seller);
+        lenient().when(clientRepository.getReferenceById(1L)).thenReturn(client);
+        lenient().when(sellerRepository.getReferenceById(1L)).thenReturn(seller);
     }
 
     @Test
@@ -138,6 +146,82 @@ class OrderServiceTest {
         List<Installment> installments = captor.getAllValues();
         assertEquals(LocalDate.of(2026, 2, 15), installments.get(0).getDueDate());
         assertEquals(LocalDate.of(2026, 3, 15), installments.get(1).getDueDate());
+    }
+
+    @Test
+    void should_recalculate_installments_when_amount_changes_and_none_paid() {
+        var order = savedOrder(orderWith(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15)));
+
+        // WHEN
+        when(orderRepository.getReferenceById(1L)).thenReturn(order);
+        when(installmentRepository.existsByOrderIdAndStatus(1L, InstallmentStatus.PAID)).thenReturn(false);
+
+        // ASSERT
+        service.update(new UpdateOrderRequest(1L, null, null, new BigDecimal("600.00"), null, null));
+
+        InOrder inOrder = inOrder(installmentRepository);
+        inOrder.verify(installmentRepository).deleteAllByOrderId(1L);
+        inOrder.verify(installmentRepository, times(3)).save(any(Installment.class));
+    }
+
+    @Test
+    void should_recalculate_installments_when_order_date_changes_and_none_paid() {
+        var order = savedOrder(orderWith(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15)));
+
+        // WHEN
+        when(orderRepository.getReferenceById(1L)).thenReturn(order);
+        when(installmentRepository.existsByOrderIdAndStatus(1L, InstallmentStatus.PAID)).thenReturn(false);
+
+        // ASSERT
+        service.update(new UpdateOrderRequest(1L, null, LocalDate.of(2026, 3, 1), null, null, null));
+
+        InOrder inOrder = inOrder(installmentRepository);
+        inOrder.verify(installmentRepository).deleteAllByOrderId(1L);
+        inOrder.verify(installmentRepository, times(3)).save(any(Installment.class));
+    }
+
+    @Test
+    void should_not_touch_installments_when_amount_and_date_are_unchanged() {
+        var order = savedOrder(orderWith(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15)));
+
+        // WHEN
+        when(orderRepository.getReferenceById(1L)).thenReturn(order);
+
+        // ASSERT
+        service.update(new UpdateOrderRequest(1L, null, null, null, "nova observação", null));
+
+        verify(installmentRepository, never()).existsByOrderIdAndStatus(anyLong(), any());
+        verify(installmentRepository, never()).deleteAllByOrderId(anyLong());
+    }
+
+    @Test
+    void should_throw_when_amount_changes_and_installment_is_paid() {
+        var order = savedOrder(orderWith(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15)));
+
+        // WHEN
+        when(orderRepository.getReferenceById(1L)).thenReturn(order);
+        when(installmentRepository.existsByOrderIdAndStatus(1L, InstallmentStatus.PAID)).thenReturn(true);
+
+        // ASSERT
+        assertThatThrownBy(() -> service.update(new UpdateOrderRequest(1L, null, null, new BigDecimal("600.00"), null, null)))
+                .isInstanceOf(OrderHasPaidInstallmentsException.class);
+
+        verify(installmentRepository, never()).deleteAllByOrderId(anyLong());
+    }
+
+    @Test
+    void should_throw_when_order_date_changes_and_installment_is_paid() {
+        var order = savedOrder(orderWith(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15)));
+
+        // WHEN
+        when(orderRepository.getReferenceById(1L)).thenReturn(order);
+        when(installmentRepository.existsByOrderIdAndStatus(1L, InstallmentStatus.PAID)).thenReturn(true);
+
+        // ASSERT
+        assertThatThrownBy(() -> service.update(new UpdateOrderRequest(1L, null, LocalDate.of(2026, 3, 1), null, null, null)))
+                .isInstanceOf(OrderHasPaidInstallmentsException.class);
+
+        verify(installmentRepository, never()).deleteAllByOrderId(anyLong());
     }
 
     private CreateOrderRequest orderWith(BigDecimal totalAmount, int totalInstallments, LocalDate orderDate) {

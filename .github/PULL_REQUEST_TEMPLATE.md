@@ -1,17 +1,25 @@
-## O que foi feito
+## 📝 Descrição
+<!-- 1-2 frases sobre o que a PR entrega -->
 
-<!-- Descreva em uma ou duas frases o que esta PR entrega. -->
-
-## Motivação
-
-<!-- Por que essa mudança é necessária? Qual problema resolve ou qual melhoria traz? -->
-
-## Mudanças
-
-- 
-
-## Test plan
-
-- [ ] 
-
+## 🔗 Issue relacionada
 Closes #
+
+## 🏷️ Tipo de mudança
+- [ ] feat — nova funcionalidade
+- [ ] fix — correção de bug
+- [ ] refactor — refatoração (sem mudar comportamento)
+- [ ] perf — melhoria de performance
+- [ ] test — adição/ajuste de testes
+- [ ] docs — documentação
+
+## 🧪 Testes
+<!-- resultado da suíte (ex: "161 testes, 0 falhas") + cenários testados manualmente via Bruno/Swagger -->
+
+## ✅ Checklist
+- [ ] Testes unitários passam localmente
+- [ ] Adicionei/atualizei testes para a mudança
+- [ ] Não há segredos, credenciais, hosts internos ou IPs no código
+- [ ] Fiz a auto-revisão do meu código (self-review)
+
+## 💬 Observações
+<!-- opcional -->

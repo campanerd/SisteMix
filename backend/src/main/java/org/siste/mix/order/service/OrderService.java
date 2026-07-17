@@ -2,12 +2,14 @@ package org.siste.mix.order.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.siste.mix.client.repository.ClientRepository;
+import org.siste.mix.installment.enums.InstallmentStatus;
 import org.siste.mix.installment.model.Installment;
 import org.siste.mix.installment.repository.InstallmentRepository;
 import org.siste.mix.order.dto.CreateOrderRequest;
 import org.siste.mix.order.dto.OrderResponse;
 import org.siste.mix.order.dto.OrderSummary;
 import org.siste.mix.order.dto.UpdateOrderRequest;
+import org.siste.mix.order.exception.OrderHasPaidInstallmentsException;
 import org.siste.mix.order.model.Order;
 import org.siste.mix.order.repository.OrderRepository;
 import org.siste.mix.seller.repository.SellerRepository;
@@ -54,7 +56,19 @@ public class OrderService {
         var seller = data.sellerId() != null
                 ? sellerRepository.getReferenceById(data.sellerId())
                 : null;
+
+        var recalculateInstallments = data.totalAmount() != null || data.orderDate() != null;
+        if (recalculateInstallments && installmentRepository.existsByOrderIdAndStatus(data.id(), InstallmentStatus.PAID)) {
+            throw new OrderHasPaidInstallmentsException();
+        }
+
         order.update(data, seller);
+
+        if (recalculateInstallments) {
+            installmentRepository.deleteAllByOrderId(order.getId());
+            generateInstallments(order);
+        }
+
         return new OrderResponse(order);
     }
 
