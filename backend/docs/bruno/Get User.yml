@@ -11,7 +11,7 @@ http:
     data: ""
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJTaXN0ZU1peCBBUEkiLCJzdWIiOiJkYXZpLnRlc3RlQHNpc3RlbWl4LmNvbSIsInJvbGUiOiJST0xFX0FETUlOIiwiZXhwIjoxNzg0MjQxNjA2fQ.7CCQGuYXoS-B16aVkWS9Z1aI1oamw3OogPWYDWTP6Y4
+    token: {{token}}
 
 runtime:
   variables:
