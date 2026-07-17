@@ -14,6 +14,9 @@ http:
         "name": "Ana Livia",
         "phone": "11988880001"
       }
+  auth:
+    type: bearer
+    token: {{token}}
 
 settings:
   encodeUrl: true
