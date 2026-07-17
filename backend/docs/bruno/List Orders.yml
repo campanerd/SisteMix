@@ -8,7 +8,7 @@ http:
   url: http://localhost:8080/api/orders
   auth:
     type: bearer
-    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJTaXN0ZU1peCBBUEkiLCJzdWIiOiJkYXZpLnRlc3RlQHNpc3RlbWl4LmNvbSIsInJvbGUiOiJST0xFX0FETUlOIiwiZXhwIjoxNzg0MzIwODkxfQ.1blFLbrfrsMTmq2aFxLGG3kwXKc8v6Evrqgl8zj0slo
+    token: {{token}}
 
 settings:
   encodeUrl: true

@@ -15,6 +15,9 @@ http:
         "cpfCnpj": "456.789.123-00",
         "email": "carlos.souza@email.com"
       }
+  auth:
+    type: bearer
+    token: {{token}}
 
 settings:
   encodeUrl: true

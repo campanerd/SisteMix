@@ -16,6 +16,9 @@ http:
     - name: dueDateTo
       value: "{{dateTo}}"
       type: query
+  auth:
+    type: bearer
+    token: {{token}}
 
 settings:
   encodeUrl: true

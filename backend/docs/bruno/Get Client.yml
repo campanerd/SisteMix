@@ -9,6 +9,9 @@ http:
   body:
     type: json
     data: ""
+  auth:
+    type: bearer
+    token: {{token}}
 
 settings:
   encodeUrl: true

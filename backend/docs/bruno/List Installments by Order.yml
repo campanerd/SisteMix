@@ -6,6 +6,9 @@ info:
 http:
   method: GET
   url: http://localhost:8080/api/installments/order/{{IdOrder}}
+  auth:
+    type: bearer
+    token: {{token}}
 
 settings:
   encodeUrl: true

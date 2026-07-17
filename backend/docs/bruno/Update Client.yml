@@ -15,6 +15,9 @@ http:
         "phone": "11988877888",
         "email": "jorge.novo@email.com"
       }
+  auth:
+    type: bearer
+    token: {{token}}
 
 settings:
   encodeUrl: true

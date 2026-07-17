@@ -12,6 +12,9 @@ http:
       {
         "status": "PAID"
       }
+  auth:
+    type: bearer
+    token: {{token}}
 
 settings:
   encodeUrl: true

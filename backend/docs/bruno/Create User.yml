@@ -15,7 +15,9 @@ http:
         "password": "123456",
         "role": "ROLE_ADMIN"
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: {{token}}
 
 settings:
   encodeUrl: true
