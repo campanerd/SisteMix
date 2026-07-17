@@ -17,6 +17,9 @@ http:
         "notes": "Pedido atualizado",
         "sellerId": null
       }
+  auth:
+    type: bearer
+    token: {{token}}
 
 settings:
   encodeUrl: true
