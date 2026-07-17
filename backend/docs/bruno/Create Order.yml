@@ -19,6 +19,9 @@ http:
         "clientId": 1,
         "sellerId": 1
       }
+  auth:
+    type: bearer
+    token: {{token}}
 
 settings:
   encodeUrl: true
