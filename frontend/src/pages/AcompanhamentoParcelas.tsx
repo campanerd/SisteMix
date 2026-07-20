@@ -18,35 +18,35 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import WarningIcon from '@mui/icons-material/Warning';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Dayjs } from 'dayjs';
-import { atualizarStatusParcela, listarParcelas } from '../api/parcelas';
-import type { ParcelaFiltros, ParcelaListagem, StatusParcela } from '../types';
+import { listInstallments, updateInstallmentStatus } from '../api/installments';
+import type { InstallmentFilters, InstallmentStatus, InstallmentSummary } from '../types';
 import { corStatus, formatarData, formatarMoeda, rotuloStatus } from '../utils/format';
 
 export function AcompanhamentoParcelas() {
   const queryClient = useQueryClient();
 
   // Estado do formulário de filtros
-  const [status, setStatus] = useState<StatusParcela | ''>('');
+  const [status, setStatus] = useState<InstallmentStatus | ''>('');
   const [vencInicio, setVencInicio] = useState<Dayjs | null>(null);
   const [vencFim, setVencFim] = useState<Dayjs | null>(null);
   const [valorMin, setValorMin] = useState('');
   const [valorMax, setValorMax] = useState('');
 
   // Filtros efetivamente aplicados (disparam a busca)
-  const [filtros, setFiltros] = useState<ParcelaFiltros>({});
+  const [filtros, setFiltros] = useState<InstallmentFilters>({});
 
   const [aviso, setAviso] = useState<{ tipo: 'success' | 'error'; texto: string } | null>(null);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['parcelas', filtros],
-    queryFn: () => listarParcelas(filtros),
+    queryKey: ['installments', filtros],
+    queryFn: () => listInstallments(filtros),
   });
 
   const mutation = useMutation({
-    mutationFn: ({ id, novoStatus }: { id: number; novoStatus: StatusParcela }) =>
-      atualizarStatusParcela(id, novoStatus),
+    mutationFn: ({ id, novoStatus }: { id: number; novoStatus: InstallmentStatus }) =>
+      updateInstallmentStatus(id, novoStatus),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['parcelas'] });
+      queryClient.invalidateQueries({ queryKey: ['installments'] });
       setAviso({ tipo: 'success', texto: 'Status atualizado com sucesso.' });
     },
     onError: () => {
@@ -55,12 +55,12 @@ export function AcompanhamentoParcelas() {
   });
 
   function aplicarFiltros() {
-    const novos: ParcelaFiltros = {};
+    const novos: InstallmentFilters = {};
     if (status) novos.status = status;
-    if (vencInicio) novos.vencimentoInicio = vencInicio.format('YYYY-MM-DD');
-    if (vencFim) novos.vencimentoFim = vencFim.format('YYYY-MM-DD');
-    if (valorMin) novos.valorMin = Number(valorMin);
-    if (valorMax) novos.valorMax = Number(valorMax);
+    if (vencInicio) novos.dueDateFrom = vencInicio.format('YYYY-MM-DD');
+    if (vencFim) novos.dueDateTo = vencFim.format('YYYY-MM-DD');
+    if (valorMin) novos.amountMin = Number(valorMin);
+    if (valorMax) novos.amountMax = Number(valorMax);
     setFiltros(novos);
   }
 
@@ -73,27 +73,27 @@ export function AcompanhamentoParcelas() {
     setFiltros({});
   }
 
-  const colunas: GridColDef<ParcelaListagem>[] = [
-    { field: 'numeroPedido', headerName: 'Pedido', width: 130 },
-    { field: 'nomeCliente', headerName: 'Cliente', flex: 1, minWidth: 160 },
+  const colunas: GridColDef<InstallmentSummary>[] = [
+    { field: 'orderNumber', headerName: 'Pedido', width: 130 },
+    { field: 'clientName', headerName: 'Cliente', flex: 1, minWidth: 160 },
     {
       field: 'parcela',
       headerName: 'Parcela',
       width: 100,
       sortable: false,
-      valueGetter: (_value, row) => `${row.numeroParcela}/${row.totalParcelas}`,
+      valueGetter: (_value, row) => `${row.installmentNumber}/${row.totalInstallments}`,
     },
     {
-      field: 'valor',
+      field: 'amount',
       headerName: 'Valor',
       width: 130,
-      renderCell: (params) => formatarMoeda(params.row.valor),
+      renderCell: (params) => formatarMoeda(params.row.amount),
     },
     {
-      field: 'vencimento',
+      field: 'dueDate',
       headerName: 'Vencimento',
       width: 130,
-      renderCell: (params) => formatarData(params.row.vencimento),
+      renderCell: (params) => formatarData(params.row.dueDate),
     },
     {
       field: 'status',
@@ -108,10 +108,10 @@ export function AcompanhamentoParcelas() {
       ),
     },
     {
-      field: 'dataPagamento',
+      field: 'paymentDate',
       headerName: 'Pagamento',
       width: 130,
-      renderCell: (params) => formatarData(params.row.dataPagamento),
+      renderCell: (params) => formatarData(params.row.paymentDate),
     },
     {
       field: 'acoes',
@@ -121,35 +121,35 @@ export function AcompanhamentoParcelas() {
       getActions: (params) => {
         const itens = [];
         const atual = params.row.status;
-        if (atual !== 'PAGO') {
+        if (atual !== 'PAID') {
           itens.push(
             <GridActionsCellItem
               key="pago"
               icon={<CheckCircleIcon />}
               label="Marcar como Pago"
-              onClick={() => mutation.mutate({ id: params.row.id, novoStatus: 'PAGO' })}
+              onClick={() => mutation.mutate({ id: params.row.id, novoStatus: 'PAID' })}
               showInMenu
             />,
           );
         }
-        if (atual !== 'PENDENTE') {
+        if (atual !== 'PENDING') {
           itens.push(
             <GridActionsCellItem
               key="pendente"
               icon={<HourglassEmptyIcon />}
               label="Marcar como Pendente"
-              onClick={() => mutation.mutate({ id: params.row.id, novoStatus: 'PENDENTE' })}
+              onClick={() => mutation.mutate({ id: params.row.id, novoStatus: 'PENDING' })}
               showInMenu
             />,
           );
         }
-        if (atual !== 'EM_ATRASO') {
+        if (atual !== 'OVERDUE') {
           itens.push(
             <GridActionsCellItem
               key="atraso"
               icon={<WarningIcon />}
               label="Marcar como Em atraso"
-              onClick={() => mutation.mutate({ id: params.row.id, novoStatus: 'EM_ATRASO' })}
+              onClick={() => mutation.mutate({ id: params.row.id, novoStatus: 'OVERDUE' })}
               showInMenu
             />,
           );
@@ -171,13 +171,13 @@ export function AcompanhamentoParcelas() {
           label="Status"
           size="small"
           value={status}
-          onChange={(e) => setStatus(e.target.value as StatusParcela | '')}
+          onChange={(e) => setStatus(e.target.value as InstallmentStatus | '')}
           sx={{ minWidth: 160 }}
         >
           <MenuItem value="">Todos</MenuItem>
-          <MenuItem value="PENDENTE">Pendente</MenuItem>
-          <MenuItem value="PAGO">Pago</MenuItem>
-          <MenuItem value="EM_ATRASO">Em atraso</MenuItem>
+          <MenuItem value="PENDING">Pendente</MenuItem>
+          <MenuItem value="PAID">Pago</MenuItem>
+          <MenuItem value="OVERDUE">Em atraso</MenuItem>
         </TextField>
 
         <DatePicker
