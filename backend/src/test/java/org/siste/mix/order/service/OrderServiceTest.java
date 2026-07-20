@@ -1,5 +1,6 @@
 package org.siste.mix.order.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.siste.mix.client.dto.CreateClientRequest;
 import org.siste.mix.client.model.Client;
 import org.siste.mix.client.repository.ClientRepository;
@@ -7,9 +8,13 @@ import org.siste.mix.installment.enums.InstallmentStatus;
 import org.siste.mix.installment.model.Installment;
 import org.siste.mix.installment.repository.InstallmentRepository;
 import org.siste.mix.order.dto.CreateOrderRequest;
+import org.siste.mix.order.dto.FieldChange;
 import org.siste.mix.order.dto.UpdateOrderRequest;
+import org.siste.mix.order.enums.OrderHistoryAction;
 import org.siste.mix.order.exception.OrderHasPaidInstallmentsException;
 import org.siste.mix.order.model.Order;
+import org.siste.mix.order.model.OrderHistory;
+import org.siste.mix.order.repository.OrderHistoryRepository;
 import org.siste.mix.order.repository.OrderRepository;
 import org.siste.mix.seller.dto.CreateSellerRequest;
 import org.siste.mix.seller.model.Seller;
@@ -25,16 +30,22 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.inOrder;
@@ -55,6 +66,10 @@ class OrderServiceTest {
     private ClientRepository clientRepository;
     @Mock
     private SellerRepository sellerRepository;
+    @Mock
+    private OrderHistoryRepository orderHistoryRepository;
+    @Spy
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @InjectMocks
     private OrderService service;
@@ -236,6 +251,93 @@ class OrderServiceTest {
                 .isInstanceOf(OrderHasPaidInstallmentsException.class);
 
         verify(installmentRepository, never()).deleteAllByOrderId(anyLong());
+    }
+
+    @Test
+    void should_save_order_history_with_changed_fields() {
+        var order = savedOrder(orderWith(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15)));
+
+        // WHEN
+        when(orderRepository.getReferenceById(1L)).thenReturn(order);
+        when(installmentRepository.existsByOrderIdAndStatus(1L, InstallmentStatus.PAID)).thenReturn(false);
+
+        // ASSERT
+        service.update(new UpdateOrderRequest(1L, null, null, new BigDecimal("600.00"), "Nova nota", null));
+
+        var captor = ArgumentCaptor.forClass(OrderHistory.class);
+        verify(orderHistoryRepository).save(captor.capture());
+
+        var history = captor.getValue();
+        assertEquals(OrderHistoryAction.UPDATE, history.getAction());
+        assertEquals(createdBy, history.getUser());
+        assertEquals(order, history.getOrder());
+
+        var changes = objectMapper.readValue(history.getChanges(), new TypeReference<List<FieldChange>>() {});
+        assertEquals(2, changes.size());
+        assertTrue(changes.stream().anyMatch(c -> c.field().equals("totalAmount") && c.to().equals("600.00")));
+        assertTrue(changes.stream().anyMatch(c -> c.field().equals("notes") && c.to().equals("Nova nota")));
+    }
+
+    @Test
+    void should_not_save_order_history_when_nothing_changes() {
+        var order = savedOrder(orderWith(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15)));
+
+        // WHEN
+        when(orderRepository.getReferenceById(1L)).thenReturn(order);
+
+        // ASSERT
+        service.update(new UpdateOrderRequest(1L, null, null, null, null, null));
+
+        verify(orderHistoryRepository, never()).save(any());
+    }
+
+    @Test
+    void should_save_order_history_on_delete() {
+        var order = savedOrder(orderWith(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15)));
+
+        // WHEN
+        when(orderRepository.getReferenceById(1L)).thenReturn(order);
+
+        // ASSERT
+        service.delete(1L);
+
+        var captor = ArgumentCaptor.forClass(OrderHistory.class);
+        verify(orderHistoryRepository).save(captor.capture());
+
+        var history = captor.getValue();
+        assertEquals(OrderHistoryAction.DELETE, history.getAction());
+        assertEquals(createdBy, history.getUser());
+        assertNull(history.getChanges());
+    }
+
+    @Test
+    void should_list_order_history_with_deserialized_changes() {
+        var order = savedOrder(orderWith(new BigDecimal("300.00"), 3, LocalDate.of(2026, 1, 15)));
+        var changesJson = objectMapper.writeValueAsString(List.of(new FieldChange("totalAmount", "300.00", "600.00")));
+        var history = new OrderHistory(order, createdBy, OrderHistoryAction.UPDATE, changesJson);
+
+        // WHEN
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(orderHistoryRepository.findAllByOrderIdOrderByChangedAtDesc(1L)).thenReturn(List.of(history));
+
+        // ASSERT
+        var result = service.listHistory(1L);
+
+        assertEquals(1, result.size());
+        assertEquals(OrderHistoryAction.UPDATE, result.get(0).action());
+        assertEquals("Ana Admin", result.get(0).changedByName());
+        assertEquals(1, result.get(0).changes().size());
+        assertEquals("totalAmount", result.get(0).changes().get(0).field());
+    }
+
+    @Test
+    void should_throw_when_listing_history_of_nonexistent_order() {
+        // WHEN
+        when(orderRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // ASSERT
+        assertThatThrownBy(() -> service.listHistory(1L))
+                .isInstanceOf(EntityNotFoundException.class);
     }
 
     private CreateOrderRequest orderWith(BigDecimal totalAmount, int totalInstallments, LocalDate orderDate) {
