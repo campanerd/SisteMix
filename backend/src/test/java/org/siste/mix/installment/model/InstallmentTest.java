@@ -7,6 +7,9 @@ import org.siste.mix.order.dto.CreateOrderRequest;
 import org.siste.mix.order.model.Order;
 import org.siste.mix.seller.dto.CreateSellerRequest;
 import org.siste.mix.seller.model.Seller;
+import org.siste.mix.user.dto.CreateUserRequest;
+import org.siste.mix.user.enums.UserRole;
+import org.siste.mix.user.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +29,8 @@ class InstallmentTest {
         var request = new CreateOrderRequest("PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, 1L, 1L);
-        order = new Order(request, client, seller);
+        var createdBy = new User(new CreateUserRequest("Ana Admin", "ana@email.com", "123456", UserRole.ROLE_ADMIN), "hash");
+        order = new Order(request, client, seller, createdBy);
     }
 
     @Test
