@@ -16,7 +16,8 @@ public record OrderResponse(
         Long clientId,
         String clientName,
         Long sellerId,
-        String sellerName
+        String sellerName,
+        String createdByName
 ) {
     public OrderResponse(Order order) {
         this(
@@ -30,7 +31,8 @@ public record OrderResponse(
                 order.getClient().getId(),
                 order.getClient().getName(),
                 order.getSeller().getId(),
-                order.getSeller().getName()
+                order.getSeller().getName(),
+                order.getCreatedBy().getName()
         );
     }
 }
