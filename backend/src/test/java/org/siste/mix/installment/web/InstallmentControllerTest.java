@@ -11,6 +11,9 @@ import org.siste.mix.installment.service.InstallmentService;
 import org.siste.mix.order.model.Order;
 import org.siste.mix.seller.dto.CreateSellerRequest;
 import org.siste.mix.seller.model.Seller;
+import org.siste.mix.user.dto.CreateUserRequest;
+import org.siste.mix.user.enums.UserRole;
+import org.siste.mix.user.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,9 +49,10 @@ class InstallmentControllerTest {
     void setUp() {
         var client = new Client(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
         var seller = new Seller(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888"));
+        var createdBy = new User(new CreateUserRequest("Ana Admin", "ana@email.com", "123456", UserRole.ROLE_ADMIN), "hash");
         var order = new Order(1L, "PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
-                new BigDecimal("300.00"), 3, null, client, seller, true);
+                new BigDecimal("300.00"), 3, null, client, seller, createdBy, true);
         var installment = new Installment(1L, 1, new BigDecimal("100.00"),
                 LocalDate.of(2026, 2, 15), InstallmentStatus.PENDING, null, order);
         summary = new InstallmentSummary(installment);
