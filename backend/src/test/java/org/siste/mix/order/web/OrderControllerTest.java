@@ -8,6 +8,9 @@ import org.siste.mix.order.dto.UpdateOrderRequest;
 import org.siste.mix.order.model.Order;
 import org.siste.mix.order.service.OrderService;
 import org.siste.mix.seller.model.Seller;
+import org.siste.mix.user.dto.CreateUserRequest;
+import org.siste.mix.user.enums.UserRole;
+import org.siste.mix.user.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,13 +51,14 @@ class OrderControllerTest {
     void setUp() {
         var client = new Client(1L, "João Silva", "11999999999", "12345678900", "joao@email.com", true);
         var seller = new Seller(1L, "Maria Souza", "98765432100", "11988888888", true);
+        var createdBy = new User(new CreateUserRequest("Ana Admin", "ana@email.com", "123456", UserRole.ROLE_ADMIN), "hash");
         order = new Order(1L, "PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
-                new BigDecimal("300.00"), 3, null, client, seller, true);
+                new BigDecimal("300.00"), 3, null, client, seller, createdBy, true);
         orderResponse = new OrderResponse(1L, "PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null,
-                1L, "João Silva", 1L, "Maria Souza");
+                1L, "João Silva", 1L, "Maria Souza", "Ana Admin");
         uriBuilder = UriComponentsBuilder.fromUriString("http://localhost");
     }
 
@@ -108,7 +112,7 @@ class OrderControllerTest {
         var updated = new OrderResponse(1L, "PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, "New notes",
-                1L, "João Silva", 1L, "Maria Souza");
+                1L, "João Silva", 1L, "Maria Souza", "Ana Admin");
 
         // WHEN
         when(service.update(any(UpdateOrderRequest.class))).thenReturn(updated);
@@ -131,7 +135,7 @@ class OrderControllerTest {
         var updated = new OrderResponse(1L, "PED-001",
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null,
-                1L, "João Silva", 2L, "Carlos Lima");
+                1L, "João Silva", 2L, "Carlos Lima", "Ana Admin");
 
         // WHEN
         when(service.update(any(UpdateOrderRequest.class))).thenReturn(updated);
