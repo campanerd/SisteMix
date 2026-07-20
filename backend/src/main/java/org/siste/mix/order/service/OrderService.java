@@ -13,9 +13,11 @@ import org.siste.mix.order.exception.OrderHasPaidInstallmentsException;
 import org.siste.mix.order.model.Order;
 import org.siste.mix.order.repository.OrderRepository;
 import org.siste.mix.seller.repository.SellerRepository;
+import org.siste.mix.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +43,8 @@ public class OrderService {
     public OrderResponse create(CreateOrderRequest data) {
         var client = clientRepository.getReferenceById(data.clientId());
         var seller = sellerRepository.getReferenceById(data.sellerId());
-        var order = orderRepository.save(new Order(data, client, seller));
+        var currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var order = orderRepository.save(new Order(data, client, seller, currentUser));
         generateInstallments(order);
         return new OrderResponse(order);
     }

@@ -6,6 +6,9 @@ import org.siste.mix.order.dto.CreateOrderRequest;
 import org.siste.mix.order.dto.UpdateOrderRequest;
 import org.siste.mix.seller.dto.CreateSellerRequest;
 import org.siste.mix.seller.model.Seller;
+import org.siste.mix.user.dto.CreateUserRequest;
+import org.siste.mix.user.enums.UserRole;
+import org.siste.mix.user.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,11 +21,13 @@ class OrderTest {
 
     private Client client;
     private Seller seller;
+    private User createdBy;
 
     @BeforeEach
     void setUp() {
         client = new Client(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
         seller = new Seller(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888"));
+        createdBy = new User(new CreateUserRequest("Ana Admin", "ana@email.com", "123456", UserRole.ROLE_ADMIN), "hash");
     }
 
     @Test
@@ -37,13 +42,14 @@ class OrderTest {
                 1L, 1L
         );
 
-        var order = new Order(request, client, seller);
+        var order = new Order(request, client, seller, createdBy);
 
         assertThat(order.getOrderNumber()).isEqualTo("PED-001");
         assertThat(order.getTotalAmount()).isEqualByComparingTo("300.00");
         assertThat(order.getTotalInstallments()).isEqualTo(3);
         assertThat(order.getClient()).isEqualTo(client);
         assertThat(order.getSeller()).isEqualTo(seller);
+        assertThat(order.getCreatedBy()).isEqualTo(createdBy);
         assertThat(order.getActive()).isTrue();
     }
 
@@ -52,7 +58,7 @@ class OrderTest {
         var order = new Order(
                 new CreateOrderRequest("PED-001", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                         new BigDecimal("300.00"), 3, null, 1L, 1L),
-                client, seller
+                client, seller, createdBy
         );
 
         order.update(new UpdateOrderRequest(1L, null, null, null, "New notes", null), null);
@@ -67,7 +73,7 @@ class OrderTest {
         var order = new Order(
                 new CreateOrderRequest("PED-001", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                         new BigDecimal("300.00"), 3, null, 1L, 1L),
-                client, seller
+                client, seller, createdBy
         );
         var newSeller = new Seller(new CreateSellerRequest("Carlos Lima", "11122233344", "11977777777"));
 
@@ -81,7 +87,7 @@ class OrderTest {
         var order = new Order(
                 new CreateOrderRequest("PED-001", LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                         new BigDecimal("300.00"), 3, null, 1L, 1L),
-                client, seller
+                client, seller, createdBy
         );
 
         assertThat(order.getActive()).isTrue();

@@ -9,6 +9,7 @@ import org.siste.mix.client.model.Client;
 import org.siste.mix.order.dto.CreateOrderRequest;
 import org.siste.mix.order.dto.UpdateOrderRequest;
 import org.siste.mix.seller.model.Seller;
+import org.siste.mix.user.model.User;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -51,10 +52,14 @@ public class Order {
     @JoinColumn(name = "seller_id")
     private Seller seller;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
+
     @Column(name = "active")
     private Boolean active;
 
-    public Order(CreateOrderRequest data, Client client, Seller seller) {
+    public Order(CreateOrderRequest data, Client client, Seller seller, User createdBy) {
         this.orderNumber = data.orderNumber();
         this.issueDate = data.issueDate();
         this.orderDate = data.orderDate();
@@ -63,6 +68,7 @@ public class Order {
         this.notes = data.notes();
         this.client = client;
         this.seller = seller;
+        this.createdBy = createdBy;
         this.active = true;
     }
 

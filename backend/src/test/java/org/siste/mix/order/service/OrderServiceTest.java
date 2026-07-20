@@ -14,6 +14,10 @@ import org.siste.mix.order.repository.OrderRepository;
 import org.siste.mix.seller.dto.CreateSellerRequest;
 import org.siste.mix.seller.model.Seller;
 import org.siste.mix.seller.repository.SellerRepository;
+import org.siste.mix.user.dto.CreateUserRequest;
+import org.siste.mix.user.enums.UserRole;
+import org.siste.mix.user.model.User;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +26,8 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -55,13 +61,21 @@ class OrderServiceTest {
 
     private Client client;
     private Seller seller;
+    private User createdBy;
 
     @BeforeEach
     void setUp() {
         client = new Client(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com"));
         seller = new Seller(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888"));
+        createdBy = new User(new CreateUserRequest("Ana Admin", "ana@email.com", "123456", UserRole.ROLE_ADMIN), "hash");
         lenient().when(clientRepository.getReferenceById(1L)).thenReturn(client);
         lenient().when(sellerRepository.getReferenceById(1L)).thenReturn(seller);
+        SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(createdBy, null));
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -230,6 +244,6 @@ class OrderServiceTest {
 
     private Order savedOrder(CreateOrderRequest data) {
         return new Order(1L, data.orderNumber(), data.issueDate(), data.orderDate(),
-                data.totalAmount(), data.totalInstallments(), data.notes(), client, seller, true);
+                data.totalAmount(), data.totalInstallments(), data.notes(), client, seller, createdBy, true);
     }
 }

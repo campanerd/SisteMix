@@ -9,6 +9,9 @@ import org.siste.mix.order.dto.CreateOrderRequest;
 import org.siste.mix.order.model.Order;
 import org.siste.mix.seller.dto.CreateSellerRequest;
 import org.siste.mix.seller.model.Seller;
+import org.siste.mix.user.dto.CreateUserRequest;
+import org.siste.mix.user.enums.UserRole;
+import org.siste.mix.user.model.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -135,10 +138,11 @@ class InstallmentServiceTest {
     private Order persistOrder(boolean active) {
         var client = em.persist(new Client(new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com")));
         var seller = em.persist(new Seller(new CreateSellerRequest("Maria Souza", "98765432100", "11988888888")));
+        var createdBy = em.persist(new User(new CreateUserRequest("Ana Admin", "ana@email.com", "123456", UserRole.ROLE_ADMIN), "hash"));
         var request = new CreateOrderRequest("PED-" + System.nanoTime(),
                 LocalDate.of(2026, 1, 1), LocalDate.of(2026, 1, 15),
                 new BigDecimal("300.00"), 3, null, null, null);
-        var order = new Order(request, client, seller);
+        var order = new Order(request, client, seller, createdBy);
         if (!active) {
             order.deactivate();
         }
