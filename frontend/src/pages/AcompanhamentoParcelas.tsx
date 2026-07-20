@@ -21,6 +21,7 @@ import type { Dayjs } from 'dayjs';
 import { listInstallments, updateInstallmentStatus } from '../api/installments';
 import type { InstallmentFilters, InstallmentStatus, InstallmentSummary } from '../types';
 import { corStatus, formatarData, formatarMoeda, rotuloStatus } from '../utils/format';
+import { filtrosPadraoParcelas } from '../utils/filtros';
 
 export function AcompanhamentoParcelas() {
   const queryClient = useQueryClient();
@@ -33,7 +34,7 @@ export function AcompanhamentoParcelas() {
   const [valorMax, setValorMax] = useState('');
 
   // Filtros efetivamente aplicados (disparam a busca)
-  const [filtros, setFiltros] = useState<InstallmentFilters>({});
+  const [filtros, setFiltros] = useState<InstallmentFilters>(filtrosPadraoParcelas());
 
   const [aviso, setAviso] = useState<{ tipo: 'success' | 'error'; texto: string } | null>(null);
 
