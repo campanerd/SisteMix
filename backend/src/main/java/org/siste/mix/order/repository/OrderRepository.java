@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    @EntityGraph(attributePaths = {"client", "seller"})
+    @EntityGraph(attributePaths = {"client", "seller", "createdBy"})
     Page<Order> findAllByActiveTrue(Pageable pageable);
 
     @EntityGraph(attributePaths = {"client", "seller", "createdBy"})

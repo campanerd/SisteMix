@@ -12,7 +12,8 @@ public record OrderSummary(
         String sellerName,
         BigDecimal totalAmount,
         Integer totalInstallments,
-        LocalDate orderDate
+        LocalDate orderDate,
+        String createdByName
 ) {
     public OrderSummary(Order order) {
         this(
@@ -22,7 +23,8 @@ public record OrderSummary(
                 order.getSeller().getName(),
                 order.getTotalAmount(),
                 order.getTotalInstallments(),
-                order.getOrderDate()
+                order.getOrderDate(),
+                order.getCreatedBy().getName()
         );
     }
 }
