@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.siste.mix.order.dto.CreateOrderRequest;
+import org.siste.mix.order.dto.OrderHistoryResponse;
 import org.siste.mix.order.dto.OrderResponse;
 import org.siste.mix.order.dto.OrderSummary;
 import org.siste.mix.order.dto.UpdateOrderRequest;
@@ -16,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/orders")
@@ -57,5 +60,11 @@ public class OrderController {
     @Operation(summary = "Listar um pedido por id")
     public ResponseEntity<OrderResponse> findById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
+    }
+
+    @GetMapping("/{id}/history")
+    @Operation(summary = "Listar o histórico de alterações de um pedido")
+    public ResponseEntity<List<OrderHistoryResponse>> history(@PathVariable Long id) {
+        return ResponseEntity.ok(service.listHistory(id));
     }
 }
