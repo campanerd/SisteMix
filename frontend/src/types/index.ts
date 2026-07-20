@@ -1,6 +1,8 @@
 // Tipos espelhando os DTOs do backend (SisteMix API)
 
-export type StatusParcela = 'PAGO' | 'PENDENTE' | 'EM_ATRASO';
+export type InstallmentStatus = 'PAID' | 'PENDING' | 'OVERDUE';
+
+export type UserRole = 'ROLE_USER' | 'ROLE_ADMIN' | 'ROLE_DEV';
 
 // ----- Spring Data Page (listagens paginadas) -----
 export interface Page<T> {
@@ -11,128 +13,154 @@ export interface Page<T> {
   size: number;
 }
 
-// ----- Cliente -----
-export interface ClienteListagem {
+// ----- Auth -----
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  token: string;
+}
+
+// ----- User -----
+export interface UserResponse {
   id: number;
-  nome: string;
-  telefone: string | null;
+  name: string;
+  email: string;
+}
+
+export interface CreateUserRequest {
+  name: string;
+  email: string;
+  password: string;
+  role: UserRole;
+}
+
+export interface UpdateUserRequest {
+  id: number;
+  name?: string;
+  email?: string;
+  password?: string;
+  role?: UserRole;
+}
+
+// ----- Client -----
+export interface ClientSummary {
+  id: number;
+  name: string;
+  phone: string | null;
   cpfCnpj: string | null;
 }
 
-export interface ClienteDetalhe extends ClienteListagem {
+export interface ClientResponse extends ClientSummary {
   email: string | null;
 }
 
-export interface ClienteCadastro {
-  nome: string;
-  telefone?: string;
+export interface CreateClientRequest {
+  name: string;
+  phone?: string;
   cpfCnpj?: string;
   email?: string;
 }
 
-export interface ClienteAtualizacao {
+export interface UpdateClientRequest {
   id: number;
-  nome?: string;
-  telefone?: string;
+  name?: string;
+  phone?: string;
   email?: string;
 }
 
-// ----- Vendedor -----
-export interface VendedorListagem {
+// ----- Seller -----
+export interface SellerSummary {
   id: number;
-  nome: string;
+  name: string;
   cpf: string | null;
-  telefone: string | null;
 }
 
-export interface VendedorCadastro {
-  nome: string;
+export interface SellerResponse extends SellerSummary {
+  phone: string | null;
+}
+
+export interface CreateSellerRequest {
+  name: string;
   cpf?: string;
-  telefone?: string;
+  phone?: string;
 }
 
-export interface VendedorAtualizacao {
+export interface UpdateSellerRequest {
   id: number;
-  nome?: string;
-  telefone?: string;
+  name?: string;
+  phone?: string;
 }
 
-// ----- Pedido -----
-export interface PedidoListagem {
+// ----- Order -----
+export interface OrderSummary {
   id: number;
-  numeroPedido: string;
-  nomeCliente: string;
-  nomeVendedor: string;
-  valorTotal: number;
-  totalParcelas: number;
-  dataPedido: string; // ISO date "AAAA-MM-DD"
+  orderNumber: string;
+  clientName: string;
+  sellerName: string;
+  totalAmount: number;
+  totalInstallments: number;
+  orderDate: string; // ISO date "AAAA-MM-DD"
 }
 
-export interface PedidoDetalhe {
+export interface OrderResponse {
   id: number;
-  numeroPedido: string;
-  dataEmissao: string;
-  dataPedido: string;
-  valorTotal: number;
-  totalParcelas: number;
-  observacao: string | null;
-  idCliente: number;
-  nomeCliente: string;
-  idVendedor: number;
-  nomeVendedor: string;
+  orderNumber: string;
+  issueDate: string;
+  orderDate: string;
+  totalAmount: number;
+  totalInstallments: number;
+  notes: string | null;
+  clientId: number;
+  clientName: string;
+  sellerId: number;
+  sellerName: string;
 }
 
-export interface PedidoCadastro {
-  numeroPedido: string;
-  dataEmissao: string;
-  dataPedido: string;
-  valorTotal: number;
-  totalParcelas: number;
-  observacao?: string;
-  idCliente: number;
-  idVendedor: number;
+export interface CreateOrderRequest {
+  orderNumber: string;
+  issueDate: string;
+  orderDate: string;
+  totalAmount: number;
+  totalInstallments: number;
+  notes?: string;
+  clientId: number;
+  sellerId: number;
 }
 
-export interface PedidoAtualizacao {
+export interface UpdateOrderRequest {
   id: number;
-  dataEmissao?: string;
-  dataPedido?: string;
-  valorTotal?: number;
-  observacao?: string;
-  idVendedor?: number;
+  issueDate?: string;
+  orderDate?: string;
+  totalAmount?: number;
+  notes?: string;
+  sellerId?: number;
 }
 
-// ----- Parcela -----
-export interface ParcelaListagem {
+// ----- Installment -----
+export interface InstallmentSummary {
   id: number;
-  numeroParcela: number;
-  totalParcelas: number;
-  valor: number;
-  vencimento: string;
-  status: StatusParcela;
-  dataPagamento: string | null;
-  numeroPedido: string;
-  nomeCliente: string;
+  installmentNumber: number;
+  totalInstallments: number;
+  amount: number;
+  dueDate: string;
+  status: InstallmentStatus;
+  paymentDate: string | null;
+  orderNumber: string;
+  clientName: string;
 }
 
-export interface ParcelaDetalhe {
-  id: number;
-  numeroParcela: number;
-  totalParcelas: number;
-  valor: number;
-  vencimento: string;
-  status: StatusParcela;
-  dataPagamento: string | null;
-  idPedido: number;
-  numeroPedido: string;
-  nomeCliente: string;
-  nomeVendedor: string;
+export interface InstallmentResponse extends InstallmentSummary {
+  orderId: number;
+  sellerName: string;
 }
 
-export interface ParcelaFiltros {
-  status?: StatusParcela;
-  vencimentoInicio?: string;
-  vencimentoFim?: string;
-  valorMin?: number;
-  valorMax?: number;
+export interface InstallmentFilters {
+  status?: InstallmentStatus;
+  dueDateFrom?: string;
+  dueDateTo?: string;
+  amountMin?: number;
+  amountMax?: number;
 }
