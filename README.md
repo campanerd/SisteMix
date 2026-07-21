@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/PostgreSQL-Docker-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL"/>
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="React 19"/>
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="TypeScript"/>
-<img src="https://github.com/campanerd/siste-mix/actions/workflows/ci.yml/badge.svg" alt="CI"/>  
+<img src="https://github.com/campanerd/SisteMix/actions/workflows/ci.yml/badge.svg" alt="CI"/>  
 <img src="https://img.shields.io/badge/status-em%20desenvolvimento-yellow" alt="Status"/>
 </p>
 
@@ -29,14 +29,17 @@
 
 | Status | Funcionalidade |
 |--------|----------------|
+| ✅ | Autenticação via JWT com controle de acesso por perfil (`USER`, `ADMIN`, `DEV`) |
 | ✅ | Listagem de parcelas com filtros por status, vencimento e valor |
+| ✅ | Próxima parcela não paga de cada pedido em destaque quando nenhum filtro é aplicado |
 | ✅ | Atualização manual de status (Pago, Pendente, Em atraso) |
 | ✅ | Geração automática de parcelas ao cadastrar um pedido |
 | ✅ | Divisão de valor com arredondamento aplicado à última parcela |
-| ✅ | CRUD completo de Clientes, Vendedores e Pedidos via API REST |
+| ✅ | Sincronização de parcelas ao editar valor/data do pedido, bloqueando a alteração se já houver parcela paga |
+| ✅ | Auditoria de pedidos: quem criou, quem editou (com o diff dos campos) e quem excluiu |
+| ✅ | CRUD completo de Clientes, Vendedores, Pedidos e Usuários via API REST |
 | 🔜 | Cadastro de Pedidos, Clientes e Vendedores via interface web |
 | 🔜 | Dashboard com resumo financeiro (total em carteira, pago, em atraso) |
-| 🔜 | Autenticação e controle de acesso |
 
 ---
 
@@ -49,10 +52,13 @@
 | Java | 26 | Linguagem principal |
 | Spring Boot | 4.0 | Framework web |
 | Spring Data JPA | — | Persistência |
+| Spring Security | — | Autenticação e autorização |
+| java-jwt (Auth0) | — | Geração e validação de tokens JWT |
 | PostgreSQL | — | Banco de dados |
 | Flyway | — | Migrations do banco |
 | Bean Validation | — | Validação de dados |
 | Lombok | — | Redução de boilerplate |
+| springdoc-openapi | — | Documentação interativa (Swagger UI) |
 
 ### Frontend
 
@@ -63,9 +69,9 @@
 | Material UI (MUI) | Componentes e design system |
 | MUI X Data Grid | Tabela de parcelas |
 | TanStack Query | Busca e cache de dados da API |
-| Axios | Cliente HTTP |
+| Axios | Cliente HTTP, com interceptors de JWT e tratamento de 401 |
 | dayjs | Manipulação de datas |
-| React Router | Navegação entre telas |
+| React Router | Navegação entre telas e rota protegida por login |
 
 ---
 
@@ -77,21 +83,26 @@ SisteMix/
 │   ├── src/main/java/org/siste/mix/
 │   │   ├── client/             # Entidade, repositório, service, controller e DTOs
 │   │   ├── seller/
-│   │   ├── order/
+│   │   ├── order/               # inclui histórico de alterações (auditoria)
 │   │   ├── installment/
-│   │   └── config/             # CORS
+│   │   ├── user/                # cadastro de usuários
+│   │   ├── infra/
+│   │   │   ├── security/        # JWT, filtro de autenticação, SecurityConfig
+│   │   │   └── exception/       # tratamento global de erros
+│   │   └── config/               # CORS, Swagger, prefixo /api
 │   ├── src/main/resources/
-│   │   └── db/migration/       # Scripts Flyway (V1–V6)
+│   │   └── db/migration/       # Scripts Flyway (V1–V10)
 │   ├── docs/
-│   │   └── bruno/              # Coleção de requisições (Bruno API client)
+│   │   ├── bruno/               # Coleção de requisições (Bruno API client)
+│   │   └── DER/                 # Diagrama e schema do banco
 │   └── pom.xml
 └── frontend/
     └── src/
-        ├── api/                # Cliente Axios + um arquivo por domínio
+        ├── api/                # Cliente Axios + um arquivo por domínio (auth, installments...)
         ├── components/         # Componentes reutilizáveis (Layout)
-        ├── pages/              # Telas da aplicação
-        ├── types/              # Interfaces TypeScript
-        ├── utils/              # Formatação (moeda, data, status)
+        ├── pages/              # Telas da aplicação (Login, Acompanhamento de Parcelas...)
+        ├── types/              # Interfaces TypeScript espelhando os DTOs do backend
+        ├── utils/              # Formatação e filtros padrão
         └── theme/              # Tema MUI
 ```
 
@@ -125,6 +136,15 @@ docker run --name sistemix-db \
 
 ### 2. Backend
 
+Crie um arquivo `.env` na raiz do projeto com as variáveis abaixo (o backend lê essas variáveis de ambiente na inicialização):
+
+```
+DB_URL=jdbc:postgresql://localhost:4747/sistemix
+DB_USER=postgres
+DB_PASSWORD=postgres
+JWT_SECRET=uma_frase_longa_e_aleatoria
+```
+
 ```bash
 cd backend
 ./mvnw spring-boot:run
@@ -140,31 +160,16 @@ npm install
 npm run dev
 ```
 
-A aplicação estará disponível em `http://localhost:5173`.
+A aplicação estará disponível em `http://localhost:5173`. Como o sistema exige login, é necessário criar um usuário antes (via `POST /api/users`, endpoint público) para conseguir acessar.
 
 ---
 
 ## Documentação da API
 
-A coleção completa de requisições está disponível para o [Bruno API Client](https://www.usebruno.com/) em `backend/docs/bruno/`.
+A API completa está documentada via Swagger:
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| GET | `/clients` | Lista clientes ativos |
-| POST | `/clients` | Cadastra cliente |
-| PUT | `/clients` | Atualiza cliente |
-| DELETE | `/clients/{id}` | Desativa cliente (soft delete) |
-| GET | `/sellers` | Lista vendedores ativos |
-| POST | `/sellers` | Cadastra vendedor |
-| PUT | `/sellers` | Atualiza vendedor |
-| DELETE | `/sellers/{id}` | Desativa vendedor |
-| GET | `/orders` | Lista pedidos ativos |
-| POST | `/orders` | Cadastra pedido e gera parcelas automaticamente |
-| PUT | `/orders` | Atualiza pedido |
-| DELETE | `/orders/{id}` | Desativa pedido |
-| GET | `/installments` | Lista parcelas com filtros opcionais |
-| GET | `/installments/{id}` | Detalhe de uma parcela |
-| GET | `/installments/order/{id}` | Lista parcelas de um pedido |
-| PATCH | `/installments/{id}/status` | Atualiza status de uma parcela |
+`http://localhost:8080/swagger-ui/index.html`
 
-**Filtros disponíveis em `GET /installments`:** `status`, `dueDateFrom`, `dueDateTo`, `amountMin`, `amountMax`
+Domínios disponíveis: **Autenticação**, **Usuários**, **Clientes**, **Vendedores**, **Pedidos** (incluindo histórico de alterações) e **Parcelas**.
+
+Também há uma coleção pronta para o [Bruno API Client](https://www.usebruno.com/) em `backend/docs/bruno/`.
