@@ -23,6 +23,11 @@ public class InstallmentService {
     private InstallmentRepository repository;
 
     public List<InstallmentSummary> list(InstallmentStatus status, LocalDate dueDateFrom, LocalDate dueDateTo, BigDecimal amountMin, BigDecimal amountMax) {
+        var noFiltersApplied = status == null && dueDateFrom == null && dueDateTo == null && amountMin == null && amountMax == null;
+        if (noFiltersApplied) {
+            return listNextDuePerOrder();
+        }
+
         var spec = Specification
                 .where(InstallmentSpec.orderIsActive())
                 .and(InstallmentSpec.hasStatus(status))
@@ -30,6 +35,15 @@ public class InstallmentService {
                 .and(InstallmentSpec.dueDateTo(dueDateTo))
                 .and(InstallmentSpec.amountMin(amountMin))
                 .and(InstallmentSpec.amountMax(amountMax));
+        return repository.findAll(spec).stream().map(InstallmentSummary::new).toList();
+    }
+
+    private List<InstallmentSummary> listNextDuePerOrder() {
+        var ids = repository.findNextUnpaidInstallmentIdsPerOrder();
+        if (ids.isEmpty()) {
+            return List.of();
+        }
+        var spec = Specification.where(InstallmentSpec.idIn(ids));
         return repository.findAll(spec).stream().map(InstallmentSummary::new).toList();
     }
 

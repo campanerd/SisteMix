@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 public class InstallmentSpec {
 
@@ -35,5 +36,9 @@ public class InstallmentSpec {
 
     public static Specification<Installment> amountMax(BigDecimal max) {
         return (root, query, cb) -> max == null ? null : cb.lessThanOrEqualTo(root.get("amount"), max);
+    }
+
+    public static Specification<Installment> idIn(List<Long> ids) {
+        return (root, query, cb) -> root.get("id").in(ids);
     }
 }

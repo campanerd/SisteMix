@@ -18,7 +18,7 @@ interface ItemMenu {
 }
 
 const itens: ItemMenu[] = [
-  { rotulo: 'Acompanhamento', caminho: '/', icone: <ReceiptLongIcon /> },
+  { rotulo: 'Acompanhamento', caminho: '/acompanhamento', icone: <ReceiptLongIcon /> },
   { rotulo: 'Pedidos', caminho: '/pedidos', icone: <ShoppingCartIcon /> },
   { rotulo: 'Clientes', caminho: '/clientes', icone: <PeopleIcon /> },
   { rotulo: 'Vendedores', caminho: '/vendedores', icone: <BadgeIcon /> },
@@ -64,7 +64,6 @@ export function Layout() {
                 key={item.caminho}
                 component={NavLink}
                 to={item.caminho}
-                end={item.caminho === '/'}
                 sx={{
                   '&.active': {
                     bgcolor: 'action.selected',
