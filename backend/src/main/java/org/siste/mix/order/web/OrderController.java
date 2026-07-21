@@ -8,7 +8,12 @@ import org.siste.mix.order.dto.OrderHistoryResponse;
 import org.siste.mix.order.dto.OrderResponse;
 import org.siste.mix.order.dto.OrderSummary;
 import org.siste.mix.order.dto.UpdateOrderRequest;
-import org.siste.mix.order.service.OrderService;
+import org.siste.mix.order.usecase.CreateOrderUseCase;
+import org.siste.mix.order.usecase.DeleteOrderUseCase;
+import org.siste.mix.order.usecase.FindOrderByIdUseCase;
+import org.siste.mix.order.usecase.ListOrderHistoryUseCase;
+import org.siste.mix.order.usecase.ListOrdersUseCase;
+import org.siste.mix.order.usecase.UpdateOrderUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,12 +31,27 @@ import java.util.List;
 public class OrderController {
 
     @Autowired
-    private OrderService service;
+    private CreateOrderUseCase createOrderUseCase;
+
+    @Autowired
+    private ListOrdersUseCase listOrdersUseCase;
+
+    @Autowired
+    private UpdateOrderUseCase updateOrderUseCase;
+
+    @Autowired
+    private DeleteOrderUseCase deleteOrderUseCase;
+
+    @Autowired
+    private FindOrderByIdUseCase findOrderByIdUseCase;
+
+    @Autowired
+    private ListOrderHistoryUseCase listOrderHistoryUseCase;
 
     @PostMapping
     @Operation(summary = "Cadastra um novo pedido e gera parcelas automaticamente")
     public ResponseEntity<OrderResponse> create(@RequestBody @Valid CreateOrderRequest data, UriComponentsBuilder uriBuilder) {
-        var response = service.create(data);
+        var response = createOrderUseCase.create(data);
         var uri = uriBuilder.path("/{id}").buildAndExpand(response.id()).toUri();
         return ResponseEntity.created(uri).body(response);
     }
@@ -39,32 +59,32 @@ public class OrderController {
     @GetMapping
     @Operation(summary = "Listar pedidos")
     public ResponseEntity<Page<OrderSummary>> list(@PageableDefault(size = 10, sort = {"orderDate"}) Pageable pageable) {
-        return ResponseEntity.ok(service.list(pageable));
+        return ResponseEntity.ok(listOrdersUseCase.list(pageable));
     }
 
     @PutMapping
     @Operation(summary = "Atualizar um pedido")
     public ResponseEntity<OrderResponse> update(@RequestBody @Valid UpdateOrderRequest data) {
-        return ResponseEntity.ok(service.update(data));
+        return ResponseEntity.ok(updateOrderUseCase.update(data));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Excluir um pedido")
     @Secured({"ROLE_ADMIN", "ROLE_DEV"})
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.delete(id);
+        deleteOrderUseCase.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Listar um pedido por id")
     public ResponseEntity<OrderResponse> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.findById(id));
+        return ResponseEntity.ok(findOrderByIdUseCase.findById(id));
     }
 
     @GetMapping("/{id}/history")
     @Operation(summary = "Listar o histórico de alterações de um pedido")
     public ResponseEntity<List<OrderHistoryResponse>> history(@PathVariable Long id) {
-        return ResponseEntity.ok(service.listHistory(id));
+        return ResponseEntity.ok(listOrderHistoryUseCase.listHistory(id));
     }
 }

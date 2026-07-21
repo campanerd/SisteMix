@@ -5,7 +5,11 @@ import org.siste.mix.seller.dto.SellerResponse;
 import org.siste.mix.seller.dto.SellerSummary;
 import org.siste.mix.seller.dto.UpdateSellerRequest;
 import org.siste.mix.seller.model.Seller;
-import org.siste.mix.seller.service.SellerService;
+import org.siste.mix.seller.usecase.CreateSellerUseCase;
+import org.siste.mix.seller.usecase.DeleteSellerUseCase;
+import org.siste.mix.seller.usecase.FindSellerByIdUseCase;
+import org.siste.mix.seller.usecase.ListSellersUseCase;
+import org.siste.mix.seller.usecase.UpdateSellerUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +35,15 @@ import static org.mockito.Mockito.when;
 class SellerControllerTest {
 
     @Mock
-    private SellerService service;
+    private CreateSellerUseCase createSellerUseCase;
+    @Mock
+    private ListSellersUseCase listSellersUseCase;
+    @Mock
+    private UpdateSellerUseCase updateSellerUseCase;
+    @Mock
+    private DeleteSellerUseCase deleteSellerUseCase;
+    @Mock
+    private FindSellerByIdUseCase findSellerByIdUseCase;
 
     @InjectMocks
     private SellerController controller;
@@ -50,7 +62,7 @@ class SellerControllerTest {
         var request = new CreateSellerRequest("Maria Souza", "12345678900", "11988888888");
 
         // WHEN
-        when(service.create(any(CreateSellerRequest.class))).thenReturn(seller);
+        when(createSellerUseCase.create(any(CreateSellerRequest.class))).thenReturn(seller);
 
         // ASSERT
         var response = controller.create(request, uriBuilder);
@@ -62,8 +74,8 @@ class SellerControllerTest {
         assertEquals("12345678900", response.getBody().cpf());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).create(any(CreateSellerRequest.class));
+        InOrder inOrder = inOrder(createSellerUseCase);
+        inOrder.verify(createSellerUseCase).create(any(CreateSellerRequest.class));
     }
 
     @Test
@@ -71,7 +83,7 @@ class SellerControllerTest {
         var page = new PageImpl<>(List.of(new SellerSummary(1L, "Maria Souza", "12345678900")));
 
         // WHEN
-        when(service.list(any(Pageable.class))).thenReturn(page);
+        when(listSellersUseCase.list(any(Pageable.class))).thenReturn(page);
 
         // ASSERT
         var response = controller.list(Pageable.ofSize(10));
@@ -82,8 +94,8 @@ class SellerControllerTest {
         assertEquals("Maria Souza", response.getBody().getContent().get(0).name());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).list(any(Pageable.class));
+        InOrder inOrder = inOrder(listSellersUseCase);
+        inOrder.verify(listSellersUseCase).list(any(Pageable.class));
     }
 
     @Test
@@ -92,7 +104,7 @@ class SellerControllerTest {
         var updated = new SellerResponse(1L, "Maria Santos", "12345678900", "11988888888");
 
         // WHEN
-        when(service.update(request)).thenReturn(updated);
+        when(updateSellerUseCase.update(request)).thenReturn(updated);
 
         // ASSERT
         var response = controller.update(request);
@@ -102,14 +114,14 @@ class SellerControllerTest {
         assertEquals("Maria Santos", response.getBody().name());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).update(request);
+        InOrder inOrder = inOrder(updateSellerUseCase);
+        inOrder.verify(updateSellerUseCase).update(request);
     }
 
     @Test
     void should_delete_seller_and_return_204() {
         // WHEN
-        doNothing().when(service).delete(1L);
+        doNothing().when(deleteSellerUseCase).delete(1L);
 
         // ASSERT
         var response = controller.delete(1L);
@@ -118,8 +130,8 @@ class SellerControllerTest {
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).delete(1L);
+        InOrder inOrder = inOrder(deleteSellerUseCase);
+        inOrder.verify(deleteSellerUseCase).delete(1L);
     }
 
     @Test
@@ -127,7 +139,7 @@ class SellerControllerTest {
         var sellerResponse = new SellerResponse(1L, "Maria Souza", "12345678900", "11988888888");
 
         // WHEN
-        when(service.findById(1L)).thenReturn(sellerResponse);
+        when(findSellerByIdUseCase.findById(1L)).thenReturn(sellerResponse);
 
         // ASSERT
         var response = controller.findById(1L);
@@ -139,7 +151,7 @@ class SellerControllerTest {
         assertEquals("12345678900", response.getBody().cpf());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).findById(1L);
+        InOrder inOrder = inOrder(findSellerByIdUseCase);
+        inOrder.verify(findSellerByIdUseCase).findById(1L);
     }
 }

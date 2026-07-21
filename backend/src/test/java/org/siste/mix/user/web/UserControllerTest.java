@@ -4,7 +4,11 @@ import org.siste.mix.user.dto.CreateUserRequest;
 import org.siste.mix.user.dto.UpdateUserRequest;
 import org.siste.mix.user.dto.UserResponse;
 import org.siste.mix.user.enums.UserRole;
-import org.siste.mix.user.service.UserService;
+import org.siste.mix.user.usecase.CreateUserUseCase;
+import org.siste.mix.user.usecase.DeactivateUserUseCase;
+import org.siste.mix.user.usecase.FindUserByIdUseCase;
+import org.siste.mix.user.usecase.ListUsersUseCase;
+import org.siste.mix.user.usecase.UpdateUserUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +31,15 @@ import static org.mockito.Mockito.when;
 class UserControllerTest {
 
     @Mock
-    private UserService service;
+    private CreateUserUseCase createUserUseCase;
+    @Mock
+    private ListUsersUseCase listUsersUseCase;
+    @Mock
+    private DeactivateUserUseCase deactivateUserUseCase;
+    @Mock
+    private UpdateUserUseCase updateUserUseCase;
+    @Mock
+    private FindUserByIdUseCase findUserByIdUseCase;
 
     @InjectMocks
     private UserController controller;
@@ -45,7 +57,7 @@ class UserControllerTest {
         var response = new UserResponse(1L, "João Silva", "joao@email.com");
 
         // WHEN
-        when(service.create(request)).thenReturn(response);
+        when(createUserUseCase.create(request)).thenReturn(response);
 
         // ASSERT
         var result = controller.create(request, uriBuilder);
@@ -56,8 +68,8 @@ class UserControllerTest {
         assertEquals("João Silva", result.getBody().name());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).create(request);
+        InOrder inOrder = inOrder(createUserUseCase);
+        inOrder.verify(createUserUseCase).create(request);
     }
 
     @Test
@@ -65,7 +77,7 @@ class UserControllerTest {
         var users = List.of(new UserResponse(1L, "João Silva", "joao@email.com"));
 
         // WHEN
-        when(service.list()).thenReturn(users);
+        when(listUsersUseCase.list()).thenReturn(users);
 
         // ASSERT
         var result = controller.list();
@@ -76,14 +88,14 @@ class UserControllerTest {
         assertEquals("João Silva", result.getBody().get(0).name());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).list();
+        InOrder inOrder = inOrder(listUsersUseCase);
+        inOrder.verify(listUsersUseCase).list();
     }
 
     @Test
     void should_deactivate_user_and_return_204() {
         // WHEN
-        doNothing().when(service).deactivate(1L);
+        doNothing().when(deactivateUserUseCase).deactivate(1L);
 
         // ASSERT
         var result = controller.deactivate(1L);
@@ -92,8 +104,8 @@ class UserControllerTest {
         assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).deactivate(1L);
+        InOrder inOrder = inOrder(deactivateUserUseCase);
+        inOrder.verify(deactivateUserUseCase).deactivate(1L);
     }
 
     @Test
@@ -102,7 +114,7 @@ class UserControllerTest {
         var response = new UserResponse(1L, "João Atualizado", "joao@email.com");
 
         // WHEN
-        when(service.update(request)).thenReturn(response);
+        when(updateUserUseCase.update(request)).thenReturn(response);
 
         // ASSERT
         var result = controller.update(request);
@@ -112,8 +124,8 @@ class UserControllerTest {
         assertEquals("João Atualizado", result.getBody().name());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).update(request);
+        InOrder inOrder = inOrder(updateUserUseCase);
+        inOrder.verify(updateUserUseCase).update(request);
     }
 
     @Test
@@ -121,7 +133,7 @@ class UserControllerTest {
         var response = new UserResponse(1L, "João Silva", "joao@email.com");
 
         // WHEN
-        when(service.findById(1L)).thenReturn(response);
+        when(findUserByIdUseCase.findById(1L)).thenReturn(response);
 
         // ASSERT
         var result = controller.findById(1L);
@@ -132,7 +144,7 @@ class UserControllerTest {
         assertEquals("joao@email.com", result.getBody().email());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).findById(1L);
+        InOrder inOrder = inOrder(findUserByIdUseCase);
+        inOrder.verify(findUserByIdUseCase).findById(1L);
     }
 }

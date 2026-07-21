@@ -7,7 +7,10 @@ import org.siste.mix.installment.dto.InstallmentSummary;
 import org.siste.mix.installment.dto.UpdateInstallmentStatusRequest;
 import org.siste.mix.installment.enums.InstallmentStatus;
 import org.siste.mix.installment.model.Installment;
-import org.siste.mix.installment.service.InstallmentService;
+import org.siste.mix.installment.usecase.FindInstallmentByIdUseCase;
+import org.siste.mix.installment.usecase.ListInstallmentsByOrderUseCase;
+import org.siste.mix.installment.usecase.ListInstallmentsUseCase;
+import org.siste.mix.installment.usecase.UpdateInstallmentStatusUseCase;
 import org.siste.mix.order.model.Order;
 import org.siste.mix.seller.dto.CreateSellerRequest;
 import org.siste.mix.seller.model.Seller;
@@ -37,7 +40,13 @@ import static org.mockito.Mockito.when;
 class InstallmentControllerTest {
 
     @Mock
-    private InstallmentService service;
+    private ListInstallmentsUseCase listInstallmentsUseCase;
+    @Mock
+    private FindInstallmentByIdUseCase findInstallmentByIdUseCase;
+    @Mock
+    private ListInstallmentsByOrderUseCase listInstallmentsByOrderUseCase;
+    @Mock
+    private UpdateInstallmentStatusUseCase updateInstallmentStatusUseCase;
 
     @InjectMocks
     private InstallmentController controller;
@@ -62,7 +71,7 @@ class InstallmentControllerTest {
     @Test
     void should_list_installments_without_filters() {
         // WHEN
-        when(service.list(any(), any(), any(), any(), any())).thenReturn(List.of(summary));
+        when(listInstallmentsUseCase.list(any(), any(), any(), any(), any())).thenReturn(List.of(summary));
 
         // ASSERT
         var response = controller.list(null, null, null, null, null);
@@ -75,14 +84,14 @@ class InstallmentControllerTest {
         assertEquals(InstallmentStatus.PENDING, response.getBody().get(0).status());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).list(any(), any(), any(), any(), any());
+        InOrder inOrder = inOrder(listInstallmentsUseCase);
+        inOrder.verify(listInstallmentsUseCase).list(any(), any(), any(), any(), any());
     }
 
     @Test
     void should_list_installments_filtered_by_status() {
         // WHEN
-        when(service.list(any(), any(), any(), any(), any())).thenReturn(List.of(summary));
+        when(listInstallmentsUseCase.list(any(), any(), any(), any(), any())).thenReturn(List.of(summary));
 
         // ASSERT
         var response = controller.list(InstallmentStatus.PENDING, null, null, null, null);
@@ -93,14 +102,14 @@ class InstallmentControllerTest {
         assertEquals(InstallmentStatus.PENDING, response.getBody().get(0).status());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).list(any(), any(), any(), any(), any());
+        InOrder inOrder = inOrder(listInstallmentsUseCase);
+        inOrder.verify(listInstallmentsUseCase).list(any(), any(), any(), any(), any());
     }
 
     @Test
     void should_return_installment_detail_with_200() {
         // WHEN
-        when(service.findById(1L)).thenReturn(detail);
+        when(findInstallmentByIdUseCase.findById(1L)).thenReturn(detail);
 
         // ASSERT
         var response = controller.findById(1L);
@@ -116,14 +125,14 @@ class InstallmentControllerTest {
         assertEquals(null, response.getBody().paymentDate());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).findById(1L);
+        InOrder inOrder = inOrder(findInstallmentByIdUseCase);
+        inOrder.verify(findInstallmentByIdUseCase).findById(1L);
     }
 
     @Test
     void should_list_installments_by_order() {
         // WHEN
-        when(service.listByOrder(1L)).thenReturn(List.of(summary));
+        when(listInstallmentsByOrderUseCase.listByOrder(1L)).thenReturn(List.of(summary));
 
         // ASSERT
         var response = controller.listByOrder(1L);
@@ -134,8 +143,8 @@ class InstallmentControllerTest {
         assertEquals("PED-001", response.getBody().get(0).orderNumber());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).listByOrder(1L);
+        InOrder inOrder = inOrder(listInstallmentsByOrderUseCase);
+        inOrder.verify(listInstallmentsByOrderUseCase).listByOrder(1L);
     }
 
     @Test
@@ -145,7 +154,7 @@ class InstallmentControllerTest {
                 1L, "PED-001", "João Silva", "Maria Souza");
 
         // WHEN
-        when(service.updateStatus(any(Long.class), any(UpdateInstallmentStatusRequest.class))).thenReturn(paidDetail);
+        when(updateInstallmentStatusUseCase.updateStatus(any(Long.class), any(UpdateInstallmentStatusRequest.class))).thenReturn(paidDetail);
 
         // ASSERT
         var response = controller.updateStatus(1L, new UpdateInstallmentStatusRequest(InstallmentStatus.PAID));
@@ -156,8 +165,8 @@ class InstallmentControllerTest {
         assertEquals(LocalDate.now(), response.getBody().paymentDate());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).updateStatus(any(Long.class), any(UpdateInstallmentStatusRequest.class));
+        InOrder inOrder = inOrder(updateInstallmentStatusUseCase);
+        inOrder.verify(updateInstallmentStatusUseCase).updateStatus(any(Long.class), any(UpdateInstallmentStatusRequest.class));
     }
 
     @Test
@@ -167,7 +176,7 @@ class InstallmentControllerTest {
                 1L, "PED-001", "João Silva", "Maria Souza");
 
         // WHEN
-        when(service.updateStatus(any(Long.class), any(UpdateInstallmentStatusRequest.class))).thenReturn(overdueDetail);
+        when(updateInstallmentStatusUseCase.updateStatus(any(Long.class), any(UpdateInstallmentStatusRequest.class))).thenReturn(overdueDetail);
 
         // ASSERT
         var response = controller.updateStatus(1L, new UpdateInstallmentStatusRequest(InstallmentStatus.OVERDUE));
@@ -178,7 +187,7 @@ class InstallmentControllerTest {
         assertEquals(null, response.getBody().paymentDate());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).updateStatus(any(Long.class), any(UpdateInstallmentStatusRequest.class));
+        InOrder inOrder = inOrder(updateInstallmentStatusUseCase);
+        inOrder.verify(updateInstallmentStatusUseCase).updateStatus(any(Long.class), any(UpdateInstallmentStatusRequest.class));
     }
 }

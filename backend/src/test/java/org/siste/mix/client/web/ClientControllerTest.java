@@ -5,7 +5,11 @@ import org.siste.mix.client.dto.ClientSummary;
 import org.siste.mix.client.dto.CreateClientRequest;
 import org.siste.mix.client.dto.UpdateClientRequest;
 import org.siste.mix.client.model.Client;
-import org.siste.mix.client.service.ClientService;
+import org.siste.mix.client.usecase.CreateClientUseCase;
+import org.siste.mix.client.usecase.DeleteClientUseCase;
+import org.siste.mix.client.usecase.FindClientByIdUseCase;
+import org.siste.mix.client.usecase.ListClientsUseCase;
+import org.siste.mix.client.usecase.UpdateClientUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +35,15 @@ import static org.mockito.Mockito.when;
 class ClientControllerTest {
 
     @Mock
-    private ClientService service;
+    private CreateClientUseCase createClientUseCase;
+    @Mock
+    private ListClientsUseCase listClientsUseCase;
+    @Mock
+    private UpdateClientUseCase updateClientUseCase;
+    @Mock
+    private DeleteClientUseCase deleteClientUseCase;
+    @Mock
+    private FindClientByIdUseCase findClientByIdUseCase;
 
     @InjectMocks
     private ClientController controller;
@@ -50,7 +62,7 @@ class ClientControllerTest {
         var request = new CreateClientRequest("João Silva", "11999999999", "12345678900", "joao@email.com");
 
         // WHEN
-        when(service.create(any(CreateClientRequest.class))).thenReturn(client);
+        when(createClientUseCase.create(any(CreateClientRequest.class))).thenReturn(client);
 
         // ASSERT
         var response = controller.create(request, uriBuilder);
@@ -62,8 +74,8 @@ class ClientControllerTest {
         assertEquals("12345678900", response.getBody().cpfCnpj());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).create(any(CreateClientRequest.class));
+        InOrder inOrder = inOrder(createClientUseCase);
+        inOrder.verify(createClientUseCase).create(any(CreateClientRequest.class));
     }
 
     @Test
@@ -71,7 +83,7 @@ class ClientControllerTest {
         var page = new PageImpl<>(List.of(new ClientSummary(1L, "João Silva", "11999999999", "12345678900")));
 
         // WHEN
-        when(service.list(any(Pageable.class))).thenReturn(page);
+        when(listClientsUseCase.list(any(Pageable.class))).thenReturn(page);
 
         // ASSERT
         var response = controller.list(Pageable.ofSize(10));
@@ -82,8 +94,8 @@ class ClientControllerTest {
         assertEquals("João Silva", response.getBody().getContent().get(0).name());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).list(any(Pageable.class));
+        InOrder inOrder = inOrder(listClientsUseCase);
+        inOrder.verify(listClientsUseCase).list(any(Pageable.class));
     }
 
     @Test
@@ -92,7 +104,7 @@ class ClientControllerTest {
         var updated = new ClientResponse(1L, "João Atualizado", "11999999999", "12345678900", "joao@email.com");
 
         // WHEN
-        when(service.update(request)).thenReturn(updated);
+        when(updateClientUseCase.update(request)).thenReturn(updated);
 
         // ASSERT
         var response = controller.update(request);
@@ -102,14 +114,14 @@ class ClientControllerTest {
         assertEquals("João Atualizado", response.getBody().name());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).update(request);
+        InOrder inOrder = inOrder(updateClientUseCase);
+        inOrder.verify(updateClientUseCase).update(request);
     }
 
     @Test
     void should_delete_client_and_return_204() {
         // WHEN
-        doNothing().when(service).delete(1L);
+        doNothing().when(deleteClientUseCase).delete(1L);
 
         // ASSERT
         var response = controller.delete(1L);
@@ -118,8 +130,8 @@ class ClientControllerTest {
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).delete(1L);
+        InOrder inOrder = inOrder(deleteClientUseCase);
+        inOrder.verify(deleteClientUseCase).delete(1L);
     }
 
     @Test
@@ -127,7 +139,7 @@ class ClientControllerTest {
         var clientResponse = new ClientResponse(1L, "João Silva", "11999999999", "12345678900", "joao@email.com");
 
         // WHEN
-        when(service.findById(1L)).thenReturn(clientResponse);
+        when(findClientByIdUseCase.findById(1L)).thenReturn(clientResponse);
 
         // ASSERT
         var response = controller.findById(1L);
@@ -139,7 +151,7 @@ class ClientControllerTest {
         assertEquals("joao@email.com", response.getBody().email());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).findById(1L);
+        InOrder inOrder = inOrder(findClientByIdUseCase);
+        inOrder.verify(findClientByIdUseCase).findById(1L);
     }
 }

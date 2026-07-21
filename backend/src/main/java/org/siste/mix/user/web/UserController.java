@@ -6,7 +6,11 @@ import jakarta.validation.Valid;
 import org.siste.mix.user.dto.CreateUserRequest;
 import org.siste.mix.user.dto.UpdateUserRequest;
 import org.siste.mix.user.dto.UserResponse;
-import org.siste.mix.user.service.UserService;
+import org.siste.mix.user.usecase.CreateUserUseCase;
+import org.siste.mix.user.usecase.DeactivateUserUseCase;
+import org.siste.mix.user.usecase.FindUserByIdUseCase;
+import org.siste.mix.user.usecase.ListUsersUseCase;
+import org.siste.mix.user.usecase.UpdateUserUseCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,35 +24,47 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private UserService service;
+    private CreateUserUseCase createUserUseCase;
+
+    @Autowired
+    private ListUsersUseCase listUsersUseCase;
+
+    @Autowired
+    private DeactivateUserUseCase deactivateUserUseCase;
+
+    @Autowired
+    private UpdateUserUseCase updateUserUseCase;
+
+    @Autowired
+    private FindUserByIdUseCase findUserByIdUseCase;
 
     @PostMapping
     public ResponseEntity<UserResponse> create(@RequestBody @Valid CreateUserRequest data, UriComponentsBuilder uriBuilder) {
-        var user = service.create(data);
+        var user = createUserUseCase.create(data);
         var uri = uriBuilder.path("/api/users/{id}").buildAndExpand(user.id()).toUri();
         return ResponseEntity.created(uri).body(user);
     }
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> list() {
-        return ResponseEntity.ok(service.list());
+        return ResponseEntity.ok(listUsersUseCase.list());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deactivate(@PathVariable Long id) {
-        service.deactivate(id);
+        deactivateUserUseCase.deactivate(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping
     @Operation(summary = "Atualizar um usuário")
     public ResponseEntity<UserResponse> update(@RequestBody @Valid UpdateUserRequest data) {
-        return ResponseEntity.ok(service.update(data));
+        return ResponseEntity.ok(updateUserUseCase.update(data));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Listar um usuário por id")
     public ResponseEntity<UserResponse> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.findById(id));
+        return ResponseEntity.ok(findUserByIdUseCase.findById(id));
     }
 }
