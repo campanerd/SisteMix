@@ -2,11 +2,19 @@ package org.siste.mix.order.web;
 
 import org.siste.mix.client.model.Client;
 import org.siste.mix.order.dto.CreateOrderRequest;
+import org.siste.mix.order.dto.FieldChange;
+import org.siste.mix.order.dto.OrderHistoryResponse;
 import org.siste.mix.order.dto.OrderResponse;
 import org.siste.mix.order.dto.OrderSummary;
 import org.siste.mix.order.dto.UpdateOrderRequest;
+import org.siste.mix.order.enums.OrderHistoryAction;
 import org.siste.mix.order.model.Order;
-import org.siste.mix.order.service.OrderService;
+import org.siste.mix.order.usecase.CreateOrderUseCase;
+import org.siste.mix.order.usecase.DeleteOrderUseCase;
+import org.siste.mix.order.usecase.FindOrderByIdUseCase;
+import org.siste.mix.order.usecase.ListOrderHistoryUseCase;
+import org.siste.mix.order.usecase.ListOrdersUseCase;
+import org.siste.mix.order.usecase.UpdateOrderUseCase;
 import org.siste.mix.seller.model.Seller;
 import org.siste.mix.user.dto.CreateUserRequest;
 import org.siste.mix.user.enums.UserRole;
@@ -25,6 +33,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +47,17 @@ import static org.mockito.Mockito.when;
 class OrderControllerTest {
 
     @Mock
-    private OrderService service;
+    private CreateOrderUseCase createOrderUseCase;
+    @Mock
+    private ListOrdersUseCase listOrdersUseCase;
+    @Mock
+    private UpdateOrderUseCase updateOrderUseCase;
+    @Mock
+    private DeleteOrderUseCase deleteOrderUseCase;
+    @Mock
+    private FindOrderByIdUseCase findOrderByIdUseCase;
+    @Mock
+    private ListOrderHistoryUseCase listOrderHistoryUseCase;
 
     @InjectMocks
     private OrderController controller;
@@ -69,7 +88,7 @@ class OrderControllerTest {
                 new BigDecimal("300.00"), 3, null, 1L, 1L);
 
         // WHEN
-        when(service.create(any(CreateOrderRequest.class))).thenReturn(orderResponse);
+        when(createOrderUseCase.create(any(CreateOrderRequest.class))).thenReturn(orderResponse);
 
         // ASSERT
         var response = controller.create(request, uriBuilder);
@@ -81,8 +100,8 @@ class OrderControllerTest {
         assertEquals("João Silva", response.getBody().clientName());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).create(any(CreateOrderRequest.class));
+        InOrder inOrder = inOrder(createOrderUseCase);
+        inOrder.verify(createOrderUseCase).create(any(CreateOrderRequest.class));
     }
 
     @Test
@@ -90,7 +109,7 @@ class OrderControllerTest {
         var page = new PageImpl<>(List.of(new OrderSummary(order)));
 
         // WHEN
-        when(service.list(any(Pageable.class))).thenReturn(page);
+        when(listOrdersUseCase.list(any(Pageable.class))).thenReturn(page);
 
         // ASSERT
         var response = controller.list(Pageable.ofSize(10));
@@ -102,8 +121,8 @@ class OrderControllerTest {
         assertEquals("João Silva", response.getBody().getContent().get(0).clientName());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).list(any(Pageable.class));
+        InOrder inOrder = inOrder(listOrdersUseCase);
+        inOrder.verify(listOrdersUseCase).list(any(Pageable.class));
     }
 
     @Test
@@ -115,7 +134,7 @@ class OrderControllerTest {
                 1L, "João Silva", 1L, "Maria Souza", "Ana Admin");
 
         // WHEN
-        when(service.update(any(UpdateOrderRequest.class))).thenReturn(updated);
+        when(updateOrderUseCase.update(any(UpdateOrderRequest.class))).thenReturn(updated);
 
         // ASSERT
         var response = controller.update(request);
@@ -125,8 +144,8 @@ class OrderControllerTest {
         assertEquals("New notes", response.getBody().notes());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).update(any(UpdateOrderRequest.class));
+        InOrder inOrder = inOrder(updateOrderUseCase);
+        inOrder.verify(updateOrderUseCase).update(any(UpdateOrderRequest.class));
     }
 
     @Test
@@ -138,7 +157,7 @@ class OrderControllerTest {
                 1L, "João Silva", 2L, "Carlos Lima", "Ana Admin");
 
         // WHEN
-        when(service.update(any(UpdateOrderRequest.class))).thenReturn(updated);
+        when(updateOrderUseCase.update(any(UpdateOrderRequest.class))).thenReturn(updated);
 
         // ASSERT
         var response = controller.update(request);
@@ -148,14 +167,14 @@ class OrderControllerTest {
         assertEquals("Carlos Lima", response.getBody().sellerName());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).update(any(UpdateOrderRequest.class));
+        InOrder inOrder = inOrder(updateOrderUseCase);
+        inOrder.verify(updateOrderUseCase).update(any(UpdateOrderRequest.class));
     }
 
     @Test
     void should_delete_order_and_return_204() {
         // WHEN
-        doNothing().when(service).delete(1L);
+        doNothing().when(deleteOrderUseCase).delete(1L);
 
         // ASSERT
         var response = controller.delete(1L);
@@ -164,14 +183,14 @@ class OrderControllerTest {
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).delete(1L);
+        InOrder inOrder = inOrder(deleteOrderUseCase);
+        inOrder.verify(deleteOrderUseCase).delete(1L);
     }
 
     @Test
     void should_return_order_detail_with_200() {
         // WHEN
-        when(service.findById(1L)).thenReturn(orderResponse);
+        when(findOrderByIdUseCase.findById(1L)).thenReturn(orderResponse);
 
         // ASSERT
         var response = controller.findById(1L);
@@ -183,7 +202,28 @@ class OrderControllerTest {
         assertEquals(3, response.getBody().totalInstallments());
 
         // InOrder
-        InOrder inOrder = inOrder(service);
-        inOrder.verify(service).findById(1L);
+        InOrder inOrder = inOrder(findOrderByIdUseCase);
+        inOrder.verify(findOrderByIdUseCase).findById(1L);
+    }
+
+    @Test
+    void should_return_order_history_with_200() {
+        var historyResponse = new OrderHistoryResponse(1L, OrderHistoryAction.UPDATE, LocalDateTime.now(),
+                "Ana Admin", List.of(new FieldChange("totalAmount", "300.00", "600.00")));
+
+        // WHEN
+        when(listOrderHistoryUseCase.listHistory(1L)).thenReturn(List.of(historyResponse));
+
+        // ASSERT
+        var response = controller.history(1L);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(1, response.getBody().size());
+        assertEquals(OrderHistoryAction.UPDATE, response.getBody().get(0).action());
+
+        // InOrder
+        InOrder inOrder = inOrder(listOrderHistoryUseCase);
+        inOrder.verify(listOrderHistoryUseCase).listHistory(1L);
     }
 }
