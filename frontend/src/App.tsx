@@ -37,8 +37,9 @@ export default function App() {
                   </RequireAuth>
                 }
               >
-                <Route path="/" element={<AcompanhamentoParcelas />} />
-                <Route path="/pedidos" element={<EmConstrucao titulo="Pedidos" />} />
+                <Route path="/" element={<Navigate to="/acompanhamento" replace />} />
+                <Route path="/pedidos" element={<AcompanhamentoParcelas />} />
+                <Route path="/acompanhamento" element={<EmConstrucao titulo="Acompanhamento" />} />
                 <Route path="/clientes" element={<EmConstrucao titulo="Clientes" />} />
                 <Route path="/vendedores" element={<EmConstrucao titulo="Vendedores" />} />
                 <Route path="/dashboard" element={<EmConstrucao titulo="Dashboard" />} />
