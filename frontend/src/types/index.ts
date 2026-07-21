@@ -103,6 +103,7 @@ export interface OrderSummary {
   totalAmount: number;
   totalInstallments: number;
   orderDate: string; // ISO date "AAAA-MM-DD"
+  createdByName: string;
 }
 
 export interface OrderResponse {
@@ -117,6 +118,24 @@ export interface OrderResponse {
   clientName: string;
   sellerId: number;
   sellerName: string;
+  createdByName: string;
+}
+
+// ----- Order history (auditoria) -----
+export type OrderHistoryAction = 'UPDATE' | 'DELETE';
+
+export interface FieldChange {
+  field: string;
+  from: string | null;
+  to: string | null;
+}
+
+export interface OrderHistoryResponse {
+  id: number;
+  action: OrderHistoryAction;
+  changedAt: string; // ISO datetime
+  changedByName: string;
+  changes: FieldChange[];
 }
 
 export interface CreateOrderRequest {
@@ -148,12 +167,12 @@ export interface InstallmentSummary {
   dueDate: string;
   status: InstallmentStatus;
   paymentDate: string | null;
+  orderId: number;
   orderNumber: string;
   clientName: string;
 }
 
 export interface InstallmentResponse extends InstallmentSummary {
-  orderId: number;
   sellerName: string;
 }
 

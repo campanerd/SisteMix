@@ -11,12 +11,13 @@ import {
   Typography,
 } from '@mui/material';
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
-import type { GridColDef } from '@mui/x-data-grid';
+import type { GridColDef, GridRowParams } from '@mui/x-data-grid';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import WarningIcon from '@mui/icons-material/Warning';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import type { Dayjs } from 'dayjs';
 import { listInstallments, updateInstallmentStatus } from '../api/installments';
 import type { InstallmentFilters, InstallmentStatus, InstallmentSummary } from '../types';
@@ -25,6 +26,7 @@ import { filtrosPadraoParcelas } from '../utils/filtros';
 
 export function AcompanhamentoParcelas() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // Estado do formulário de filtros
   const [status, setStatus] = useState<InstallmentStatus | ''>('');
@@ -63,6 +65,10 @@ export function AcompanhamentoParcelas() {
     if (valorMin) novos.amountMin = Number(valorMin);
     if (valorMax) novos.amountMax = Number(valorMax);
     setFiltros(novos);
+  }
+
+  function abrirPedido(params: GridRowParams<InstallmentSummary>) {
+    navigate(`/pedidos/${params.row.orderId}`);
   }
 
   function limparFiltros() {
@@ -163,7 +169,7 @@ export function AcompanhamentoParcelas() {
   return (
     <Box>
       <Typography variant="h5" sx={{ mb: 2 }}>
-        Acompanhamento de Parcelas
+        Acompanhamento de Pedidos
       </Typography>
 
       <Paper sx={{ p: 2, mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center' }}>
@@ -229,6 +235,8 @@ export function AcompanhamentoParcelas() {
           columns={colunas}
           loading={isLoading}
           disableRowSelectionOnClick
+          onRowClick={abrirPedido}
+          sx={{ '& .MuiDataGrid-row': { cursor: 'pointer' } }}
           initialState={{
             pagination: { paginationModel: { pageSize: 25 } },
           }}

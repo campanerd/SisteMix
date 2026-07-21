@@ -14,6 +14,7 @@ public record InstallmentSummary(
         LocalDate dueDate,
         InstallmentStatus status,
         LocalDate paymentDate,
+        Long orderId,
         String orderNumber,
         String clientName
 ) {
@@ -26,6 +27,7 @@ public record InstallmentSummary(
                 installment.getDueDate(),
                 installment.getStatus(),
                 installment.getPaymentDate(),
+                installment.getOrder().getId(),
                 installment.getOrder().getOrderNumber(),
                 installment.getOrder().getClient().getName()
         );

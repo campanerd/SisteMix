@@ -1,0 +1,14 @@
+import { api } from './client';
+import type { OrderHistoryResponse, OrderResponse } from '../types';
+
+// GET /api/orders/{id}
+export async function getOrder(id: number): Promise<OrderResponse> {
+  const { data } = await api.get<OrderResponse>(`/orders/${id}`);
+  return data;
+}
+
+// GET /api/orders/{id}/history
+export async function getOrderHistory(id: number): Promise<OrderHistoryResponse[]> {
+  const { data } = await api.get<OrderHistoryResponse[]>(`/orders/${id}/history`);
+  return data;
+}

@@ -10,6 +10,7 @@ import { getToken } from './api/client';
 import { Layout } from './components/Layout';
 import { Login } from './pages/Login';
 import { AcompanhamentoParcelas } from './pages/AcompanhamentoParcelas';
+import { DetalhePedido } from './pages/DetalhePedido';
 import { EmConstrucao } from './pages/EmConstrucao';
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ export default function App() {
               >
                 <Route path="/" element={<Navigate to="/acompanhamento" replace />} />
                 <Route path="/pedidos" element={<AcompanhamentoParcelas />} />
+                <Route path="/pedidos/:id" element={<DetalhePedido />} />
                 <Route path="/acompanhamento" element={<EmConstrucao titulo="Acompanhamento" />} />
                 <Route path="/clientes" element={<EmConstrucao titulo="Clientes" />} />
                 <Route path="/vendedores" element={<EmConstrucao titulo="Vendedores" />} />
