@@ -2,6 +2,7 @@ package org.siste.mix.installment.repository;
 
 import org.siste.mix.installment.enums.InstallmentStatus;
 import org.siste.mix.installment.model.Installment;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -15,6 +16,10 @@ public interface InstallmentRepository extends JpaRepository<Installment, Long>,
     @EntityGraph(attributePaths = {"order", "order.client"})
     @Override
     List<Installment> findAll(Specification<Installment> spec);
+
+    @EntityGraph(attributePaths = {"order", "order.client"})
+    @Override
+    List<Installment> findAll(Specification<Installment> spec, Sort sort);
 
     boolean existsByOrderIdAndStatus(Long orderId, InstallmentStatus status);
 

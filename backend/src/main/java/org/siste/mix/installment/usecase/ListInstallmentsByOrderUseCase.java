@@ -4,6 +4,7 @@ import org.siste.mix.installment.dto.InstallmentSummary;
 import org.siste.mix.installment.repository.InstallmentRepository;
 import org.siste.mix.installment.repository.InstallmentSpec;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ public class ListInstallmentsByOrderUseCase {
         var spec = Specification
                 .where(InstallmentSpec.forOrder(orderId))
                 .and(InstallmentSpec.orderIsActive());
-        return repository.findAll(spec).stream().map(InstallmentSummary::new).toList();
+        var sort = Sort.by("installmentNumber");
+        return repository.findAll(spec, sort).stream().map(InstallmentSummary::new).toList();
     }
 }

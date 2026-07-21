@@ -49,6 +49,19 @@ class ListInstallmentsByOrderUseCaseTest {
     }
 
     @Test
+    void should_return_installments_ordered_by_installment_number() {
+        var order = persistOrder(true);
+        persistInstallment(order, 3, new BigDecimal("100.00"), LocalDate.of(2026, 4, 15), InstallmentStatus.PENDING);
+        persistInstallment(order, 1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), InstallmentStatus.PENDING);
+        persistInstallment(order, 2, new BigDecimal("100.00"), LocalDate.of(2026, 3, 15), InstallmentStatus.PENDING);
+        em.flush();
+
+        var result = useCase.listByOrder(order.getId());
+
+        assertThat(result).extracting("installmentNumber").containsExactly(1, 2, 3);
+    }
+
+    @Test
     void should_not_list_installments_by_order_when_order_is_deactivated() {
         var order = persistOrder(true);
         persistInstallment(order, 1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), InstallmentStatus.PENDING);
