@@ -23,6 +23,7 @@ import { listInstallments, updateInstallmentStatus } from '../api/installments';
 import type { InstallmentFilters, InstallmentStatus, InstallmentSummary } from '../types';
 import { corStatus, formatarData, formatarMoeda, rotuloStatus } from '../utils/format';
 import { filtrosPadraoParcelas } from '../utils/filtros';
+import { NovoPedidoDialog } from './NovoPedidoDialog';
 
 export function AcompanhamentoParcelas() {
   const queryClient = useQueryClient();
@@ -39,6 +40,7 @@ export function AcompanhamentoParcelas() {
   const [filtros, setFiltros] = useState<InstallmentFilters>(filtrosPadraoParcelas());
 
   const [aviso, setAviso] = useState<{ tipo: 'success' | 'error'; texto: string } | null>(null);
+  const [novoPedidoAberto, setNovoPedidoAberto] = useState(false);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['installments', filtros],
@@ -169,9 +171,12 @@ export function AcompanhamentoParcelas() {
 
   return (
     <Box>
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Acompanhamento de Pedidos
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h5">Acompanhamento de Pedidos</Typography>
+        <Button variant="contained" onClick={() => setNovoPedidoAberto(true)}>
+          Novo Pedido
+        </Button>
+      </Box>
 
       <Paper sx={{ p: 2, mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center' }}>
         <TextField
@@ -246,6 +251,12 @@ export function AcompanhamentoParcelas() {
           localeText={{ noRowsLabel: 'Nenhuma parcela encontrada' }}
         />
       </Paper>
+
+      <NovoPedidoDialog
+        open={novoPedidoAberto}
+        onClose={() => setNovoPedidoAberto(false)}
+        onCriado={() => setAviso({ tipo: 'success', texto: 'Pedido cadastrado com sucesso.' })}
+      />
 
       <Snackbar
         open={aviso !== null}
