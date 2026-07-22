@@ -183,3 +183,13 @@ export interface InstallmentFilters {
   amountMin?: number;
   amountMax?: number;
 }
+
+// ----- Dashboard -----
+export interface DashboardSummaryResponse {
+  activeOrdersCount: number;
+  paidCount: number;
+  pendingCount: number;
+  overdueCount: number;
+  totalReceivedAmount: number;
+  totalToReceiveAmount: number;
+}

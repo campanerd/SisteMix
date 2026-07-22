@@ -12,6 +12,12 @@ export function formatarData(iso: string | null): string {
   return `${dia}/${mes}/${ano}`;
 }
 
+// Percentual de uma parte em relação ao total (0 quando o total é zero, evita divisão por zero)
+export function formatarPercentual(parte: number, total: number): string {
+  if (total <= 0) return '0%';
+  return `${((parte / total) * 100).toFixed(1).replace('.', ',')}%`;
+}
+
 // Rótulo legível para cada status (a API fala inglês, a tela fala português)
 export const rotuloStatus: Record<InstallmentStatus, string> = {
   PAID: 'Pago',
