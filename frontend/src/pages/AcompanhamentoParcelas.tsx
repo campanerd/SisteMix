@@ -58,7 +58,8 @@ export function AcompanhamentoParcelas() {
   });
 
   function aplicarFiltros() {
-    const novos: InstallmentFilters = {};
+    // Clicar em "Filtrar" é sempre uma escolha explícita do usuários
+    const novos: InstallmentFilters = { showAll: true };
     if (status) novos.status = status;
     if (vencInicio) novos.dueDateFrom = vencInicio.format('YYYY-MM-DD');
     if (vencFim) novos.dueDateTo = vencFim.format('YYYY-MM-DD');
@@ -180,6 +181,7 @@ export function AcompanhamentoParcelas() {
           value={status}
           onChange={(e) => setStatus(e.target.value as InstallmentStatus | '')}
           sx={{ minWidth: 160 }}
+          slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
         >
           <MenuItem value="">Todos</MenuItem>
           <MenuItem value="PENDING">Pendente</MenuItem>

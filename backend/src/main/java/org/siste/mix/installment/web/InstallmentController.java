@@ -43,9 +43,10 @@ public class InstallmentController {
             @RequestParam(required = false) LocalDate dueDateFrom,
             @RequestParam(required = false) LocalDate dueDateTo,
             @RequestParam(required = false) BigDecimal amountMin,
-            @RequestParam(required = false) BigDecimal amountMax
+            @RequestParam(required = false) BigDecimal amountMax,
+            @RequestParam(required = false, defaultValue = "false") boolean showAll
     ) {
-        return ResponseEntity.ok(listInstallmentsUseCase.list(status, dueDateFrom, dueDateTo, amountMin, amountMax));
+        return ResponseEntity.ok(listInstallmentsUseCase.list(status, dueDateFrom, dueDateTo, amountMin, amountMax, showAll));
     }
 
     @GetMapping("/{id}")

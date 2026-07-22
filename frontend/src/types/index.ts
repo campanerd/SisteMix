@@ -182,6 +182,7 @@ export interface InstallmentFilters {
   dueDateTo?: string;
   amountMin?: number;
   amountMax?: number;
+  showAll?: boolean;
 }
 
 // ----- Dashboard -----
