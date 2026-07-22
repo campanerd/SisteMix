@@ -16,4 +16,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @EntityGraph(attributePaths = {"client", "seller", "createdBy"})
     @Override
     Optional<Order> findById(Long id);
+
+    long countByActiveTrue();
 }

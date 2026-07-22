@@ -18,8 +18,8 @@ public class ListInstallmentsUseCase {
     @Autowired
     private InstallmentRepository repository;
 
-    public List<InstallmentSummary> list(InstallmentStatus status, LocalDate dueDateFrom, LocalDate dueDateTo, BigDecimal amountMin, BigDecimal amountMax) {
-        var noFiltersApplied = status == null && dueDateFrom == null && dueDateTo == null && amountMin == null && amountMax == null;
+    public List<InstallmentSummary> list(InstallmentStatus status, LocalDate dueDateFrom, LocalDate dueDateTo, BigDecimal amountMin, BigDecimal amountMax, boolean showAll) {
+        var noFiltersApplied = !showAll && status == null && dueDateFrom == null && dueDateTo == null && amountMin == null && amountMax == null;
         if (noFiltersApplied) {
             return listNextDuePerOrder();
         }

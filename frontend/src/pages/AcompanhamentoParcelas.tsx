@@ -11,20 +11,23 @@ import {
   Typography,
 } from '@mui/material';
 import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
-import type { GridColDef } from '@mui/x-data-grid';
+import type { GridColDef, GridRowParams } from '@mui/x-data-grid';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import WarningIcon from '@mui/icons-material/Warning';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import type { Dayjs } from 'dayjs';
 import { listInstallments, updateInstallmentStatus } from '../api/installments';
 import type { InstallmentFilters, InstallmentStatus, InstallmentSummary } from '../types';
 import { corStatus, formatarData, formatarMoeda, rotuloStatus } from '../utils/format';
 import { filtrosPadraoParcelas } from '../utils/filtros';
+import { NovoPedidoDialog } from './NovoPedidoDialog';
 
 export function AcompanhamentoParcelas() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // Estado do formulário de filtros
   const [status, setStatus] = useState<InstallmentStatus | ''>('');
@@ -37,6 +40,7 @@ export function AcompanhamentoParcelas() {
   const [filtros, setFiltros] = useState<InstallmentFilters>(filtrosPadraoParcelas());
 
   const [aviso, setAviso] = useState<{ tipo: 'success' | 'error'; texto: string } | null>(null);
+  const [novoPedidoAberto, setNovoPedidoAberto] = useState(false);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['installments', filtros],
@@ -56,13 +60,18 @@ export function AcompanhamentoParcelas() {
   });
 
   function aplicarFiltros() {
-    const novos: InstallmentFilters = {};
+    // Clicar em "Filtrar" é sempre uma escolha explícita do usuários
+    const novos: InstallmentFilters = { showAll: true };
     if (status) novos.status = status;
     if (vencInicio) novos.dueDateFrom = vencInicio.format('YYYY-MM-DD');
     if (vencFim) novos.dueDateTo = vencFim.format('YYYY-MM-DD');
     if (valorMin) novos.amountMin = Number(valorMin);
     if (valorMax) novos.amountMax = Number(valorMax);
     setFiltros(novos);
+  }
+
+  function abrirPedido(params: GridRowParams<InstallmentSummary>) {
+    navigate(`/pedidos/${params.row.orderId}`);
   }
 
   function limparFiltros() {
@@ -162,9 +171,12 @@ export function AcompanhamentoParcelas() {
 
   return (
     <Box>
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Acompanhamento de Parcelas
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h5">Acompanhamento de Pedidos</Typography>
+        <Button variant="contained" onClick={() => setNovoPedidoAberto(true)}>
+          Novo Pedido
+        </Button>
+      </Box>
 
       <Paper sx={{ p: 2, mb: 2, display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center' }}>
         <TextField
@@ -174,6 +186,7 @@ export function AcompanhamentoParcelas() {
           value={status}
           onChange={(e) => setStatus(e.target.value as InstallmentStatus | '')}
           sx={{ minWidth: 160 }}
+          slotProps={{ select: { displayEmpty: true }, inputLabel: { shrink: true } }}
         >
           <MenuItem value="">Todos</MenuItem>
           <MenuItem value="PENDING">Pendente</MenuItem>
@@ -229,6 +242,8 @@ export function AcompanhamentoParcelas() {
           columns={colunas}
           loading={isLoading}
           disableRowSelectionOnClick
+          onRowClick={abrirPedido}
+          sx={{ '& .MuiDataGrid-row': { cursor: 'pointer' } }}
           initialState={{
             pagination: { paginationModel: { pageSize: 25 } },
           }}
@@ -236,6 +251,12 @@ export function AcompanhamentoParcelas() {
           localeText={{ noRowsLabel: 'Nenhuma parcela encontrada' }}
         />
       </Paper>
+
+      <NovoPedidoDialog
+        open={novoPedidoAberto}
+        onClose={() => setNovoPedidoAberto(false)}
+        onCriado={() => setAviso({ tipo: 'success', texto: 'Pedido cadastrado com sucesso.' })}
+      />
 
       <Snackbar
         open={aviso !== null}

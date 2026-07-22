@@ -43,7 +43,7 @@ class ListInstallmentsUseCaseTest {
         persistInstallment(order, 1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), InstallmentStatus.PENDING);
         em.flush();
 
-        var result = useCase.list(null, null, null, null, null);
+        var result = useCase.list(null, null, null, null, null, false);
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).orderNumber()).isEqualTo(order.getOrderNumber());
@@ -56,7 +56,7 @@ class ListInstallmentsUseCaseTest {
         order.deactivate();
         em.flush();
 
-        var result = useCase.list(null, null, null, null, null);
+        var result = useCase.list(null, null, null, null, null, false);
 
         assertThat(result).isEmpty();
     }
@@ -68,7 +68,7 @@ class ListInstallmentsUseCaseTest {
         persistInstallment(order, 2, new BigDecimal("100.00"), LocalDate.of(2026, 3, 15), InstallmentStatus.PAID);
         em.flush();
 
-        var result = useCase.list(InstallmentStatus.PAID, null, null, null, null);
+        var result = useCase.list(InstallmentStatus.PAID, null, null, null, null, false);
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).status()).isEqualTo(InstallmentStatus.PAID);
@@ -81,10 +81,22 @@ class ListInstallmentsUseCaseTest {
         persistInstallment(order, 2, new BigDecimal("100.00"), LocalDate.of(2026, 5, 15), InstallmentStatus.PENDING);
         em.flush();
 
-        var result = useCase.list(null, LocalDate.of(2026, 4, 1), null, null, null);
+        var result = useCase.list(null, LocalDate.of(2026, 4, 1), null, null, null, false);
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).dueDate()).isEqualTo(LocalDate.of(2026, 5, 15));
+    }
+
+    @Test
+    void should_list_all_installments_when_show_all_is_true_even_without_other_filters() {
+        var order = persistOrder(true);
+        persistInstallment(order, 1, new BigDecimal("100.00"), LocalDate.of(2026, 2, 15), InstallmentStatus.PAID);
+        persistInstallment(order, 2, new BigDecimal("100.00"), LocalDate.of(2026, 3, 15), InstallmentStatus.PENDING);
+        em.flush();
+
+        var result = useCase.list(null, null, null, null, null, true);
+
+        assertThat(result).hasSize(2);
     }
 
     private Order persistOrder(boolean active) {

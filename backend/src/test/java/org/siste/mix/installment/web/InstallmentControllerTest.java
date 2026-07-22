@@ -33,6 +33,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.when;
 
@@ -71,10 +73,10 @@ class InstallmentControllerTest {
     @Test
     void should_list_installments_without_filters() {
         // WHEN
-        when(listInstallmentsUseCase.list(any(), any(), any(), any(), any())).thenReturn(List.of(summary));
+        when(listInstallmentsUseCase.list(any(), any(), any(), any(), any(), anyBoolean())).thenReturn(List.of(summary));
 
         // ASSERT
-        var response = controller.list(null, null, null, null, null);
+        var response = controller.list(null, null, null, null, null, false);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -85,16 +87,16 @@ class InstallmentControllerTest {
 
         // InOrder
         InOrder inOrder = inOrder(listInstallmentsUseCase);
-        inOrder.verify(listInstallmentsUseCase).list(any(), any(), any(), any(), any());
+        inOrder.verify(listInstallmentsUseCase).list(any(), any(), any(), any(), any(), anyBoolean());
     }
 
     @Test
     void should_list_installments_filtered_by_status() {
         // WHEN
-        when(listInstallmentsUseCase.list(any(), any(), any(), any(), any())).thenReturn(List.of(summary));
+        when(listInstallmentsUseCase.list(any(), any(), any(), any(), any(), anyBoolean())).thenReturn(List.of(summary));
 
         // ASSERT
-        var response = controller.list(InstallmentStatus.PENDING, null, null, null, null);
+        var response = controller.list(InstallmentStatus.PENDING, null, null, null, null, false);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -103,7 +105,24 @@ class InstallmentControllerTest {
 
         // InOrder
         InOrder inOrder = inOrder(listInstallmentsUseCase);
-        inOrder.verify(listInstallmentsUseCase).list(any(), any(), any(), any(), any());
+        inOrder.verify(listInstallmentsUseCase).list(any(), any(), any(), any(), any(), anyBoolean());
+    }
+
+    @Test
+    void should_list_all_installments_when_show_all_is_true() {
+        // WHEN
+        when(listInstallmentsUseCase.list(any(), any(), any(), any(), any(), eq(true))).thenReturn(List.of(summary));
+
+        // ASSERT
+        var response = controller.list(null, null, null, null, null, true);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(1, response.getBody().size());
+
+        // InOrder
+        InOrder inOrder = inOrder(listInstallmentsUseCase);
+        inOrder.verify(listInstallmentsUseCase).list(any(), any(), any(), any(), any(), eq(true));
     }
 
     @Test
