@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Alert,
   Box,
@@ -7,6 +8,7 @@ import {
   Divider,
   Grid,
   Paper,
+  Snackbar,
   Typography,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -18,11 +20,14 @@ import { getOrder, getOrderHistory } from '../api/orders';
 import { listInstallmentsByOrder } from '../api/installments';
 import type { InstallmentSummary } from '../types';
 import { corStatus, formatarData, formatarMoeda, rotuloStatus } from '../utils/format';
+import { EditarPedidoDialog } from './EditarPedidoDialog';
 
 export function DetalhePedido() {
   const { id } = useParams<{ id: string }>();
   const orderId = Number(id);
   const navigate = useNavigate();
+  const [editarAberto, setEditarAberto] = useState(false);
+  const [aviso, setAviso] = useState(false);
 
   const order = useQuery({
     queryKey: ['order', orderId],
@@ -95,9 +100,12 @@ export function DetalhePedido() {
         Voltar
       </Button>
 
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Pedido {pedido.orderNumber}
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h5">Pedido {pedido.orderNumber}</Typography>
+        <Button variant="contained" onClick={() => setEditarAberto(true)}>
+          Editar
+        </Button>
+      </Box>
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={2}>
@@ -176,6 +184,24 @@ export function DetalhePedido() {
           </Box>
         ))}
       </Paper>
+
+      <EditarPedidoDialog
+        open={editarAberto}
+        pedido={pedido}
+        onClose={() => setEditarAberto(false)}
+        onAtualizado={() => setAviso(true)}
+      />
+
+      <Snackbar
+        open={aviso}
+        autoHideDuration={3000}
+        onClose={() => setAviso(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity="success" onClose={() => setAviso(false)}>
+          Pedido atualizado com sucesso.
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

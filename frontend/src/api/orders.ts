@@ -1,9 +1,15 @@
 import { api } from './client';
-import type { CreateOrderRequest, OrderHistoryResponse, OrderResponse } from '../types';
+import type { CreateOrderRequest, OrderHistoryResponse, OrderResponse, UpdateOrderRequest } from '../types';
 
 // POST /api/orders
 export async function createOrder(data: CreateOrderRequest): Promise<OrderResponse> {
   const { data: response } = await api.post<OrderResponse>('/orders', data);
+  return response;
+}
+
+// PUT /api/orders
+export async function updateOrder(data: UpdateOrderRequest): Promise<OrderResponse> {
+  const { data: response } = await api.put<OrderResponse>('/orders', data);
   return response;
 }
 
