@@ -35,4 +35,12 @@ public interface InstallmentRepository extends JpaRepository<Installment, Long>,
             WHERE x.rn = 1
             """, nativeQuery = true)
     List<Long> findNextUnpaidInstallmentIdsPerOrder();
+
+    @Query("""
+            SELECT i.status AS status, COUNT(i) AS count, COALESCE(SUM(i.amount), 0) AS totalAmount
+            FROM Installment i
+            WHERE i.order.active = true
+            GROUP BY i.status
+            """)
+    List<InstallmentStatusAggregate> aggregateActiveByStatus();
 }
